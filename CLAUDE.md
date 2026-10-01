@@ -1,4 +1,4 @@
-# CLAUDE.md — Coronel Segura (working name)
+# CLAUDE.md — Evacua
 
 Offline-first evacuation map (installable PWA) for ONE pilot sector of Coronel, Chile.
 Built during the WarriorHacks 2.0 hackathon. Public repo, judged on Impact, Feasibility,
@@ -30,7 +30,9 @@ Delivery plan, phase status, pending decisions and risks: `docs/PLAN.md`.
   (speed, text size, simple mode, voice, backpack checklist, messages), not separate apps.
 - Scope: ONE pilot sector of Coronel: **Yobilo** (bbox to be fixed in Phase 2). Everything else is roadmap.
 - Fully static: no backend, no external APIs at runtime, no database.
-- Team: the owner alone + Claude Code. Deadline ≈ 2026-10-09 (8 days from 2026-10-01).
+- Team: the owner alone + Claude Code. Official deadline (Devpost): **2026-10-13 23:45 CDT**
+  (≈ 01:45 on 2026-10-14 in Chile). Submission: public GitHub repo, 2–3 min demo video,
+  pictures, demo link, and the WarriorHacks 2.0 Track Selection Form (owner fills it in).
 - The demo runs in a web browser (desktop Chrome or a phone browser); no app stores involved.
 
 ## Git, GitHub and Vercel
@@ -73,6 +75,11 @@ Delivery plan, phase status, pending decisions and risks: `docs/PLAN.md`.
 - Functional system, not mockups. School-appropriate content.
 - Attribute and check the license of everything: OpenStreetMap (ODbL — "© OpenStreetMap
   contributors" visible on the map), libraries, datasets, fonts, icons.
+- Project license (owner decision 2026-10-01): code under **PolyForm Noncommercial 1.0.0** —
+  anyone may use and modify it, nobody may charge for it. Never call the project "open
+  source" (OSI); say "source-available, free for noncommercial use". Data is NOT relicensed:
+  OSM-derived data stays ODbL, SENAPRED data keeps its terms. Only add dependencies whose
+  licenses allow inclusion (MIT, ISC, BSD, Apache-2.0, OFL for fonts).
 
 ### 3. Privacy
 
@@ -150,7 +157,7 @@ ESLint + Prettier, GitHub Actions, Dependabot, Vercel static hosting.
 ## Required documentation
 
 README.md, ARCHITECTURE.md (Mermaid diagram), DATA_SOURCES.md, AI_DISCLOSURE.md, SECURITY.md,
-PRIVACY.md, LICENSE (MIT for code; data keeps its own licenses), CONTRIBUTING.md,
+PRIVACY.md, LICENSE (PolyForm Noncommercial 1.0.0 for code; data keeps its own licenses), CONTRIBUTING.md,
 docs/DEMO_SCRIPT.md (2–3 min).
 
 ## Definition of done

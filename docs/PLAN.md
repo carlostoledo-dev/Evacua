@@ -1,4 +1,4 @@
-# Delivery plan — Coronel Segura
+# Delivery plan — Evacua
 
 Each phase ends with a report (done / tested / pending or uncertain) and waits for
 explicit owner approval before the next one starts.
@@ -158,13 +158,18 @@ explicit owner approval before the next one starts.
 
 ## Owner answers (2026-10-01)
 
-- Pilot sector: **Yobilo**, Coronel. Solo developer + Claude Code; ~8 days left (≈ 2026-10-09).
+- Pilot sector: **Yobilo**, Coronel. Solo developer + Claude Code. Official deadline per Devpost: 2026-10-13 23:45 CDT (the owner first estimated ≈ 2026-10-09). The rules say nothing about licensing or IP.
 - D1 approved (Vite + React). D3 approved (simulated DEMO location). D5 approved.
 - D2 (wildfire) deferred: focus on everything else first, revisit later. D4 goes with D2.
 - English UI added as second locale (es-CL stays default).
 - Demo will be shown in a web browser (no app stores; a PWA is a web app anyway).
 - The owner runs git/GitHub/Vercel personally with Claude's step-by-step guidance.
 - Search for official data: done, see below.
+- 2026-10-01: the product is renamed **Evacua** (repo `carlostoledo-dev/Evacua`); Coronel /
+  Yobilo remain the place names.
+- 2026-10-01: license changed from MIT to **PolyForm Noncommercial 1.0.0** — anyone may use and
+  modify the code, nobody may charge for it; government, public-safety, educational and charitable
+  organizations are explicitly allowed. Data keeps its own licenses (ODbL, SENAPRED terms).
 
 ## Official data findings (2026-10-01)
 
