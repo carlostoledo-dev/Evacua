@@ -118,7 +118,9 @@ Delivery plan, phase status, pending decisions and risks: `docs/PLAN.md`.
   that return explicit result types instead of throwing.
 - Profiles and hazards are typed config objects. No `if (profile === '...')` branching
   scattered through UI components.
-- Multi-commune by data: `data/communes/<id>/manifest.json` (zone, bbox, layers, sources).
+- Multi-commune by data: `public/data/communes/<id>/manifest.json` (zone, bbox, layers, sources)
+  listed in `public/data/communes/index.json`. `npm run data:import` re-downloads SENAPRED layers;
+  `npm run data:validate` (also run by `build`) uses the same loader as the browser.
   Adding a commune = adding data, not changing code.
 - Routing: pedestrian graph generated at data-build time from OSM; A* runs in the client.
 - Generated data (tiles, graph, GeoJSON) is committed; CI never fetches external data.
