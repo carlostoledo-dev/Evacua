@@ -1,9 +1,9 @@
 {
-  "name": "coronel-segura",
+  "name": "evacua",
   "private": true,
   "version": "0.1.0",
   "description": "Offline-first evacuation map (PWA) for a pilot sector of Coronel, Chile.",
-  "license": "MIT",
+  "license": "PolyForm-Noncommercial-1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",

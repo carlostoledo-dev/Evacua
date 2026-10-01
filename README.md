@@ -38,5 +38,16 @@ Built with AI assistance (Claude Code). See [AI_DISCLOSURE.md](AI_DISCLOSURE.md)
 
 ## License
 
-Code: [MIT](LICENSE). Map and safety data keep their own licenses (OpenStreetMap: ODbL;
-SENAPRED data: cited per IDE Chile guidance) — details will be in `DATA_SOURCES.md`.
+Evacua's code is free to use, study, modify and share for **noncommercial** purposes under the
+[PolyForm Noncommercial License 1.0.0](LICENSE). Nobody may charge for it or use it
+commercially. Public-safety organizations, government institutions (e.g. municipalities),
+schools and charities may use it regardless of how they are funded. Because commercial use is
+not allowed, this is _source-available_ software, not OSI "open source".
+
+Map and safety data are **not** covered by that license and keep their own terms
+(OpenStreetMap: ODbL; SENAPRED data: cited per IDE Chile guidance) — details in `DATA_SOURCES.md`.
+
+**Licencia (resumen):** cualquiera puede usar, estudiar, modificar y compartir el código de
+Evacua sin fines comerciales; nadie puede cobrar por él. Municipios, organismos de emergencia,
+colegios y organizaciones sin fines de lucro pueden usarlo libremente. Los datos de mapas y de
+seguridad mantienen sus propias licencias.
