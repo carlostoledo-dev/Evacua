@@ -7,7 +7,9 @@ evacuate from your location, even with no internet.
 > **Support tool only.** It does not replace the authorities (SENAPRED, SHOA, Municipality of
 > Coronel). Always follow their official instructions.
 
-**Status:** work in progress for WarriorHacks 2.0 — Phase 1 of 7 (skeleton, CI, PWA, i18n).
+**Live demo:** https://evacua-phi.vercel.app
+
+**Status:** work in progress for WarriorHacks 2.0 — Phase 2 of 7 (official data layer).
 The full README (problem, audience, demo, screenshots, architecture, limits, roadmap) comes in Phase 7.
 
 ## Resumen en español

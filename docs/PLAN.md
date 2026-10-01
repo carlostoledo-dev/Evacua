@@ -3,16 +3,16 @@
 Each phase ends with a report (done / tested / pending or uncertain) and waits for
 explicit owner approval before the next one starts.
 
-| Phase                                           | Status                                                |
-| ----------------------------------------------- | ----------------------------------------------------- |
-| 0. Questions, plan, CLAUDE.md                   | Done — answered 2026-10-01                            |
-| 1. Skeleton, CI, PWA, i18n                      | Built, CI green — awaiting Vercel import and approval |
-| 2. Data layer: schema + labeled DEMO data       | Not started                                           |
-| 3. Offline map + hazard layers and selector     | Not started                                           |
-| 4. Evacuation guidance: safe point, route, time | Not started                                           |
-| 5. Profiles + accessibility                     | Not started                                           |
-| 6. Security, tests, Lighthouse                  | Not started                                           |
-| 7. Docs, screenshots, demo script               | Not started                                           |
+| Phase                                           | Status                     |
+| ----------------------------------------------- | -------------------------- |
+| 0. Questions, plan, CLAUDE.md                   | Done — answered 2026-10-01 |
+| 1. Skeleton, CI, PWA, i18n                      | Done — approved 2026-10-01 |
+| 2. Data layer: schema + labeled DEMO data       | In progress                |
+| 3. Offline map + hazard layers and selector     | Not started                |
+| 4. Evacuation guidance: safe point, route, time | Not started                |
+| 5. Profiles + accessibility                     | Not started                |
+| 6. Security, tests, Lighthouse                  | Not started                |
+| 7. Docs, screenshots, demo script               | Not started                |
 
 ---
 
@@ -34,7 +34,7 @@ explicit owner approval before the next one starts.
 **Acceptance criteria**
 
 - [x] `lint`, `typecheck`, `test`, `build` pass locally and in GitHub Actions (run 36918458245, both jobs green).
-- [ ] Deployed URL is installable (manifest + SW detected). Pending: the owner imports the repo in Vercel (the Vercel connector got 403 on project creation and the GitHub app grant is the owner's).
+- [x] Deployed at https://evacua-phi.vercel.app (owner imported it in Vercel). Verified in production: all security headers, manifest with maskable icon, SW `no-cache`, immutable assets, Playwright offline reload, zero foreign requests, zero console errors.
 - [x] Playwright: after first load, going offline and reloading still renders the app shell.
 - [x] Playwright: every network request is same-origin; zero CSP violations in console.
 - [x] No UI string outside the dictionary (ESLint `no-restricted-syntax` on JSX text and
@@ -194,6 +194,21 @@ FeatureServer (WGS84, JSON query):
 - Yobilo in OSM (Nominatim): road "Yobilo" from ≈ (-37.0118, -73.1565) to ≈ (-36.9996, -73.1349).
 - Text encoding: some attributes come back mis-encoded (e.g. "Biob�o"); normalize in the import script.
 - Wildfire: not researched yet (D2 deferred).
+
+## Stretch features (only after the minimum demo works, target 2026-10-06)
+
+Ranked by impact / effort, proposed 2026-10-01:
+
+1. **Big-arrow mode:** a huge arrow toward the safe point using the device compass, with the
+   distance below it (no map reading needed). Needs `DeviceOrientation` and a Permissions-Policy update.
+2. **Printable plan + QR:** one printable page with the route map, meeting point and backpack
+   checklist; schools can post a QR that opens Evacua at that public location.
+3. Family reunion point stored only on the device.
+4. Timed drill ("¿Llegas a tiempo?") for all profiles.
+5. Demo on a low-end Android phone.
+
+Owner-side levers (cannot be done by code): test with 3–5 real people (anonymized, with
+consent) and contact the Municipalidad de Coronel / SENAPRED Biobío / a local school.
 
 ## Proposed decisions
 
