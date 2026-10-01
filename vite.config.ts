@@ -19,8 +19,8 @@ export default defineConfig({
       includeAssets: ['favicon.ico', 'logo.svg', 'apple-touch-icon-180x180.png'],
       manifest: {
         id: '/',
-        name: 'Coronel Segura',
-        short_name: 'Coronel Segura',
+        name: 'Evacua',
+        short_name: 'Evacua',
         description:
           'Mapa de evacuación sin conexión para el sector Yobilo de Coronel. Herramienta de apoyo: sigue siempre a las autoridades.',
         lang: 'es-CL',

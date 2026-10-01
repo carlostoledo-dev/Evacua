@@ -10,7 +10,7 @@ export interface KeyValueStore {
 }
 
 export const STORAGE_KEYS = {
-  locale: 'coronel-segura:locale',
+  locale: 'evacua:locale',
 } as const;
 
 /**
