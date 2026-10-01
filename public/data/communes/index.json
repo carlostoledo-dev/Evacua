@@ -1,0 +1,5 @@
+{
+  "schemaVersion": 1,
+  "defaultCommune": "coronel",
+  "communes": [{ "id": "coronel", "manifest": "coronel/manifest.json" }]
+}
