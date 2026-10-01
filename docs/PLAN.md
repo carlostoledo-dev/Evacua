@@ -3,16 +3,16 @@
 Each phase ends with a report (done / tested / pending or uncertain) and waits for
 explicit owner approval before the next one starts.
 
-| Phase                                           | Status                                           |
-| ----------------------------------------------- | ------------------------------------------------ |
-| 0. Questions, plan, CLAUDE.md                   | Done — answered 2026-10-01                       |
-| 1. Skeleton, CI, PWA, i18n                      | Built — awaiting owner push, CI run and approval |
-| 2. Data layer: schema + labeled DEMO data       | Not started                                      |
-| 3. Offline map + hazard layers and selector     | Not started                                      |
-| 4. Evacuation guidance: safe point, route, time | Not started                                      |
-| 5. Profiles + accessibility                     | Not started                                      |
-| 6. Security, tests, Lighthouse                  | Not started                                      |
-| 7. Docs, screenshots, demo script               | Not started                                      |
+| Phase                                           | Status                                                |
+| ----------------------------------------------- | ----------------------------------------------------- |
+| 0. Questions, plan, CLAUDE.md                   | Done — answered 2026-10-01                            |
+| 1. Skeleton, CI, PWA, i18n                      | Built, CI green — awaiting Vercel import and approval |
+| 2. Data layer: schema + labeled DEMO data       | Not started                                           |
+| 3. Offline map + hazard layers and selector     | Not started                                           |
+| 4. Evacuation guidance: safe point, route, time | Not started                                           |
+| 5. Profiles + accessibility                     | Not started                                           |
+| 6. Security, tests, Lighthouse                  | Not started                                           |
+| 7. Docs, screenshots, demo script               | Not started                                           |
 
 ---
 
@@ -33,8 +33,8 @@ explicit owner approval before the next one starts.
 
 **Acceptance criteria**
 
-- [x] `lint`, `typecheck`, `test`, `build` pass locally. CI: pending first push by the owner.
-- [ ] Deployed URL is installable (manifest + SW detected). Pending first Vercel deploy by the owner.
+- [x] `lint`, `typecheck`, `test`, `build` pass locally and in GitHub Actions (run 36918458245, both jobs green).
+- [ ] Deployed URL is installable (manifest + SW detected). Pending: the owner imports the repo in Vercel (the Vercel connector got 403 on project creation and the GitHub app grant is the owner's).
 - [x] Playwright: after first load, going offline and reloading still renders the app shell.
 - [x] Playwright: every network request is same-origin; zero CSP violations in console.
 - [x] No UI string outside the dictionary (ESLint `no-restricted-syntax` on JSX text and
@@ -244,3 +244,9 @@ Playwright offline tests, and a manifest/service-worker check in CI.
 - GPS cold start in airplane mode can take a long time → "buscando señal" state + manual position.
 - Offline bundle size (tiles + graph + glyphs) on low-end phones → keep bbox small, measure.
 - Windows dev machine has no Java/Docker → tile tooling must work with single binaries or Node/Python.
+
+## Dependency notes
+
+- 2026-10-01: Dependabot opened major bumps for `typescript` (6 → 7) and
+  `@vite-pwa/assets-generator` (1 → 2). Do not merge TypeScript 7 while `typescript-eslint`
+  only supports `<6.1.0`; re-evaluate both after the hackathon.
