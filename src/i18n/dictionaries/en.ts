@@ -1,7 +1,7 @@
 import type { Dictionary } from '../translate.ts';
 
 export const en: Dictionary = {
-  'app.name': 'Coronel Segura',
+  'app.name': 'Evacua',
   'app.tagline': 'Offline evacuation map',
   'app.pilotSector': 'Pilot sector: Yobilo, Coronel (Chile)',
 
@@ -26,7 +26,7 @@ export const en: Dictionary = {
 
   'home.title': 'Where should I evacuate?',
   'home.intro':
-    'Coronel Segura shows you where to evacuate for each hazard (tsunami, wildfire or earthquake) from your location, even without internet.',
+    'Evacua shows you where to evacuate for each hazard (tsunami, wildfire or earthquake) from your location, even without internet.',
   'home.comingSoon': 'The sector map and evacuation routes will be available in the next version.',
 
   'footer.version': 'Version {version}',

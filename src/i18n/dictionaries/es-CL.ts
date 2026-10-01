@@ -1,6 +1,6 @@
 // Source dictionary: its keys define `MessageKey`. Every other locale must provide all of them.
 export const esCL = {
-  'app.name': 'Coronel Segura',
+  'app.name': 'Evacua',
   'app.tagline': 'Mapa de evacuación sin conexión',
   'app.pilotSector': 'Sector piloto: Yobilo, Coronel',
 
@@ -25,7 +25,7 @@ export const esCL = {
 
   'home.title': '¿Hacia dónde evacuar?',
   'home.intro':
-    'Coronel Segura te muestra hacia dónde evacuar según la amenaza (tsunami, incendio forestal o terremoto) y tu ubicación, incluso sin internet.',
+    'Evacua te muestra hacia dónde evacuar según la amenaza (tsunami, incendio forestal o terremoto) y tu ubicación, incluso sin internet.',
   'home.comingSoon':
     'El mapa del sector y las rutas de evacuación estarán disponibles en la próxima versión.',
 
