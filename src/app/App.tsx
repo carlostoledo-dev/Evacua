@@ -1,8 +1,10 @@
 import { useI18n } from '../i18n/I18nContext.ts';
 import { AppStatus } from '../ui/components/AppStatus.tsx';
+import { DataSources } from '../ui/components/DataSources.tsx';
 import { Disclaimer } from '../ui/components/Disclaimer.tsx';
 import { LanguageSwitcher } from '../ui/components/LanguageSwitcher.tsx';
 import { UpdatePrompt } from '../ui/components/UpdatePrompt.tsx';
+import { useCommuneData } from '../ui/hooks/useCommuneData.ts';
 import { useOnlineStatus } from '../ui/hooks/useOnlineStatus.ts';
 import { useServiceWorker } from '../ui/hooks/useServiceWorker.ts';
 
@@ -10,6 +12,7 @@ export function App() {
   const { t } = useI18n();
   const online = useOnlineStatus();
   const serviceWorker = useServiceWorker();
+  const commune = useCommuneData();
 
   return (
     <div className="layout">
@@ -40,6 +43,7 @@ export function App() {
           <p>{t('home.intro')}</p>
           <p className="muted">{t('home.comingSoon')}</p>
         </section>
+        <DataSources state={commune.state} onRetry={commune.retry} />
       </main>
 
       <footer className="footer">
