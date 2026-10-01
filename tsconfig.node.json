@@ -29,6 +29,7 @@
     "pwa-assets.config.ts",
     "config/**/*.ts",
     "e2e/**/*.ts",
-    "tests/**/*.ts"
+    "tests/**/*.ts",
+    "scripts/**/*.ts"
   ]
 }

@@ -45,7 +45,7 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,svg,png,ico,webmanifest}'],
+        globPatterns: ['**/*.{js,css,html,svg,png,ico,webmanifest,json,geojson}'],
         navigateFallback: 'index.html',
         cleanupOutdatedCaches: true,
         // Control the first page right away so it works offline without a second visit.
@@ -66,7 +66,7 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       include: ['src/**/*.{ts,tsx}'],
-      exclude: ['src/**/*.test.{ts,tsx}', 'src/main.tsx'],
+      exclude: ['src/**/*.test.{ts,tsx}', 'src/**/__fixtures__/**', 'src/main.tsx'],
     },
   },
 });

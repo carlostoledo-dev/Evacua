@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "id": "coronel",
+  "name": "Coronel",
+  "region": "Biobío",
+  "country": "CL",
+  "sector": {
+    "id": "yobilo",
+    "name": "Yobilo",
+    "serviceArea": [-73.166, -37.018, -73.132, -36.996],
+    "note": "Pilot service area defined by the Evacua project around the Yobilo road (Villa Mora to Calabozo). It is not an official administrative boundary."
+  },
+  "bounds": [-73.178, -37.026, -73.122, -36.99],
+  "layers": [
+    {
+      "id": "tsunami-evacuation-area",
+      "role": "evacuation-area",
+      "hazards": ["tsunami"],
+      "file": "layers/tsunami-evacuation-area.geojson",
+      "sourceId": "senapred-tsunami-2024"
+    },
+    {
+      "id": "tsunami-safe-line",
+      "role": "safe-line",
+      "hazards": ["tsunami"],
+      "file": "layers/tsunami-safe-line.geojson",
+      "sourceId": "senapred-tsunami-2024"
+    },
+    {
+      "id": "tsunami-evacuation-routes",
+      "role": "evacuation-route",
+      "hazards": ["tsunami"],
+      "file": "layers/tsunami-evacuation-routes.geojson",
+      "sourceId": "senapred-tsunami-2024"
+    },
+    {
+      "id": "tsunami-meeting-points",
+      "role": "meeting-point",
+      "hazards": ["tsunami"],
+      "file": "layers/tsunami-meeting-points.geojson",
+      "sourceId": "senapred-tsunami-2024"
+    }
+  ],
+  "sources": [
+    {
+      "id": "senapred-tsunami-2024",
+      "name": "Amenaza por Tsunami 2024 (SENAPRED)",
+      "publisher": "Servicio Nacional de Prevención y Respuesta ante Desastres (SENAPRED)",
+      "url": "https://services5.arcgis.com/i7S5PSnIJAUcWvSE/ArcGIS/rest/services/Amenaza_por_Tsunami_2024/FeatureServer",
+      "catalogUrl": "https://geoportal.cl/geoportal/catalog/35413/Amenaza%20por%20Tsunami",
+      "license": "No explicit license published; used citing SENAPRED as the providing institution, as IDE Chile requests",
+      "retrievedAt": "2026-10-01",
+      "verified": true,
+      "notes": "Compiled by SENAPRED from municipal tsunami evacuation plans. The safe line declares SHOA's tsunami inundation chart (CITSU) as its basis (attribute fuente = CITSU)."
+    }
+  ]
+}
