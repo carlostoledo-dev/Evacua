@@ -1,4 +1,4 @@
-# Coronel Segura
+# Evacua
 
 Offline-first evacuation map (installable web app / PWA) for the **Yobilo** pilot sector of
 Coronel, Chile. Pick a hazard — tsunami, wildfire or earthquake — and the app shows where to
