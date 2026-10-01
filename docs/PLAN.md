@@ -57,7 +57,7 @@ explicit owner approval before the next one starts.
 
 - zod schemas: commune manifest, layer FeatureCollections with required per-feature metadata
   (`source`, `sourceUrl`, `retrievedAt`, `license`, `verified`).
-- `data/communes/coronel/manifest.json` + layers: tsunami zone / safe zone, meeting points,
+- `public/data/communes/coronel/manifest.json` + layers: tsunami zone / safe zone, meeting points,
   wildfire layer per decision D2. Official data if obtainable; otherwise DEMO, labeled.
 - Data loader returning typed results (ok / invalid / missing), never partial silent rendering.
 - `scripts/validate-data` run in CI.
@@ -66,10 +66,29 @@ explicit owner approval before the next one starts.
 
 **Acceptance criteria**
 
-- [ ] Build fails if any feature lacks a metadata field (tested with a broken fixture).
-- [ ] Invalid data → explicit error state in UI, no crash.
-- [ ] A fixture second commune loads with zero code changes.
-- [ ] No layer without verification claims to be official, in data or in UI.
+- [x] Build fails if any feature lacks a metadata field: `build` runs `data:validate` first;
+      verified manually by deleting one feature's `license` (build exited 1 naming the field)
+      and by unit tests for each of the five fields.
+- [x] Invalid data → explicit error state in UI, no crash (e2e: invalid manifest, failed
+      download + retry).
+- [x] A fixture second commune loads with zero code changes (unit test `loader.test.ts`).
+- [x] No layer without verification claims to be official: features must match their source's
+      `verified` flag, license and URL (`consistency.ts`); the UI badge is derived from the data.
+
+**Phase 2 notes (2026-10-01)**
+
+- No DEMO data was needed: all four tsunami layers for Yobilo come from SENAPRED's official
+  service and are labeled "Fuente oficial verificada". The wildfire layer stays pending (D2).
+- Data lives in `public/data/communes/<id>/` (served same-origin and precached for offline use);
+  the registry is `public/data/communes/index.json`.
+- Pilot service area `[-73.166, -37.018, -73.132, -36.996]` (defined by Evacua, not official);
+  data bounds `[-73.178, -37.026, -73.122, -36.99]`. Total data ≈ 134 KB.
+- Walking speeds sourced from FEMA P-646 (3rd ed., p. 5-2): 4 mph average healthy adult,
+  2 mph mobility-impaired. Because 4 mph is optimistic, Phase 4 should show time as a range.
+- Open item: SENAPRED publishes no explicit license; cited per IDE Chile guidance. Optional
+  owner action: ask SENAPRED for written confirmation.
+- UX note for Phase 3: the sticky disclaimer takes ~20 % of a phone screen; compact it (still
+  always visible) when the map arrives.
 
 ## Phase 3 — Offline map and hazard layers
 

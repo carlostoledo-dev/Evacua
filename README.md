@@ -9,7 +9,7 @@ evacuate from your location, even with no internet.
 
 **Live demo:** https://evacua-phi.vercel.app
 
-**Status:** work in progress for WarriorHacks 2.0 — Phase 2 of 7 (official data layer).
+**Status:** work in progress for WarriorHacks 2.0 — Phase 2 of 7 (official data layer). Data sources: [DATA_SOURCES.md](DATA_SOURCES.md).
 The full README (problem, audience, demo, screenshots, architecture, limits, roadmap) comes in Phase 7.
 
 ## Resumen en español
