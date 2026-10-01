@@ -1,0 +1,294 @@
+/* Design tokens. All text pairs meet WCAG AA (≥ 4.5:1); borders and focus rings ≥ 3:1. */
+:root {
+  color-scheme: light dark;
+
+  --color-bg: #f6f8fb;
+  --color-surface: #ffffff;
+  --color-text: #0b1220;
+  --color-text-muted: #3d4a5c;
+  --color-primary: #0b4f8a;
+  --color-primary-contrast: #ffffff;
+  --color-border: #6b7a8f;
+  --color-focus: #0b4f8a;
+  --color-warning-bg: #fff4ce;
+  --color-warning-text: #3d2a00;
+  --color-warning-border: #8a6100;
+  --color-ok: #1b6e3a;
+  --color-pending: #6a4a00;
+  --color-error: #a4161a;
+
+  --radius: 0.75rem;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 1rem;
+  --space-4: 1.5rem;
+  --touch-target: 48px;
+  --font-body: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #0b1220;
+    --color-surface: #141d2e;
+    --color-text: #eef2f7;
+    --color-text-muted: #b8c3d1;
+    --color-primary: #8cc8ff;
+    --color-primary-contrast: #0b1220;
+    --color-border: #8a99ad;
+    --color-focus: #ffd166;
+    --color-warning-bg: #2e2300;
+    --color-warning-text: #ffe7a3;
+    --color-warning-border: #d9a400;
+    --color-ok: #7ee2a0;
+    --color-pending: #ffd166;
+    --color-error: #ff9a9a;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 1.125rem;
+  line-height: 1.5;
+  color: var(--color-text);
+  background: var(--color-bg);
+}
+
+h1 {
+  font-size: 1.75rem;
+  line-height: 1.2;
+  margin: 0 0 var(--space-2);
+}
+
+p {
+  margin: 0 0 var(--space-2);
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+main:focus {
+  outline: none;
+}
+
+.icon {
+  flex: none;
+  width: 1.5em;
+  height: 1.5em;
+}
+
+/* Layout: the disclaimer footer stays visible at the bottom of every screen. */
+.layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+.main {
+  flex: 1;
+  width: 100%;
+  max-width: 48rem;
+  margin: 0 auto;
+  padding: var(--space-3);
+}
+
+.skip-link {
+  position: absolute;
+  left: var(--space-2);
+  top: -100px;
+  z-index: 10;
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 2px solid var(--color-primary);
+  border-radius: var(--radius);
+}
+
+.skip-link:focus {
+  top: var(--space-2);
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.brand__logo {
+  border-radius: 0.6rem;
+}
+
+.brand__name {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.brand__tagline {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+}
+
+/* Buttons: ≥ 48 px targets; pressed state uses fill AND weight, not color alone. */
+button,
+.button {
+  min-width: var(--touch-target);
+  min-height: var(--touch-target);
+  padding: var(--space-2) var(--space-3);
+  font: inherit;
+  font-weight: 600;
+  color: var(--color-primary);
+  background: var(--color-surface);
+  border: 2px solid var(--color-primary);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.button--primary,
+button[aria-pressed='true'] {
+  color: var(--color-primary-contrast);
+  background: var(--color-primary);
+  font-weight: 800;
+}
+
+.language-switcher {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.app-status {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.status-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  padding: var(--space-1) var(--space-3);
+  min-height: var(--touch-target);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  font-size: 1rem;
+}
+
+.status-chip[data-state='ready'],
+.status-chip[data-state='online'] {
+  color: var(--color-ok);
+}
+
+.status-chip[data-state='pending'] {
+  color: var(--color-pending);
+}
+
+.status-chip[data-state='error'],
+.status-chip[data-state='unsupported'],
+.status-chip[data-state='offline'] {
+  color: var(--color-error);
+}
+
+.card {
+  padding: var(--space-4) var(--space-3);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.pilot {
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.muted {
+  color: var(--color-text-muted);
+}
+
+.update-prompt {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-surface);
+  border-bottom: 2px solid var(--color-primary);
+}
+
+.update-prompt p {
+  margin: 0;
+  flex: 1 1 12rem;
+}
+
+.update-prompt__actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.footer {
+  position: sticky;
+  bottom: 0;
+  background: var(--color-bg);
+}
+
+.disclaimer {
+  display: flex;
+  gap: var(--space-2);
+  align-items: flex-start;
+  padding: var(--space-2) var(--space-3);
+  color: var(--color-warning-text);
+  background: var(--color-warning-bg);
+  border-top: 3px solid var(--color-warning-border);
+  font-size: 1rem;
+}
+
+.disclaimer p {
+  margin: 0;
+}
+
+.footer__version {
+  margin: 0;
+  padding: 0 var(--space-3) var(--space-1);
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  text-align: right;
+  background: var(--color-warning-bg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
