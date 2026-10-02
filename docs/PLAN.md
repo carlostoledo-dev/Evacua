@@ -128,6 +128,19 @@ explicit owner approval before the next one starts.
   and has been corrected.
 - Found and fixed during visual review: MapLibre's CSS made the map container collapse to
   0 px; e2e now asserts the canvas height and visible credits.
+- Owner request (2026-10-02): make it feel like a mobile app, light, fast and battery-friendly.
+  Done in this phase:
+  - App shell: compact app bar with one connection pill, full-screen map, bottom tab bar
+    (Mapa · Qué hacer · Datos · Ajustes) with 60 px targets, compact disclaimer always visible,
+    safe-area insets (notch / gesture bar), no pull-to-refresh, system fonts only.
+  - Themes: high-contrast light (outdoor sunlight) and pure-black dark (OLED pixels off), with
+    Automático / Claro / Oscuro in Settings, stored on the device; map palette follows the theme.
+  - Battery and low-end phones: map rendered at most at 2× pixel ratio, no label fade animation,
+    no world copies, no CSS animations; the map stays mounted but hidden on other tabs, so it is
+    not rebuilt and does not render.
+  - Accessibility kept: native radios (selected hazard shows a ✓ + fill), focus moves to each
+    screen title on tab change, 48 px map controls (e2e-verified).
+  - Bug found by e2e: two hazard selectors shared one radio group name; fixed with `useId`.
 
 ## Phase 4 — Evacuation guidance
 
