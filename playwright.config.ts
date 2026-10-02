@@ -15,6 +15,8 @@ export default defineConfig({
     baseURL: `http://localhost:${String(PORT)}`,
     locale: 'es-CL',
     trace: 'on-first-retry',
+    // Software WebGL so MapLibre can draw in headless CI browsers.
+    launchOptions: { args: ['--enable-unsafe-swiftshader', '--use-angle=swiftshader'] },
   },
   projects: [{ name: 'mobile-chromium', use: { ...devices['Pixel 7'], locale: 'es-CL' } }],
   webServer: {
