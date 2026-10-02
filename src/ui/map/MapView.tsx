@@ -1,10 +1,12 @@
 // Lazy-loaded map chunk: MapLibre is only downloaded when the map is shown.
 import {
   AttributionControl,
+  LngLatBounds,
   Map as MapLibreMap,
   NavigationControl,
   ScaleControl,
   setWorkerUrl,
+  type GeoJSONSource,
   type LngLatBoundsLike,
 } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
@@ -19,15 +21,25 @@ import { diagonalHatch } from './hatch.ts';
 import {
   buildStyle,
   DARK_PALETTE,
+  DESTINATION_SOURCE,
   HATCH_IMAGE_ID,
   LIGHT_PALETTE,
   overlayLayerIds,
+  USER_POSITION_SOURCE,
+  USER_ROUTE_SOURCE,
   type MapPalette,
 } from './style.ts';
 
 setWorkerUrl(workerUrl);
 
 type MapState = 'loading' | 'ready' | 'error';
+
+/** What the app draws on top of the official layers for the current user. */
+export interface UserOverlay {
+  position: [number, number] | null;
+  path: [number, number][] | null;
+  destination: [number, number] | null;
+}
 
 /** Pads [w, s, e, n] by a fraction of its size, so the edges stay reachable when panning. */
 function padBounds([w, s, e, n]: readonly number[], ratio: number): LngLatBoundsLike {
@@ -39,10 +51,35 @@ function padBounds([w, s, e, n]: readonly number[], ratio: number): LngLatBounds
   ];
 }
 
+function pointCollection(point: [number, number] | null): GeoJSON.FeatureCollection {
+  return {
+    type: 'FeatureCollection',
+    features: point
+      ? [{ type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: point } }]
+      : [],
+  };
+}
+
+function lineCollection(path: [number, number][] | null): GeoJSON.FeatureCollection {
+  return {
+    type: 'FeatureCollection',
+    features:
+      path && path.length > 1
+        ? [{ type: 'Feature', properties: {}, geometry: { type: 'LineString', coordinates: path } }]
+        : [],
+  };
+}
+
 interface MapViewProps {
   commune: CommuneData;
   hazard: HazardId;
   theme: Theme;
+  overlay: UserOverlay;
+  /** When true, the next tap on the map reports a position through `onPick`. */
+  picking: boolean;
+  onPick: (position: [number, number]) => void;
+  /** The position is simulated: a DEMO label must be visible on the map. */
+  demo: boolean;
 }
 
 /** Highest device pixel ratio we render at: 3× screens cost ~2× the GPU work for little gain. */
@@ -57,14 +94,30 @@ function supportsWebGL(): boolean {
   }
 }
 
-export default function MapView({ commune, hazard, theme }: MapViewProps) {
+export default function MapView({
+  commune,
+  hazard,
+  theme,
+  overlay,
+  picking,
+  onPick,
+  demo,
+}: MapViewProps) {
   const { t } = useI18n();
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
   // Without WebGL the map cannot exist; say so instead of failing silently.
   const [state, setState] = useState<MapState>(() => (supportsWebGL() ? 'loading' : 'error'));
+  // Bumped each time a (re)created map finished loading its style, so dependent effects re-run.
+  const [mapVersion, setMapVersion] = useState(0);
+  const pickingRef = useRef(picking);
+  const onPickRef = useRef(onPick);
+  useEffect(() => {
+    pickingRef.current = picking;
+    onPickRef.current = onPick;
+  });
 
-  // (Re)create the map per commune, language (control labels) and theme (palette).
+  // (Re)create the map per commune, language (labels) and theme (palette).
   useEffect(() => {
     const element = containerRef.current;
     if (!element || state === 'error') return;
@@ -79,6 +132,7 @@ export default function MapView({ commune, hazard, theme }: MapViewProps) {
           layers,
           palette,
           origin: window.location.origin,
+          youLabel: t('route.you'),
         }),
         bounds: padBounds(manifest.sector.serviceArea, 0.05),
         // Never show beyond the data bounds: the clipped edge of the evacuation area there is
@@ -116,11 +170,17 @@ export default function MapView({ commune, hazard, theme }: MapViewProps) {
         map.addImage(id, diagonalHatch(palette.evacuationArea));
       }
     });
+    map.on('load', () => {
+      setMapVersion((v) => v + 1);
+    });
     map.once('idle', () => {
       setState('ready');
     });
     map.on('error', () => {
       if (!map.loaded()) setState('error');
+    });
+    map.on('click', (event) => {
+      if (pickingRef.current) onPickRef.current([event.lngLat.lng, event.lngLat.lat]);
     });
     return () => {
       mapRef.current = null;
@@ -133,33 +193,59 @@ export default function MapView({ commune, hazard, theme }: MapViewProps) {
   // Show only the layers relevant to the selected hazard.
   useEffect(() => {
     const map = mapRef.current;
-    if (!map) return;
-    const apply = () => {
-      const visible = new Set(
-        layersForHazard(
-          hazard,
-          commune.layers.map((l) => l.entry),
-        ).map((e) => e.id),
-      );
-      for (const layer of commune.layers) {
-        for (const id of overlayLayerIds(layer)) {
-          if (map.getLayer(id)) {
-            map.setLayoutProperty(
-              id,
-              'visibility',
-              visible.has(layer.entry.id) ? 'visible' : 'none',
-            );
-          }
+    if (!map || mapVersion === 0) return;
+    const visible = new Set(
+      layersForHazard(
+        hazard,
+        commune.layers.map((l) => l.entry),
+      ).map((e) => e.id),
+    );
+    for (const layer of commune.layers) {
+      for (const id of overlayLayerIds(layer)) {
+        if (map.getLayer(id)) {
+          map.setLayoutProperty(id, 'visibility', visible.has(layer.entry.id) ? 'visible' : 'none');
         }
       }
-    };
-    if (map.isStyleLoaded()) apply();
-    else map.once('load', apply);
-  }, [hazard, commune, t, theme]);
+    }
+  }, [hazard, commune, mapVersion]);
+
+  // Draw the user's position, route and destination; frame them without animation (battery).
+  const { position, path, destination } = overlay;
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || mapVersion === 0) return;
+    void map.getSource<GeoJSONSource>(USER_ROUTE_SOURCE)?.setData(lineCollection(path));
+    void map.getSource<GeoJSONSource>(USER_POSITION_SOURCE)?.setData(pointCollection(position));
+    void map.getSource<GeoJSONSource>(DESTINATION_SOURCE)?.setData(pointCollection(destination));
+    const points = path && path.length > 1 ? path : position ? [position] : [];
+    const first = points[0];
+    if (!first) return;
+    if (points.length === 1) {
+      map.jumpTo({ center: first, zoom: Math.max(map.getZoom(), 15) });
+    } else {
+      const bounds = points.reduce((b, p) => b.extend(p), new LngLatBounds(first, first));
+      // Extra room at the top-left (scale bar, DEMO label) and bottom (legend, credits).
+      map.fitBounds(bounds, {
+        padding: { top: 96, right: 72, bottom: 80, left: 72 },
+        animate: false,
+        maxZoom: 17,
+      });
+    }
+  }, [position, path, destination, mapVersion]);
 
   return (
-    <div className="map-frame" data-testid="map" data-state={state}>
+    <div
+      className={picking ? 'map-frame map-frame--picking' : 'map-frame'}
+      data-testid="map"
+      data-state={state}
+      data-route={path && path.length > 1 ? 'shown' : 'none'}
+    >
       <div ref={containerRef} className="map-canvas" />
+      {demo && (
+        <p className="map-demo-chip" data-testid="map-demo">
+          {t('location.demoBadge')}
+        </p>
+      )}
       {state === 'loading' && (
         <p className="map-overlay" role="status">
           {t('map.loading')}
