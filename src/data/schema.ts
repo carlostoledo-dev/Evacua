@@ -102,6 +102,8 @@ export const sourceSchema = z.object({
   id: slug,
   name: z.string().min(1),
   publisher: z.string().min(1),
+  /** Short credit shown on the map, e.g. "SENAPRED". */
+  attribution: z.string().min(1).max(40),
   url: httpsUrl,
   catalogUrl: httpsUrl.optional(),
   license: z.string().min(1),
