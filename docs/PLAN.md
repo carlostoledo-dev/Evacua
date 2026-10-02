@@ -7,7 +7,7 @@ explicit owner approval before the next one starts.
 | ----------------------------------------------- | -------------------------- |
 | 0. Questions, plan, CLAUDE.md                   | Done — answered 2026-10-01 |
 | 1. Skeleton, CI, PWA, i18n                      | Done — approved 2026-10-01 |
-| 2. Data layer: schema + labeled DEMO data       | In progress                |
+| 2. Data layer: schema + labeled DEMO data       | Done — approved 2026-10-02 |
 | 3. Offline map + hazard layers and selector     | Not started                |
 | 4. Evacuation guidance: safe point, route, time | Not started                |
 | 5. Profiles + accessibility                     | Not started                |
