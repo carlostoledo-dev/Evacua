@@ -143,6 +143,69 @@ export const basemapSchema = z.object({
 });
 export type Basemap = z.infer<typeof basemapSchema>;
 
+/** Pedestrian network extracted from OpenStreetMap (see scripts/build-graph.ts). */
+export const graphEntrySchema = z.object({
+  file: z.string().regex(/^[a-z0-9-]+\.json$/, 'must be a relative .json file name'),
+  source: z.string().min(1),
+  sourceUrl: httpsUrl,
+  license: z.string().min(1),
+  retrievedAt: isoDate,
+});
+export type GraphEntry = z.infer<typeof graphEntrySchema>;
+
+/**
+ * Compact graph: `nodes` is [lon0, lat0, lon1, lat1, …]; `edges` is [from, to, meters, …]
+ * with node indices. Edges are walkable in both directions.
+ */
+export const graphFileSchema = z
+  .object({
+    schemaVersion: z.literal(1),
+    nodes: z.array(z.number()).min(2),
+    edges: z.array(z.number()),
+  })
+  .superRefine((graph, ctx) => {
+    if (graph.nodes.length % 2 !== 0) {
+      ctx.addIssue({ code: 'custom', path: ['nodes'], message: 'nodes must be [lon, lat] pairs' });
+      return;
+    }
+    if (graph.edges.length % 3 !== 0) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['edges'],
+        message: 'edges must be [from, to, meters] triples',
+      });
+      return;
+    }
+    for (let i = 0; i < graph.nodes.length; i += 2) {
+      const lon = graph.nodes[i] ?? NaN;
+      const lat = graph.nodes[i + 1] ?? NaN;
+      if (!(lon >= -180 && lon <= 180 && lat >= -90 && lat <= 90)) {
+        ctx.addIssue({ code: 'custom', path: ['nodes', i], message: 'coordinate out of range' });
+        return;
+      }
+    }
+    const nodeCount = graph.nodes.length / 2;
+    for (let i = 0; i < graph.edges.length; i += 3) {
+      const from = graph.edges[i] ?? -1;
+      const to = graph.edges[i + 1] ?? -1;
+      const meters = graph.edges[i + 2] ?? -1;
+      const validIndex = (n: number) => Number.isInteger(n) && n >= 0 && n < nodeCount;
+      if (!validIndex(from) || !validIndex(to) || !(meters >= 0)) {
+        ctx.addIssue({ code: 'custom', path: ['edges', i], message: 'invalid edge' });
+        return;
+      }
+    }
+  });
+export type GraphFile = z.infer<typeof graphFileSchema>;
+
+/** Preset positions for "Simular ubicación (DEMO)"; always shown with a DEMO label. */
+export const demoLocationSchema = z.object({
+  id: slug,
+  label: z.object({ 'es-CL': z.string().min(1), en: z.string().min(1) }),
+  coordinates: z.tuple([longitude, latitude]),
+});
+export type DemoLocation = z.infer<typeof demoLocationSchema>;
+
 function contains(outer: Bounds, inner: Bounds): boolean {
   return (
     outer[0] <= inner[0] && outer[1] <= inner[1] && outer[2] >= inner[2] && outer[3] >= inner[3]
@@ -164,6 +227,9 @@ export const manifestSchema = z
     }),
     bounds: boundsSchema,
     basemap: basemapSchema,
+    // Optional: without a graph the app falls back to a labeled straight line.
+    graph: graphEntrySchema.optional(),
+    demoLocations: z.array(demoLocationSchema).default([]),
     layers: z.array(layerEntrySchema).min(1),
     sources: z.array(sourceSchema).min(1),
   })

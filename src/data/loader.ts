@@ -4,9 +4,11 @@ import type { z } from 'zod';
 import { checkLayerConsistency, layerStatus, type LayerStatus } from './consistency.ts';
 import {
   formatIssues,
+  graphFileSchema,
   layerSchemas,
   manifestSchema,
   registrySchema,
+  type GraphFile,
   type LayerCollection,
   type LayerEntry,
   type Manifest,
@@ -37,6 +39,8 @@ export interface LoadedLayer {
 export interface CommuneData {
   manifest: Manifest;
   layers: LoadedLayer[];
+  /** Pedestrian network; null when the commune has none (routing then falls back). */
+  graph: GraphFile | null;
 }
 
 function ok<T>(value: T): Result<T> {
@@ -119,7 +123,17 @@ export async function loadCommune(
     if (!result.ok) return result;
     layers.push(result.value);
   }
-  return ok({ manifest: manifest.value, layers });
+
+  let graph: GraphFile | null = null;
+  const graphEntry = manifest.value.graph;
+  if (graphEntry) {
+    const graphUrl = resolveSameOrigin(graphEntry.file, manifestUrl);
+    if (!graphUrl) return fail('invalid', graphEntry.file, ['graph path leaves the data origin']);
+    const loaded = await fetchValidated(fetcher, graphUrl, graphFileSchema);
+    if (!loaded.ok) return loaded;
+    graph = loaded.value;
+  }
+  return ok({ manifest: manifest.value, layers, graph });
 }
 
 /** Registry → default commune → manifest and layers. */

@@ -63,5 +63,46 @@
       "verified": true,
       "notes": "Compiled by SENAPRED from municipal tsunami evacuation plans. The safe line declares SHOA's tsunami inundation chart (CITSU) as its basis (attribute fuente = CITSU)."
     }
+  ],
+  "graph": {
+    "file": "graph.json",
+    "source": "OpenStreetMap walkable ways via the Overpass API",
+    "sourceUrl": "https://www.openstreetmap.org/copyright",
+    "license": "ODbL-1.0 (© OpenStreetMap contributors)",
+    "retrievedAt": "2026-10-02"
+  },
+  "demoLocations": [
+    {
+      "id": "yobilo-villa-mora",
+      "label": {
+        "es-CL": "Calle Yobilo, Villa Mora (dentro del área a evacuar)",
+        "en": "Yobilo road, Villa Mora (inside the evacuation area)"
+      },
+      "coordinates": [-73.152, -37.01]
+    },
+    {
+      "id": "villa-la-pena",
+      "label": {
+        "es-CL": "Villa La Peña (dentro del área a evacuar)",
+        "en": "Villa La Peña (inside the evacuation area)"
+      },
+      "coordinates": [-73.148, -37.0]
+    },
+    {
+      "id": "nuevo-horizonte",
+      "label": {
+        "es-CL": "Villa Nuevo Horizonte (fuera del área a evacuar)",
+        "en": "Villa Nuevo Horizonte (outside the evacuation area)"
+      },
+      "coordinates": [-73.143, -37.007]
+    },
+    {
+      "id": "lo-rojas-outside",
+      "label": {
+        "es-CL": "Lo Rojas (fuera del sector piloto)",
+        "en": "Lo Rojas (outside the pilot sector)"
+      },
+      "coordinates": [-73.163, -37.023]
+    }
   ]
 }
