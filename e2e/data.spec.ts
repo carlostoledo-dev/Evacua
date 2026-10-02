@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { openTab, waitForOfflineReady } from './helpers.ts';
 
 const LAYER_IDS = [
   'tsunami-evacuation-area',
@@ -25,6 +26,7 @@ async function expectOfficialLayers(page: Page) {
 
 test('lists every tsunami layer as an official SENAPRED source', async ({ page }) => {
   await page.goto('/');
+  await openTab(page, 'Datos');
   await expectOfficialLayers(page);
   await expect(dataPanel(page).getByTestId('layer-tsunami-meeting-points')).toContainText(
     'Puntos de encuentro',
@@ -33,11 +35,10 @@ test('lists every tsunami layer as an official SENAPRED source', async ({ page }
 
 test('keeps the sector data available offline after the first visit', async ({ page, context }) => {
   await page.goto('/');
-  await expect(page.getByTestId('offline-status')).toHaveText('Lista para usar sin conexión', {
-    timeout: 15_000,
-  });
+  await waitForOfflineReady(page);
   await context.setOffline(true);
   await page.reload();
+  await openTab(page, 'Datos');
   await expectOfficialLayers(page);
 });
 
@@ -49,6 +50,11 @@ test.describe('without the service worker, so requests can be intercepted', () =
       route.fulfill({ json: { schemaVersion: 1, id: 'coronel' } }),
     );
     await page.goto('/');
+    // The map screen explains the problem and links to the details.
+    await expect(page.getByRole('alert')).toContainText('No se pudieron cargar los datos');
+    await expect(page.getByTestId('map')).toHaveCount(0);
+    await page.getByRole('button', { name: 'Ver detalles' }).click();
+
     const alert = dataPanel(page).getByRole('alert');
     await expect(alert).toContainText('Los datos no pasaron la validación');
     await expect(dataPanel(page).getByTestId(/^layer-/)).toHaveCount(0);
@@ -62,6 +68,7 @@ test.describe('without the service worker, so requests can be intercepted', () =
       return route.continue();
     });
     await page.goto('/');
+    await openTab(page, 'Datos');
     await expect(dataPanel(page).getByRole('alert')).toContainText(
       'Sin conexión y sin datos guardados',
     );

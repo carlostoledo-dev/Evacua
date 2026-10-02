@@ -1,8 +1,5 @@
-import { expect, test, type Page } from '@playwright/test';
-
-async function waitForMap(page: Page) {
-  await expect(page.getByTestId('map')).toHaveAttribute('data-state', 'ready', { timeout: 30_000 });
-}
+import { expect, test } from '@playwright/test';
+import { openTab, waitForMap, waitForOfflineReady } from './helpers.ts';
 
 test('draws the offline map with credits, legend and badges, without CSP errors', async ({
   page,
@@ -24,14 +21,14 @@ test('draws the offline map with credits, legend and badges, without CSP errors'
 
   const map = page.getByTestId('map');
   await expect(map.locator('canvas')).toBeVisible();
-  // The canvas must actually fill the frame (a collapsed container once hid the whole map).
+  // The canvas must actually fill the screen (a collapsed container once hid the whole map).
   const box = await map.locator('canvas').boundingBox();
   expect(box?.height ?? 0).toBeGreaterThan(250);
   await expect(map.getByText('© OpenStreetMap contributors')).toBeVisible();
-  await expect(map).toContainText('© OpenStreetMap contributors');
   await expect(map).toContainText('SENAPRED');
 
-  const legend = page.getByRole('region', { name: 'Leyenda' });
+  const legend = page.getByTestId('map-legend');
+  await legend.getByText('Leyenda').click();
   await expect(legend.getByRole('listitem')).toHaveCount(4);
   await expect(legend).toContainText('Puntos de encuentro');
   await expect(legend.getByText('Fuente oficial verificada')).toHaveCount(4);
@@ -40,8 +37,19 @@ test('draws the offline map with credits, legend and badges, without CSP errors'
   expect(problems).toEqual([]);
 });
 
+test('map controls are at least 48 px for touch', async ({ page }) => {
+  await page.goto('/');
+  await waitForMap(page);
+  for (const name of ['Acercar', 'Alejar']) {
+    const box = await page.getByRole('button', { name }).boundingBox();
+    expect(box?.width ?? 0).toBeGreaterThanOrEqual(48);
+    expect(box?.height ?? 0).toBeGreaterThanOrEqual(48);
+  }
+});
+
 test('switching hazard shows the matching official guidance', async ({ page }) => {
   await page.goto('/');
+  await openTab(page, 'Qué hacer');
   const guidance = page.getByTestId('guidance');
   await expect(page.getByRole('radio', { name: 'Tsunami' })).toBeChecked();
   await expect(guidance).toContainText('Área de Evacuación por tsunami');
@@ -49,23 +57,25 @@ test('switching hazard shows the matching official guidance', async ({ page }) =
   await page.getByRole('radio', { name: 'Terremoto' }).check();
   await expect(guidance).toContainText('Lugar de Protección Sísmica');
   await expect(guidance).toContainText('evacúa inmediatamente hacia un punto de encuentro');
-  // Near the coast the tsunami layers still apply after a strong quake.
-  await expect(page.getByRole('region', { name: 'Leyenda' }).getByRole('listitem')).toHaveCount(4);
   await expect(page.getByRole('radio', { name: /Incendio/ })).toHaveCount(0);
+
+  // The choice is shared with the map screen, where the tsunami layers still apply.
+  await openTab(page, 'Mapa');
+  await expect(page.getByRole('radio', { name: 'Terremoto' })).toBeChecked();
+  await page.getByTestId('map-legend').getByText('Leyenda').click();
+  await expect(page.getByTestId('map-legend').getByRole('listitem')).toHaveCount(4);
 });
 
 test('the map works offline after the first visit', async ({ page, context }) => {
   await page.goto('/');
   await waitForMap(page);
-  await expect(page.getByTestId('offline-status')).toHaveText('Lista para usar sin conexión', {
-    timeout: 15_000,
-  });
+  await waitForOfflineReady(page);
 
   const failed: string[] = [];
   page.on('requestfailed', (r) => failed.push(r.url()));
   await context.setOffline(true);
   await page.reload();
   await waitForMap(page);
-  await expect(page.getByTestId('map')).toContainText('© OpenStreetMap contributors');
+  await expect(page.getByTestId('map').getByText('© OpenStreetMap contributors')).toBeVisible();
   expect(failed).toEqual([]);
 });
