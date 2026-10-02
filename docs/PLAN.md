@@ -8,7 +8,7 @@ explicit owner approval before the next one starts.
 | 0. Questions, plan, CLAUDE.md                   | Done — answered 2026-10-01 |
 | 1. Skeleton, CI, PWA, i18n                      | Done — approved 2026-10-01 |
 | 2. Data layer: schema + labeled DEMO data       | Done — approved 2026-10-02 |
-| 3. Offline map + hazard layers and selector     | Not started                |
+| 3. Offline map + hazard layers and selector     | In progress                |
 | 4. Evacuation guidance: safe point, route, time | Not started                |
 | 5. Profiles + accessibility                     | Not started                |
 | 6. Security, tests, Lighthouse                  | Not started                |
@@ -242,7 +242,12 @@ consent) and contact the Municipalidad de Coronel / SENAPRED Biobío / a local s
 - Smaller initial load for low-end phones; Vitest is native to Vite.
 - Recorded as an ADR in ARCHITECTURE.md either way.
 
-### D2 — Wildfire layer (DEFERRED by owner)
+### D2 — Wildfire layer (DECIDED 2026-10-02: option C for now)
+
+Owner chose **C**: no wildfire hazard in the pilot for now; the selector offers tsunami and
+earthquake. Consequence: the "same spot, two hazards, two routes" demo contrast is weaker,
+because after a strong quake near the coast the official instruction is to evacuate as for a
+tsunami. Option A can be added later without rework (hazards are data + config).
 
 A static offline app cannot know where a fire is, the wind, or which roads are cut, so there is
 no valid precomputed "official wildfire route". Options:

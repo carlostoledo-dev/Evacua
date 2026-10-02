@@ -25,7 +25,8 @@ Delivery plan, phase status, pending decisions and risks: `docs/PLAN.md`.
 - Installable map that works with no internet. With GPS it shows where to evacuate for the
   selected hazard: tsunami, wildfire (incendio forestal) or earthquake (terremoto).
 - The correct direction depends on the hazard (high ground is good for tsunami, may be
-  dangerous in a wildfire). The demo must show: same location, two hazards, two different routes.
+  dangerous in a wildfire). Owner decision 2026-10-02 (D2 = C): wildfire is out of the pilot for
+  now; the hazards offered are tsunami and earthquake. Wildfire can return later as option A.
 - Three profiles — Persona, Adulto mayor, Niño/a — are typed configuration presets
   (speed, text size, simple mode, voice, backpack checklist, messages), not separate apps.
 - Scope: ONE pilot sector of Coronel: **Yobilo** (bbox to be fixed in Phase 2). Everything else is roadmap.
