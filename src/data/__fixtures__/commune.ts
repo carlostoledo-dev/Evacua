@@ -55,6 +55,15 @@ export function manifest(id: string, overrides: Record<string, unknown> = {}) {
       note: 'Test service area.',
     },
     bounds: [-73.2, -37.05, -73.1, -36.95],
+    basemap: {
+      tiles: `/tiles/${id}/{z}/{x}/{y}.mvt`,
+      minzoom: 12,
+      maxzoom: 15,
+      attribution: '© OpenStreetMap contributors',
+      source: 'Test tiles',
+      license: 'ODbL-1.0',
+      retrievedAt: '2026-10-01',
+    },
     layers: [
       {
         id: 'meeting-points',

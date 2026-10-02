@@ -11,6 +11,15 @@
     "note": "Pilot service area defined by the Evacua project around the Yobilo road (Villa Mora to Calabozo). It is not an official administrative boundary."
   },
   "bounds": [-73.178, -37.026, -73.122, -36.99],
+  "basemap": {
+    "tiles": "/tiles/coronel/{z}/{x}/{y}.mvt",
+    "minzoom": 12,
+    "maxzoom": 15,
+    "attribution": "© OpenStreetMap contributors",
+    "source": "Protomaps basemap daily build 20261002 (https://build.protomaps.com/20261002.pmtiles)",
+    "license": "ODbL-1.0 (OpenStreetMap data)",
+    "retrievedAt": "2026-10-02"
+  },
   "layers": [
     {
       "id": "tsunami-evacuation-area",

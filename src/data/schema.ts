@@ -123,6 +123,24 @@ export const layerEntrySchema = z.object({
 });
 export type LayerEntry = z.infer<typeof layerEntrySchema>;
 
+/** Offline basemap tiles extracted for the commune (see scripts/build-tiles.ts). */
+export const basemapSchema = z.object({
+  // Same-origin static tiles only.
+  tiles: z
+    .string()
+    .regex(
+      /^\/tiles\/[a-z0-9-]+\/\{z\}\/\{x\}\/\{y\}\.mvt$/,
+      'must be /tiles/<id>/{z}/{x}/{y}.mvt',
+    ),
+  minzoom: z.number().int().min(0).max(22),
+  maxzoom: z.number().int().min(0).max(22),
+  attribution: z.string().min(1),
+  source: z.string().min(1),
+  license: z.string().min(1),
+  retrievedAt: isoDate,
+});
+export type Basemap = z.infer<typeof basemapSchema>;
+
 function contains(outer: Bounds, inner: Bounds): boolean {
   return (
     outer[0] <= inner[0] && outer[1] <= inner[1] && outer[2] >= inner[2] && outer[3] >= inner[3]
@@ -143,6 +161,7 @@ export const manifestSchema = z
       note: z.string().min(1),
     }),
     bounds: boundsSchema,
+    basemap: basemapSchema,
     layers: z.array(layerEntrySchema).min(1),
     sources: z.array(sourceSchema).min(1),
   })
@@ -166,6 +185,9 @@ export const manifestSchema = z
       }
       layerIds.add(layer.id);
     });
+    if (manifest.basemap.minzoom > manifest.basemap.maxzoom) {
+      ctx.addIssue({ code: 'custom', path: ['basemap', 'minzoom'], message: 'minzoom > maxzoom' });
+    }
     if (!contains(manifest.bounds, manifest.sector.serviceArea)) {
       ctx.addIssue({
         code: 'custom',
