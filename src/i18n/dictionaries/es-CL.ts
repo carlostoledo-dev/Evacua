@@ -25,13 +25,41 @@ export const esCL = {
 
   'home.title': '¿Hacia dónde evacuar?',
   'home.intro':
-    'Evacua te muestra hacia dónde evacuar según la amenaza (tsunami, incendio forestal o terremoto) y tu ubicación, incluso sin internet.',
-  'home.comingSoon':
-    'El mapa del sector y las rutas de evacuación estarán disponibles en la próxima versión.',
+    'Evacua te muestra hacia dónde evacuar ante un tsunami o un terremoto, con datos oficiales e incluso sin internet.',
+  'home.comingSoon': 'La ruta desde tu ubicación llegará en la próxima versión.',
 
   'hazard.tsunami': 'Tsunami',
   'hazard.wildfire': 'Incendio forestal',
   'hazard.earthquake': 'Terremoto',
+
+  'hazard.choose': 'Elige la amenaza',
+
+  'map.title': 'Mapa del sector',
+  'map.zoomIn': 'Acercar',
+  'map.zoomOut': 'Alejar',
+  'map.attribution': 'Mostrar u ocultar créditos del mapa',
+  'map.loading': 'Cargando el mapa…',
+  'map.error':
+    'Este navegador no puede mostrar el mapa. Las indicaciones y los datos del sector siguen disponibles abajo.',
+  'map.legend': 'Leyenda',
+
+  // Verbatim from SENAPRED (https://www.senapred.cl/tsunami/ and /sismos/), retrieved 2026-10-02.
+  'guidance.title': 'Qué hacer (indicaciones oficiales)',
+  'guidance.tsunami.1':
+    'Si sientes un sismo que te dificulta mantenerte en pie y te encuentras en un Área de Evacuación por tsunami, evacúa inmediatamente.',
+  'guidance.tsunami.2':
+    'Si después de un sismo observas que el mar se retira de forma inusual, exponiendo el fondo marino, evacúa inmediatamente hacia terrenos elevados.',
+  'guidance.tsunami.3':
+    'Prioriza la evacuación horizontal hacia un Punto de Encuentro y/o Área de Seguridad.',
+  'guidance.earthquake.1': 'Mantén la calma y ubícate en un Lugar de Protección Sísmica.',
+  'guidance.earthquake.2':
+    'Protégete y afírmate debajo de un elemento firme. Si no es posible ubicarte debajo, ubícate junto a él.',
+  'guidance.earthquake.3':
+    'Si estás en la calle, aléjate de los edificios, postes y cables eléctricos.',
+  'guidance.earthquake.4':
+    'Si estás en la costa y el sismo te dificultó mantenerte en pie, evacúa inmediatamente hacia un punto de encuentro.',
+  'guidance.source': 'Texto oficial de SENAPRED.',
+  'guidance.sourceLink': 'Ver todas las recomendaciones',
 
   'data.title': 'Datos del sector',
   'data.sector': 'Sector {sector}, {commune} ({region})',

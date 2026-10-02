@@ -45,7 +45,9 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,svg,png,ico,webmanifest,json,geojson}'],
+        // Everything the app needs offline: shell, data, basemap tiles and label glyphs.
+        globPatterns: ['**/*.{js,css,html,svg,png,ico,webmanifest,json,geojson,mvt,pbf}'],
+        globIgnores: ['**/node_modules/**', 'fonts/OFL.txt'],
         navigateFallback: 'index.html',
         cleanupOutdatedCaches: true,
         // Control the first page right away so it works offline without a second visit.
@@ -53,11 +55,17 @@ export default defineConfig({
       },
     }),
   ],
+  worker: {
+    // MapLibre starts its worker with { type: 'module' }.
+    format: 'es',
+  },
   preview: {
     headers: globalHeaders(),
   },
   build: {
     target: 'es2022',
+    // The only large chunk is MapLibre, lazy-loaded with the map; the app shell stays small.
+    chunkSizeWarningLimit: 1100,
     sourcemap: true,
   },
   test: {

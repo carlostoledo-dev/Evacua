@@ -16,6 +16,10 @@
   --color-ok: #1b6e3a;
   --color-pending: #6a4a00;
   --color-error: #a4161a;
+  /* Map overlay colors: keep in sync with LIGHT_PALETTE in src/ui/map/style.ts */
+  --map-area: #c8102e;
+  --map-safe-line: #6a1b9a;
+  --map-route: #0b6e3a;
 
   --radius: 0.75rem;
   --space-1: 0.25rem;
@@ -42,6 +46,10 @@
     --color-ok: #7ee2a0;
     --color-pending: #ffd166;
     --color-error: #ff9a9a;
+    /* Keep in sync with DARK_PALETTE in src/ui/map/style.ts */
+    --map-area: #ff6b7f;
+    --map-safe-line: #d59cff;
+    --map-route: #5fe39a;
   }
 }
 
@@ -389,6 +397,210 @@ a {
 
 .data-error__details code {
   overflow-wrap: anywhere;
+}
+
+/* Hazard selector: large radio cards */
+.hazard-selector {
+  margin: var(--space-3) 0 0;
+  padding: 0;
+  border: 0;
+}
+
+.hazard-selector legend {
+  font-weight: 700;
+  margin-bottom: var(--space-2);
+}
+
+.hazard-selector__options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 8.5rem), 1fr));
+  gap: var(--space-2);
+}
+
+.hazard-option {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1) var(--space-2);
+  min-height: 64px;
+  min-width: 0;
+  padding: var(--space-2);
+  text-align: center;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.hazard-option input {
+  width: 1.4rem;
+  height: 1.4rem;
+  margin: 0;
+  accent-color: var(--color-primary);
+}
+
+.hazard-option:has(input:checked) {
+  border-color: var(--color-primary);
+  border-width: 4px;
+  color: var(--color-primary);
+}
+
+.hazard-option:has(input:focus-visible) {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+.icon--large {
+  width: 2rem;
+  height: 2rem;
+}
+
+/* The label takes its own row under the radio and icon, so long words never break. */
+.hazard-option > span {
+  flex-basis: 100%;
+}
+
+/* Map */
+.card--map {
+  padding: var(--space-2);
+}
+
+.map-frame {
+  position: relative;
+  height: min(60dvh, 520px);
+  min-height: 320px;
+  border-radius: calc(var(--radius) - 4px);
+  overflow: hidden;
+  background: var(--color-bg);
+}
+
+.map-canvas {
+  /* Size by width/height, not absolute positioning: MapLibre's CSS sets position: relative. */
+  width: 100%;
+  height: 100%;
+}
+
+.map-overlay {
+  position: absolute;
+  inset: auto var(--space-2) var(--space-2);
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+p.map-frame.map-overlay {
+  position: relative;
+  inset: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.map-overlay--error {
+  color: var(--color-error);
+  border-color: var(--color-error);
+}
+
+/* MapLibre controls: 48 px touch targets */
+.maplibregl-ctrl-group button {
+  width: var(--touch-target);
+  height: var(--touch-target);
+}
+
+.maplibregl-ctrl-attrib {
+  font-size: 0.85rem;
+}
+
+.map-legend {
+  margin-top: var(--space-2);
+}
+
+.map-legend h3 {
+  margin: var(--space-2) 0;
+  font-size: 1.1rem;
+}
+
+.map-legend ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-2);
+}
+
+.map-legend li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.map-legend__name {
+  font-weight: 600;
+}
+
+.swatch-area {
+  fill: var(--map-area);
+  fill-opacity: 0.18;
+  stroke: var(--map-area);
+}
+
+.swatch-area-stroke {
+  fill: var(--map-area);
+}
+
+.swatch-safe-line {
+  stroke: var(--map-safe-line);
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+
+.swatch-route {
+  stroke: var(--map-route);
+  stroke-width: 4;
+  stroke-dasharray: 6 4;
+}
+
+.swatch-point {
+  fill: var(--map-route);
+  stroke: var(--color-surface);
+  stroke-width: 3;
+}
+
+/* Official guidance */
+.guidance {
+  margin-top: var(--space-3);
+  padding: var(--space-4) var(--space-3);
+  background: var(--color-surface);
+  border: 2px solid var(--color-primary);
+  border-radius: var(--radius);
+}
+
+.guidance ol {
+  margin: 0 0 var(--space-2);
+  padding-left: 1.4rem;
+  display: grid;
+  gap: var(--space-2);
+}
+
+/* Small screens: the disclaimer stays visible but takes less room. */
+@media (max-width: 40rem) {
+  .disclaimer {
+    font-size: 0.875rem;
+    padding: var(--space-1) var(--space-2);
+  }
+
+  .disclaimer .icon {
+    width: 1.25em;
+    height: 1.25em;
+  }
+
+  .footer__version {
+    display: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
