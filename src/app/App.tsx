@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { DEFAULT_HAZARD, layersForHazard, type HazardId } from '../domain/hazards.ts';
 import { useI18n } from '../i18n/I18nContext.ts';
 import { ConnectionPill } from '../ui/components/ConnectionPill.tsx';
@@ -6,6 +6,8 @@ import { Disclaimer } from '../ui/components/Disclaimer.tsx';
 import { TabBar, type View } from '../ui/components/TabBar.tsx';
 import { UpdatePrompt } from '../ui/components/UpdatePrompt.tsx';
 import { useCommuneData } from '../ui/hooks/useCommuneData.ts';
+import { useEvacuationPlan } from '../ui/hooks/useEvacuationPlan.ts';
+import { locationPosition, useLocation } from '../ui/hooks/useLocation.ts';
 import { useOnlineStatus } from '../ui/hooks/useOnlineStatus.ts';
 import { useServiceWorker } from '../ui/hooks/useServiceWorker.ts';
 import { useTheme } from '../ui/hooks/useTheme.ts';
@@ -41,15 +43,19 @@ export function App() {
   }, [view]);
 
   const data = commune.state.status === 'ready' ? commune.state.data : null;
-  const visibleIds = new Set(
-    data
-      ? layersForHazard(
-          hazard,
-          data.layers.map((l) => l.entry),
-        ).map((e) => e.id)
-      : [],
-  );
-  const visibleLayers = data ? data.layers.filter((l) => visibleIds.has(l.entry.id)) : [];
+  const visibleLayers = useMemo(() => {
+    if (!data) return [];
+    const ids = new Set(
+      layersForHazard(
+        hazard,
+        data.layers.map((l) => l.entry),
+      ).map((e) => e.id),
+    );
+    return data.layers.filter((l) => ids.has(l.entry.id));
+  }, [data, hazard]);
+
+  const location = useLocation();
+  const plan = useEvacuationPlan(data, visibleLayers, locationPosition(location.state));
 
   return (
     <div className="app">
@@ -80,6 +86,9 @@ export function App() {
           onShowData={() => {
             setView('data');
           }}
+          location={location.state}
+          locationActions={location}
+          plan={plan}
         />
         {view === 'guide' && <GuideScreen hazard={hazard} onHazardChange={setHazard} />}
         {view === 'data' && <DataScreen state={commune.state} onRetry={commune.retry} />}

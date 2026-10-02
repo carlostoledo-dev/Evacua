@@ -18,6 +18,8 @@ export interface MapPalette {
   route: string;
   meetingPoint: string;
   meetingPointStroke: string;
+  userRoute: string;
+  userRouteCasing: string;
 }
 
 export const LIGHT_PALETTE: MapPalette = {
@@ -34,6 +36,8 @@ export const LIGHT_PALETTE: MapPalette = {
   route: '#0b6e3a',
   meetingPoint: '#0b6e3a',
   meetingPointStroke: '#ffffff',
+  userRoute: '#1a4fd6',
+  userRouteCasing: '#ffffff',
 };
 
 // Pure black land: on OLED screens black pixels are off, so the dark theme saves battery.
@@ -51,6 +55,8 @@ export const DARK_PALETTE: MapPalette = {
   route: '#5fe39a',
   meetingPoint: '#5fe39a',
   meetingPointStroke: '#000000',
+  userRoute: '#7ab8ff',
+  userRouteCasing: '#000000',
 };
 
 /** Image id of the diagonal hatch used so the evacuation area is not shown by color alone. */
@@ -234,15 +240,85 @@ export function overlayLayerIds(layer: LoadedLayer): string[] {
   return overlayLayers(layer, LIGHT_PALETTE).map((l) => l.id);
 }
 
+/** Sources the app updates at runtime with the user's position and route (not official data). */
+export const USER_ROUTE_SOURCE = 'user-route';
+export const USER_POSITION_SOURCE = 'user-position';
+export const DESTINATION_SOURCE = 'destination';
+
+const EMPTY: GeoJSON.FeatureCollection = { type: 'FeatureCollection', features: [] };
+
+function userLayers(p: MapPalette, youLabel: string): LayerSpecification[] {
+  return [
+    {
+      id: 'user-route-casing',
+      type: 'line',
+      source: USER_ROUTE_SOURCE,
+      layout: { 'line-cap': 'round', 'line-join': 'round' },
+      paint: { 'line-color': p.userRouteCasing, 'line-width': 10 },
+    },
+    {
+      id: 'user-route',
+      type: 'line',
+      source: USER_ROUTE_SOURCE,
+      layout: { 'line-cap': 'round', 'line-join': 'round' },
+      paint: { 'line-color': p.userRoute, 'line-width': 6 },
+    },
+    {
+      id: 'destination-ring',
+      type: 'circle',
+      source: DESTINATION_SOURCE,
+      paint: {
+        'circle-radius': 16,
+        'circle-color': 'rgba(0,0,0,0)',
+        'circle-stroke-color': p.userRoute,
+        'circle-stroke-width': 5,
+      },
+    },
+    {
+      id: 'user-position',
+      type: 'circle',
+      source: USER_POSITION_SOURCE,
+      paint: {
+        'circle-radius': 10,
+        'circle-color': p.userRoute,
+        'circle-stroke-color': p.userRouteCasing,
+        'circle-stroke-width': 4,
+      },
+    },
+    {
+      id: 'user-position-label',
+      type: 'symbol',
+      source: USER_POSITION_SOURCE,
+      layout: {
+        'text-field': youLabel,
+        'text-font': PLACE_FONT,
+        'text-size': 15,
+        'text-offset': [0, -1.6],
+        'text-anchor': 'bottom',
+        'text-allow-overlap': true,
+      },
+      paint: { 'text-color': p.label, 'text-halo-color': p.labelHalo, 'text-halo-width': 2 },
+    },
+  ];
+}
+
 export interface StyleInput {
   basemap: Basemap;
   layers: readonly LoadedLayer[];
   palette: MapPalette;
   /** Absolute origin used to build same-origin tile and glyph URLs. */
   origin: string;
+  /** Label of the user's position marker, already translated. */
+  youLabel: string;
 }
 
-export function buildStyle({ basemap, layers, palette, origin }: StyleInput): StyleSpecification {
+export function buildStyle({
+  basemap,
+  layers,
+  palette,
+  origin,
+  youLabel,
+}: StyleInput): StyleSpecification {
   const overlaySources = Object.fromEntries(
     layers.map((layer) => [
       overlaySourceId(layer.entry.id),
@@ -265,10 +341,14 @@ export function buildStyle({ basemap, layers, palette, origin }: StyleInput): St
         attribution: basemap.attribution,
       },
       ...overlaySources,
+      [USER_ROUTE_SOURCE]: { type: 'geojson', data: EMPTY },
+      [DESTINATION_SOURCE]: { type: 'geojson', data: EMPTY },
+      [USER_POSITION_SOURCE]: { type: 'geojson', data: EMPTY },
     },
     layers: [
       ...basemapLayers(palette),
       ...layers.flatMap((layer) => overlayLayers(layer, palette)),
+      ...userLayers(palette, youLabel),
     ],
   };
 }

@@ -81,6 +81,63 @@ export const en: Dictionary = {
   'guidance.source': "Translated from SENAPRED's official Spanish guidance.",
   'guidance.sourceLink': 'See all recommendations (Spanish)',
 
+  'location.demoBadge': 'DEMO',
+  'location.title': 'Your location',
+  'location.useGps': 'Use my location (GPS)',
+  'location.pickOnMap': 'Pick on the map',
+  'location.simulate': 'Simulate a location (DEMO)',
+  'location.simulatePlaceholder': 'Choose a test point…',
+  'location.locating': 'Finding your location… GPS answers faster outdoors.',
+  'location.picking': 'Tap the map where you are.',
+  'location.cancel': 'Cancel',
+  'location.change': 'Change location',
+  'location.error.unsupported': 'This browser cannot use GPS. Pick your location on the map.',
+  'location.error.denied':
+    'You did not allow location access. Pick your location on the map or allow it in the browser.',
+  'location.error.unavailable':
+    'Your location could not be found. Try outdoors or pick your location on the map.',
+  'location.error.timeout': 'GPS took too long. Try again or pick your location on the map.',
+  'location.source.gps': 'GPS location (accuracy ± {meters})',
+  'location.source.manual': 'Location picked on the map',
+  'location.source.demo': 'Simulated location: {label}',
+  'location.privacy': 'Your location is used only on this phone: never stored or sent.',
+
+  'route.title': 'Where to evacuate',
+  'route.inDanger': 'You are inside the tsunami evacuation area.',
+  'route.notInDanger': 'You are outside the tsunami evacuation area.',
+  'route.toSafety': 'Leave the danger area: {distance} on foot ({fast}–{slow} min).',
+  'route.toMeetingPoint': 'Then, meeting point {code}: {distance} in total ({fast}–{slow} min).',
+  'route.nearestMeetingPoint':
+    'Nearest meeting point: {code}, {distance} away ({fast}–{slow} min).',
+  'route.toSafeArea':
+    'Destination: the nearest safe zone. No meeting point can be reached without going back into the danger area.',
+  'route.alreadySafe':
+    'You are outside the evacuation area according to SENAPRED. Stay alert to the authorities.',
+  'route.outside':
+    'You are outside the pilot sector ({sector}). Evacua only has data for that sector: follow the authorities.',
+  'route.straightLine.title': 'No route computed: this is a straight line, not a path.',
+  'route.straightLine.body':
+    'Meeting point {code} is {distance} away in a straight line, to the {direction}.',
+  'route.straightLine.noGraph': 'This sector has no street network loaded.',
+  'route.straightLine.farFromNetwork': 'You are far from the known streets.',
+  'route.straightLine.noPath': 'No street path to a safe zone was found.',
+  'route.noDestination': 'No meeting points are loaded to show a direction.',
+  'route.timeNote':
+    'Estimated time between a normal and a slow walking pace (FEMA). Do not wait: evacuate now.',
+  'route.earthquakeFirst':
+    'First protect yourself during the quake. If you are on the coast and it was hard to stay standing, evacuate like this:',
+  'route.you': 'You',
+  'route.legend': 'Your route',
+
+  'compass.N': 'north',
+  'compass.NE': 'northeast',
+  'compass.E': 'east',
+  'compass.SE': 'southeast',
+  'compass.S': 'south',
+  'compass.SW': 'southwest',
+  'compass.W': 'west',
+  'compass.NW': 'northwest',
+
   'data.title': 'Sector data',
   'data.sector': '{sector} sector, {commune} ({region})',
   'data.serviceAreaExplainer':

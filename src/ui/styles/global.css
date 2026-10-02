@@ -663,6 +663,132 @@ button,
   stroke-width: 3;
 }
 
+/* DEMO label on the map whenever the position is simulated */
+.map-demo-chip {
+  position: absolute;
+  top: 3.25rem;
+  left: var(--space-2);
+  z-index: 3;
+  margin: 0;
+  padding: var(--space-1) var(--space-3);
+  color: var(--color-warning-text);
+  background: var(--color-warning-bg);
+  border: 2px solid var(--color-warning-border);
+  border-radius: 999px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+}
+
+.map-frame--picking .maplibregl-canvas {
+  cursor: crosshair;
+}
+
+/* Route panel under the map */
+.route-panel {
+  max-height: 45dvh;
+  overflow-y: auto;
+  padding: var(--space-2) max(var(--space-3), env(safe-area-inset-right)) var(--space-3)
+    max(var(--space-3), env(safe-area-inset-left));
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+}
+
+.route-panel h2 {
+  margin: var(--space-1) 0 var(--space-2);
+  font-size: 1.15rem;
+}
+
+.location-chooser {
+  display: grid;
+  /* minmax(0, 1fr): long option labels must not widen the panel past the screen. */
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-2);
+}
+
+.button--block {
+  width: 100%;
+}
+
+.demo-select {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-1);
+}
+
+.demo-select label {
+  font-weight: 600;
+}
+
+.demo-select select {
+  width: 100%;
+  min-width: 0;
+  min-height: var(--touch-target);
+  padding: var(--space-2);
+  font: inherit;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.route-wait {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.route-wait p {
+  flex: 1 1 12rem;
+  margin: 0;
+}
+
+.location-source {
+  font-size: 0.9375rem;
+  color: var(--color-text-muted);
+}
+
+/* Plan messages: icon + bold text + border, never color alone */
+.plan {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius);
+  border: 2px solid currentColor;
+}
+
+.plan .icon {
+  margin-top: 0.1em;
+}
+
+.plan--danger {
+  color: var(--color-error);
+}
+
+.plan--warning {
+  color: var(--color-warning-text);
+  background: var(--color-warning-bg);
+  border-color: var(--color-warning-border);
+}
+
+.plan--safe {
+  color: var(--color-ok);
+}
+
+.plan-note {
+  font-weight: 600;
+}
+
+.plan-steps {
+  margin: 0 0 var(--space-2);
+  padding-left: 1.4rem;
+  display: grid;
+  gap: var(--space-1);
+  font-weight: 600;
+}
+
 /* Official guidance */
 .guidance {
   margin-top: var(--space-3);

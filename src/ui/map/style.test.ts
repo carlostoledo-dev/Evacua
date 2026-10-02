@@ -28,6 +28,7 @@ describe('buildStyle', () => {
     layers: [layer],
     palette: LIGHT_PALETTE,
     origin: 'https://evacua.test',
+    youLabel: 'Tú',
   });
 
   it('only references same-origin tiles and glyphs', () => {
@@ -64,6 +65,7 @@ describe('buildStyle', () => {
       layers: [{ ...layer, entry: { ...entry, role: 'evacuation-area' } }],
       palette: DARK_PALETTE,
       origin: 'https://evacua.test',
+      youLabel: 'Tú',
     });
     const hatch = areaStyle.layers.find((l) => l.id.endsWith('-hatch'));
     expect(hatch?.paint).toMatchObject({ 'fill-pattern': HATCH_IMAGE_ID });
