@@ -1,0 +1,170 @@
+// Lazy-loaded map chunk: MapLibre is only downloaded when the map is shown.
+import {
+  AttributionControl,
+  Map as MapLibreMap,
+  NavigationControl,
+  ScaleControl,
+  setWorkerUrl,
+  type LngLatBoundsLike,
+} from 'maplibre-gl';
+import 'maplibre-gl/dist/maplibre-gl.css';
+// Bundled worker served from our own origin: no blob: workers, so the strict CSP holds.
+import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
+import { useEffect, useRef, useState } from 'react';
+import type { CommuneData } from '../../data/loader.ts';
+import { layersForHazard, type HazardId } from '../../domain/hazards.ts';
+import { useI18n } from '../../i18n/I18nContext.ts';
+import { diagonalHatch } from './hatch.ts';
+import {
+  buildStyle,
+  DARK_PALETTE,
+  HATCH_IMAGE_ID,
+  LIGHT_PALETTE,
+  overlayLayerIds,
+  type MapPalette,
+} from './style.ts';
+
+setWorkerUrl(workerUrl);
+
+type MapState = 'loading' | 'ready' | 'error';
+
+function prefersDark(): boolean {
+  return window.matchMedia('(prefers-color-scheme: dark)').matches;
+}
+
+/** Pads [w, s, e, n] by a fraction of its size, so the edges stay reachable when panning. */
+function padBounds([w, s, e, n]: readonly number[], ratio: number): LngLatBoundsLike {
+  const dx = ((e ?? 0) - (w ?? 0)) * ratio;
+  const dy = ((n ?? 0) - (s ?? 0)) * ratio;
+  return [
+    [(w ?? 0) - dx, (s ?? 0) - dy],
+    [(e ?? 0) + dx, (n ?? 0) + dy],
+  ];
+}
+
+interface MapViewProps {
+  commune: CommuneData;
+  hazard: HazardId;
+}
+
+function supportsWebGL(): boolean {
+  try {
+    const canvas = document.createElement('canvas');
+    return Boolean(canvas.getContext('webgl2') ?? canvas.getContext('webgl'));
+  } catch {
+    return false;
+  }
+}
+
+export default function MapView({ commune, hazard }: MapViewProps) {
+  const { t } = useI18n();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<MapLibreMap | null>(null);
+  // Without WebGL the map cannot exist; say so instead of failing silently.
+  const [state, setState] = useState<MapState>(() => (supportsWebGL() ? 'loading' : 'error'));
+
+  // (Re)create the map per commune and language, so its controls are labeled in that language.
+  useEffect(() => {
+    const element = containerRef.current;
+    if (!element || state === 'error') return;
+    const palette: MapPalette = prefersDark() ? DARK_PALETTE : LIGHT_PALETTE;
+    const { manifest, layers } = commune;
+    let map: MapLibreMap;
+    try {
+      map = new MapLibreMap({
+        container: element,
+        style: buildStyle({
+          basemap: manifest.basemap,
+          layers,
+          palette,
+          origin: window.location.origin,
+        }),
+        bounds: padBounds(manifest.sector.serviceArea, 0.05),
+        // Never show beyond the data bounds: the clipped edge of the evacuation area there is
+        // artificial and could be misread as its real limit.
+        maxBounds: padBounds(manifest.bounds, 0),
+        minZoom: manifest.basemap.minzoom,
+        maxZoom: 18,
+        attributionControl: false,
+        dragRotate: false,
+        pitchWithRotate: false,
+        locale: {
+          'Map.Title': t('map.title'),
+          'NavigationControl.ZoomIn': t('map.zoomIn'),
+          'NavigationControl.ZoomOut': t('map.zoomOut'),
+          'AttributionControl.ToggleAttribution': t('map.attribution'),
+        },
+      });
+    } catch {
+      // Rare (e.g. WebGL context lost right away). Report it after this effect finishes.
+      queueMicrotask(() => {
+        setState('error');
+      });
+      return;
+    }
+    mapRef.current = map;
+    map.addControl(new NavigationControl({ showCompass: false }), 'top-right');
+    map.addControl(new ScaleControl({ unit: 'metric' }), 'top-left');
+    map.addControl(new AttributionControl({ compact: false }), 'bottom-right');
+    map.setMissingStyleImageResolver((id) => {
+      if (id === HATCH_IMAGE_ID && !map.hasImage(id)) {
+        map.addImage(id, diagonalHatch(palette.evacuationArea));
+      }
+    });
+    map.once('idle', () => {
+      setState('ready');
+    });
+    map.on('error', () => {
+      if (!map.loaded()) setState('error');
+    });
+    return () => {
+      mapRef.current = null;
+      map.remove();
+    };
+    // `state` only gates creation; it must not trigger a rebuild when it changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps, @eslint-react/exhaustive-deps
+  }, [commune, t]);
+
+  // Show only the layers relevant to the selected hazard.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    const apply = () => {
+      const visible = new Set(
+        layersForHazard(
+          hazard,
+          commune.layers.map((l) => l.entry),
+        ).map((e) => e.id),
+      );
+      for (const layer of commune.layers) {
+        for (const id of overlayLayerIds(layer)) {
+          if (map.getLayer(id)) {
+            map.setLayoutProperty(
+              id,
+              'visibility',
+              visible.has(layer.entry.id) ? 'visible' : 'none',
+            );
+          }
+        }
+      }
+    };
+    if (map.isStyleLoaded()) apply();
+    else map.once('load', apply);
+  }, [hazard, commune, t]);
+
+  return (
+    <div className="map-frame" data-testid="map" data-state={state}>
+      <div ref={containerRef} className="map-canvas" />
+      {state === 'loading' && (
+        <p className="map-overlay" role="status">
+          {t('map.loading')}
+        </p>
+      )}
+      {state === 'error' && (
+        <p className="map-overlay map-overlay--error" role="alert">
+          {t('map.error')}
+        </p>
+      )}
+    </div>
+  );
+}

@@ -1,24 +1,10 @@
 import type { DataError, DataErrorKind, LoadedLayer } from '../../data/loader.ts';
-import type { LayerRole } from '../../data/schema.ts';
 import { useI18n } from '../../i18n/I18nContext.ts';
 import type { MessageKey } from '../../i18n/translate.ts';
-import type { HazardId } from '../../domain/hazards.ts';
 import type { CommuneState } from '../hooks/useCommuneData.ts';
+import { HAZARD_LABEL, ROLE_LABEL } from '../labels.ts';
 import { LayerBadge } from './LayerBadge.tsx';
 import { WarningIcon } from './icons.tsx';
-
-const ROLE_LABEL: Record<LayerRole, MessageKey> = {
-  'evacuation-area': 'layer.role.evacuationArea',
-  'safe-line': 'layer.role.safeLine',
-  'evacuation-route': 'layer.role.evacuationRoute',
-  'meeting-point': 'layer.role.meetingPoint',
-};
-
-const HAZARD_LABEL: Record<HazardId, MessageKey> = {
-  tsunami: 'hazard.tsunami',
-  wildfire: 'hazard.wildfire',
-  earthquake: 'hazard.earthquake',
-};
 
 const ERROR_MESSAGE: Record<DataErrorKind, MessageKey> = {
   network: 'data.error.network',

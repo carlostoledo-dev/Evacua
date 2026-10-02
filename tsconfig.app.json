@@ -6,7 +6,7 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "moduleDetection": "force",
-    "types": ["vite/client", "vite-plugin-pwa/react"],
+    "types": ["vite/client", "vite-plugin-pwa/react", "geojson"],
     "jsx": "react-jsx",
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,

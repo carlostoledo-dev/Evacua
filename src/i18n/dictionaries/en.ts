@@ -26,12 +26,38 @@ export const en: Dictionary = {
 
   'home.title': 'Where should I evacuate?',
   'home.intro':
-    'Evacua shows you where to evacuate for each hazard (tsunami, wildfire or earthquake) from your location, even without internet.',
-  'home.comingSoon': 'The sector map and evacuation routes will be available in the next version.',
+    'Evacua shows you where to evacuate in a tsunami or an earthquake, using official data, even without internet.',
+  'home.comingSoon': 'The route from your location arrives in the next version.',
 
   'hazard.tsunami': 'Tsunami',
   'hazard.wildfire': 'Wildfire',
   'hazard.earthquake': 'Earthquake',
+
+  'hazard.choose': 'Choose the hazard',
+
+  'map.title': 'Sector map',
+  'map.zoomIn': 'Zoom in',
+  'map.zoomOut': 'Zoom out',
+  'map.attribution': 'Show or hide map credits',
+  'map.loading': 'Loading the map…',
+  'map.error':
+    'This browser cannot show the map. The guidance and sector data are still available below.',
+  'map.legend': 'Legend',
+
+  'guidance.title': 'What to do (official guidance)',
+  'guidance.tsunami.1':
+    'If you feel an earthquake that makes it hard to stay standing and you are in a tsunami evacuation area, evacuate immediately.',
+  'guidance.tsunami.2':
+    'If after an earthquake you see the sea draw back unusually, exposing the seabed, evacuate immediately to higher ground.',
+  'guidance.tsunami.3': 'Prefer horizontal evacuation toward a meeting point and/or safety area.',
+  'guidance.earthquake.1': 'Stay calm and go to a seismic protection place.',
+  'guidance.earthquake.2':
+    'Protect yourself and hold on under something sturdy. If you cannot get under it, stay next to it.',
+  'guidance.earthquake.3': 'If you are outdoors, move away from buildings, poles and power lines.',
+  'guidance.earthquake.4':
+    'If you are on the coast and the earthquake made it hard to stay standing, evacuate immediately toward a meeting point.',
+  'guidance.source': "Translated from SENAPRED's official Spanish guidance.",
+  'guidance.sourceLink': 'See all recommendations (Spanish)',
 
   'data.title': 'Sector data',
   'data.sector': '{sector} sector, {commune} ({region})',
