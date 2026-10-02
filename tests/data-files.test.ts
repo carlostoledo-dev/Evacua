@@ -2,6 +2,9 @@
 import { pathToFileURL } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { loadCommune, loadRegistry, type CommuneData } from '../src/data/loader.ts';
+import { routingInputs } from '../src/data/routing-inputs.ts';
+import { buildGraph } from '../src/domain/graph.ts';
+import { planEvacuation, prepareRouting } from '../src/domain/routing.ts';
 import { fsFetcher } from '../scripts/lib/fs-fetcher.ts';
 
 const registryUrl = pathToFileURL('public/data/communes/index.json').href;
@@ -52,6 +55,35 @@ describe('shipped data', () => {
       expect(lon).toBeLessThanOrEqual(east);
       expect(lat).toBeGreaterThanOrEqual(south);
       expect(lat).toBeLessThanOrEqual(north);
+    }
+  });
+
+  it('Coronel / Yobilo: each DEMO location behaves as its label says', async () => {
+    const { manifest, layers, graph } = await loadShipped('coronel');
+    expect(graph).not.toBeNull();
+    const { evacuationAreas, meetingPoints } = routingInputs(layers);
+    expect(meetingPoints.length).toBeGreaterThan(0);
+    const context = prepareRouting(graph ? buildGraph(graph) : null, evacuationAreas);
+    const plans = Object.fromEntries(
+      manifest.demoLocations.map((demo) => [
+        demo.id,
+        planEvacuation({
+          context,
+          start: demo.coordinates,
+          serviceArea: manifest.sector.serviceArea,
+          meetingPoints,
+        }),
+      ]),
+    );
+
+    expect(plans['yobilo-villa-mora']).toMatchObject({ kind: 'route', inDangerZone: true });
+    expect(plans['villa-la-pena']).toMatchObject({ kind: 'route', inDangerZone: true });
+    expect(plans['nuevo-horizonte']).toMatchObject({ kind: 'route', inDangerZone: false });
+    expect(plans['lo-rojas-outside']).toEqual({ kind: 'outside-service-area' });
+    const yobilo = plans['yobilo-villa-mora'];
+    if (yobilo?.kind === 'route') {
+      expect(yobilo.metersToSafety).toBeGreaterThan(0);
+      expect(yobilo.metersToSafety).toBeLessThan(yobilo.meters);
     }
   });
 });

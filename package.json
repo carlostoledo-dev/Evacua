@@ -22,7 +22,8 @@
     "data:import": "node scripts/import-senapred.ts && prettier --write public/data/communes",
     "data:validate": "node scripts/validate-data.ts",
     "data:tiles": "node scripts/build-tiles.ts && prettier --write public/data/communes",
-    "data:glyphs": "node scripts/fetch-glyphs.ts"
+    "data:glyphs": "node scripts/fetch-glyphs.ts",
+    "data:graph": "node scripts/build-graph.ts && prettier --write public/data/communes/*/manifest.json"
   },
   "dependencies": {
     "maplibre-gl": "^6.11.2",
