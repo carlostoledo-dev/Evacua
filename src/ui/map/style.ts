@@ -36,20 +36,21 @@ export const LIGHT_PALETTE: MapPalette = {
   meetingPointStroke: '#ffffff',
 };
 
+// Pure black land: on OLED screens black pixels are off, so the dark theme saves battery.
 export const DARK_PALETTE: MapPalette = {
-  water: '#1c3550',
-  land: '#1a1d22',
-  park: '#22311f',
-  building: '#2c2f35',
-  road: '#4a4f58',
-  roadCasing: '#0d0f12',
-  label: '#eef2f7',
-  labelHalo: '#0b1220',
+  water: '#0b1a2a',
+  land: '#000000',
+  park: '#0c1d10',
+  building: '#1a1c20',
+  road: '#3b4049',
+  roadCasing: '#000000',
+  label: '#e8eef5',
+  labelHalo: '#000000',
   evacuationArea: '#ff6b7f',
   safeLine: '#d59cff',
   route: '#5fe39a',
   meetingPoint: '#5fe39a',
-  meetingPointStroke: '#0b1220',
+  meetingPointStroke: '#000000',
 };
 
 /** Image id of the diagonal hatch used so the evacuation area is not shown by color alone. */
@@ -248,7 +249,7 @@ export function buildStyle({ basemap, layers, palette, origin }: StyleInput): St
       {
         type: 'geojson' as const,
         data: layer.collection, // validated by zod (src/data/schema.ts)
-        attribution: layer.source.publisher,
+        attribution: layer.source.attribution,
       },
     ]),
   );

@@ -8,6 +8,26 @@ export const en: Dictionary = {
   'nav.skipToContent': 'Skip to content',
   'language.label': 'Language',
 
+  'nav.label': 'Main navigation',
+  'nav.map': 'Map',
+  'nav.guide': 'What to do',
+  'nav.data': 'Data',
+  'nav.settings': 'Settings',
+
+  'settings.title': 'Settings',
+  'settings.status': 'App status',
+  'settings.theme': 'Color theme',
+  'theme.system': 'Automatic (like the phone)',
+  'theme.light': 'Light: better in sunlight',
+  'theme.dark': 'Dark: saves battery',
+  'theme.hint':
+    'On OLED screens the dark theme uses pure black: those pixels switch off and use less battery.',
+
+  'status.pill.ready': 'Works offline',
+  'status.pill.pending': 'Preparing…',
+  'status.pill.offline': 'Offline',
+  'status.pill.unavailable': 'No offline mode',
+
   'disclaimer.title': 'Important',
   'disclaimer.body':
     'This app is a support tool. It does not replace the authorities (SENAPRED, SHOA, Municipality of Coronel). Always follow their official instructions.',
@@ -42,6 +62,8 @@ export const en: Dictionary = {
   'map.loading': 'Loading the map…',
   'map.error':
     'This browser cannot show the map. The guidance and sector data are still available below.',
+  'map.dataError': 'Sector data could not be loaded.',
+  'map.showData': 'See details',
   'map.legend': 'Legend',
 
   'guidance.title': 'What to do (official guidance)',

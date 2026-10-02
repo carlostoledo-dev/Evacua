@@ -14,6 +14,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { CommuneData } from '../../data/loader.ts';
 import { layersForHazard, type HazardId } from '../../domain/hazards.ts';
 import { useI18n } from '../../i18n/I18nContext.ts';
+import type { Theme } from '../theme.ts';
 import { diagonalHatch } from './hatch.ts';
 import {
   buildStyle,
@@ -28,10 +29,6 @@ setWorkerUrl(workerUrl);
 
 type MapState = 'loading' | 'ready' | 'error';
 
-function prefersDark(): boolean {
-  return window.matchMedia('(prefers-color-scheme: dark)').matches;
-}
-
 /** Pads [w, s, e, n] by a fraction of its size, so the edges stay reachable when panning. */
 function padBounds([w, s, e, n]: readonly number[], ratio: number): LngLatBoundsLike {
   const dx = ((e ?? 0) - (w ?? 0)) * ratio;
@@ -45,7 +42,11 @@ function padBounds([w, s, e, n]: readonly number[], ratio: number): LngLatBounds
 interface MapViewProps {
   commune: CommuneData;
   hazard: HazardId;
+  theme: Theme;
 }
+
+/** Highest device pixel ratio we render at: 3× screens cost ~2× the GPU work for little gain. */
+const MAX_PIXEL_RATIO = 2;
 
 function supportsWebGL(): boolean {
   try {
@@ -56,18 +57,18 @@ function supportsWebGL(): boolean {
   }
 }
 
-export default function MapView({ commune, hazard }: MapViewProps) {
+export default function MapView({ commune, hazard, theme }: MapViewProps) {
   const { t } = useI18n();
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
   // Without WebGL the map cannot exist; say so instead of failing silently.
   const [state, setState] = useState<MapState>(() => (supportsWebGL() ? 'loading' : 'error'));
 
-  // (Re)create the map per commune and language, so its controls are labeled in that language.
+  // (Re)create the map per commune, language (control labels) and theme (palette).
   useEffect(() => {
     const element = containerRef.current;
     if (!element || state === 'error') return;
-    const palette: MapPalette = prefersDark() ? DARK_PALETTE : LIGHT_PALETTE;
+    const palette: MapPalette = theme === 'dark' ? DARK_PALETTE : LIGHT_PALETTE;
     const { manifest, layers } = commune;
     let map: MapLibreMap;
     try {
@@ -88,6 +89,10 @@ export default function MapView({ commune, hazard }: MapViewProps) {
         attributionControl: false,
         dragRotate: false,
         pitchWithRotate: false,
+        // Battery and low-end phones: no label fade animations, capped resolution, one world copy.
+        fadeDuration: 0,
+        pixelRatio: Math.min(window.devicePixelRatio, MAX_PIXEL_RATIO),
+        renderWorldCopies: false,
         locale: {
           'Map.Title': t('map.title'),
           'NavigationControl.ZoomIn': t('map.zoomIn'),
@@ -123,7 +128,7 @@ export default function MapView({ commune, hazard }: MapViewProps) {
     };
     // `state` only gates creation; it must not trigger a rebuild when it changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps, @eslint-react/exhaustive-deps
-  }, [commune, t]);
+  }, [commune, t, theme]);
 
   // Show only the layers relevant to the selected hazard.
   useEffect(() => {
@@ -150,7 +155,7 @@ export default function MapView({ commune, hazard }: MapViewProps) {
     };
     if (map.isStyleLoaded()) apply();
     else map.once('load', apply);
-  }, [hazard, commune, t]);
+  }, [hazard, commune, t, theme]);
 
   return (
     <div className="map-frame" data-testid="map" data-state={state}>

@@ -7,6 +7,26 @@ export const esCL = {
   'nav.skipToContent': 'Saltar al contenido',
   'language.label': 'Idioma',
 
+  'nav.label': 'Navegación principal',
+  'nav.map': 'Mapa',
+  'nav.guide': 'Qué hacer',
+  'nav.data': 'Datos',
+  'nav.settings': 'Ajustes',
+
+  'settings.title': 'Ajustes',
+  'settings.status': 'Estado de la app',
+  'settings.theme': 'Tema de colores',
+  'theme.system': 'Automático (como el teléfono)',
+  'theme.light': 'Claro: mejor al sol',
+  'theme.dark': 'Oscuro: ahorra batería',
+  'theme.hint':
+    'En pantallas OLED el tema oscuro usa negro puro: esos píxeles se apagan y gastan menos batería.',
+
+  'status.pill.ready': 'Lista sin internet',
+  'status.pill.pending': 'Preparando…',
+  'status.pill.offline': 'Sin conexión',
+  'status.pill.unavailable': 'Sin modo offline',
+
   'disclaimer.title': 'Importante',
   'disclaimer.body':
     'Esta app es una herramienta de apoyo. No reemplaza a las autoridades (SENAPRED, SHOA, Municipalidad de Coronel). Sigue siempre sus instrucciones oficiales.',
@@ -41,6 +61,8 @@ export const esCL = {
   'map.loading': 'Cargando el mapa…',
   'map.error':
     'Este navegador no puede mostrar el mapa. Las indicaciones y los datos del sector siguen disponibles abajo.',
+  'map.dataError': 'No se pudieron cargar los datos del sector.',
+  'map.showData': 'Ver detalles',
   'map.legend': 'Leyenda',
 
   // Verbatim from SENAPRED (https://www.senapred.cl/tsunami/ and /sismos/), retrieved 2026-10-02.

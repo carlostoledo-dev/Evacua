@@ -4,20 +4,22 @@ import { LOCALE_NATIVE_NAMES, LOCALES } from '../../i18n/locales.ts';
 export function LanguageSwitcher() {
   const { locale, setLocale, t } = useI18n();
   return (
-    <div className="language-switcher" role="group" aria-label={t('language.label')}>
+    <fieldset className="choice-list">
+      <legend>{t('language.label')}</legend>
       {LOCALES.map((option) => (
-        <button
-          key={option}
-          type="button"
-          lang={option}
-          aria-pressed={option === locale}
-          onClick={() => {
-            setLocale(option);
-          }}
-        >
-          {LOCALE_NATIVE_NAMES[option]}
-        </button>
+        <label key={option} className="choice" lang={option}>
+          <input
+            type="radio"
+            name="language"
+            value={option}
+            checked={option === locale}
+            onChange={() => {
+              setLocale(option);
+            }}
+          />
+          <span>{LOCALE_NATIVE_NAMES[option]}</span>
+        </label>
       ))}
-    </div>
+    </fieldset>
   );
 }

@@ -79,14 +79,22 @@ function DataErrorView({ error, onRetry }: { error: DataError; onRetry: () => vo
 interface DataSourcesProps {
   state: CommuneState;
   onRetry: () => void;
+  /** 1 when the panel is a screen of its own. */
+  level?: 1 | 2;
 }
 
 /** Shows which data the app is using, where it comes from, and whether it is official. */
-export function DataSources({ state, onRetry }: DataSourcesProps) {
+export function DataSources({ state, onRetry, level = 2 }: DataSourcesProps) {
   const { t } = useI18n();
   return (
     <section className="card" aria-labelledby="data-title" aria-busy={state.status === 'loading'}>
-      <h2 id="data-title">{t('data.title')}</h2>
+      {level === 1 ? (
+        <h1 id="data-title" tabIndex={-1}>
+          {t('data.title')}
+        </h1>
+      ) : (
+        <h2 id="data-title">{t('data.title')}</h2>
+      )}
       {state.status === 'loading' && <p role="status">{t('data.loading')}</p>}
       {state.status === 'error' && <DataErrorView error={state.error} onRetry={onRetry} />}
       {state.status === 'ready' && (
