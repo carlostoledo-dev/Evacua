@@ -143,7 +143,8 @@ Delivery plan, phase status, pending decisions and risks: `docs/PLAN.md`.
 
 Vite + React + TypeScript strict (decision D1, approved — Next.js dropped because its static
 export needs inline scripts that break a strict CSP). vite-plugin-pwa (Workbox), MapLibre GL JS
-(CSP build), PMTiles (offline vector tiles of the sector), zod, Vitest, Playwright,
+(worker bundled same-origin), offline vector tiles extracted from a Protomaps/OSM build as static
+`.mvt` files, zod, Vitest, Playwright,
 ESLint + Prettier, GitHub Actions, Dependabot, Vercel static hosting.
 
 ## Commands
@@ -151,6 +152,8 @@ ESLint + Prettier, GitHub Actions, Dependabot, Vercel static hosting.
 - `npm run dev` — dev server (no service worker, no CSP).
 - `npm run check` — format check, lint (0 warnings), typecheck, unit tests, build. Run before handing over a phase.
 - `npm run test:e2e` — Playwright against `vite preview` with the real security headers (offline test included).
+- `npm run data:tiles` / `npm run data:glyphs` — re-extract basemap tiles (written to
+  `public/tiles/<id>/`, recorded in the manifest) and label glyphs.
 - `npm run icons` — regenerate PWA PNG icons from `public/logo.svg` (commit the output).
 - Security headers live only in `vercel.json`; `config/headers.ts` feeds them to `vite preview`
   and `tests/security-headers.test.ts` asserts the policy.

@@ -3,16 +3,16 @@
 Each phase ends with a report (done / tested / pending or uncertain) and waits for
 explicit owner approval before the next one starts.
 
-| Phase                                           | Status                     |
-| ----------------------------------------------- | -------------------------- |
-| 0. Questions, plan, CLAUDE.md                   | Done — answered 2026-10-01 |
-| 1. Skeleton, CI, PWA, i18n                      | Done — approved 2026-10-01 |
-| 2. Data layer: schema + labeled DEMO data       | Done — approved 2026-10-02 |
-| 3. Offline map + hazard layers and selector     | In progress                |
-| 4. Evacuation guidance: safe point, route, time | Not started                |
-| 5. Profiles + accessibility                     | Not started                |
-| 6. Security, tests, Lighthouse                  | Not started                |
-| 7. Docs, screenshots, demo script               | Not started                |
+| Phase                                           | Status                          |
+| ----------------------------------------------- | ------------------------------- |
+| 0. Questions, plan, CLAUDE.md                   | Done — answered 2026-10-01      |
+| 1. Skeleton, CI, PWA, i18n                      | Done — approved 2026-10-01      |
+| 2. Data layer: schema + labeled DEMO data       | Done — approved 2026-10-02      |
+| 3. Offline map + hazard layers and selector     | Built — awaiting owner approval |
+| 4. Evacuation guidance: safe point, route, time | Not started                     |
+| 5. Profiles + accessibility                     | Not started                     |
+| 6. Security, tests, Lighthouse                  | Not started                     |
+| 7. Docs, screenshots, demo script               | Not started                     |
 
 ---
 
@@ -103,9 +103,31 @@ explicit owner approval before the next one starts.
 
 **Acceptance criteria**
 
-- [ ] In airplane mode after install, the sector map renders fully (Playwright offline + manual phone test).
-- [ ] Switching hazard changes layers; each layer shows its badge.
-- [ ] App shell JS ≤ ~150 KB gzip excluding the lazy map chunk; total offline bundle size documented.
+- [x] Offline after the first visit, the sector map renders fully (Playwright: offline reload,
+      map `ready`, zero failed requests). Manual phone test in airplane mode: pending (owner).
+- [x] Switching hazard changes guidance and layer visibility; each layer shows its badge in the
+      legend (tsunami and earthquake both use the tsunami layers by design).
+- [x] App shell JS 104 KB gzip (MapLibre chunk 279 KB gzip, lazy). Offline precache ≈ 3.5 MB
+      (87 files: shell, data ≈ 134 KB, tiles ≈ 946 KB, glyphs ≈ 544 KB, MapLibre + worker).
+
+**Phase 3 notes (2026-10-02)**
+
+- Changed from the plan: instead of shipping a PMTiles archive, `scripts/build-tiles.ts` reads the
+  Protomaps daily planet build with range requests and writes the 52 tiles covering the data
+  bounds (z12–15) as static `.mvt` files. No pmtiles client at runtime, no range requests through
+  the service worker; the basemap entry (source, license, date) is stored in the manifest.
+- Own high-contrast style (light/dark) instead of the Protomaps style package; labels use
+  self-hosted Noto Sans glyphs (OFL). No sprites needed.
+- MapLibre 6 worker is bundled and served same-origin (`?worker&url`), so the CSP is unchanged
+  (no `blob:`); verified by e2e with zero console errors.
+- The evacuation area uses a hatch pattern and the legend repeats each shape, so nothing relies
+  on color alone. The map never pans past the data bounds, so the artificial clip edge of the
+  evacuation polygon is never shown.
+- Earthquake guidance uses SENAPRED's own wording. SENAPRED does **not** use "agáchate, cúbrete
+  y afírmate"; it says to go to a "Lugar de Protección Sísmica". The earlier plan text was wrong
+  and has been corrected.
+- Found and fixed during visual review: MapLibre's CSS made the map container collapse to
+  0 px; e2e now asserts the canvas height and visible credits.
 
 ## Phase 4 — Evacuation guidance
 
@@ -259,9 +281,10 @@ no valid precomputed "official wildfire route". Options:
 - **B:** official CONAF/SENAPRED layer, only if a usable, licensed source is found and verified.
 - **C:** drop wildfire for the pilot; keep tsunami + earthquake.
 
-Earthquake mode (any option): first "Agáchate, cúbrete, afírmate"; then, inside the tsunami zone,
-evacuate to the tsunami safe zone if the quake is strong; otherwise go to an open-space meeting
-point. Exact guidance wording to be taken from SENAPRED/SHOA material and cited (TODO).
+Earthquake mode: SENAPRED's official wording (https://www.senapred.cl/sismos/): go to a
+"Lugar de Protección Sísmica"; on the coast, if the quake made it hard to stay standing, evacuate
+immediately toward a meeting point. (Corrected 2026-10-02: SENAPRED does not use "agáchate,
+cúbrete y afírmate".)
 
 ### D3 — Simulated location for the demo (APPROVED)
 

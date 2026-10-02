@@ -67,6 +67,31 @@ The Yobilo service area (`sector.serviceArea` in the manifest) was **defined by 
 project** around the Yobilo road (Villa Mora to Calabozo). It is not an official administrative
 boundary. The data bounds extend beyond it so routes can reach nearby safe zones.
 
+## Basemap and map assets
+
+| Asset                                                                 | Source                                                                                                                                                                                                | License                                                       | Retrieved  |
+| --------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- | ---------- |
+| Vector tiles `public/tiles/coronel/` (52 tiles, z12–15, ≈ 946 KB)     | OpenStreetMap data via the Protomaps basemap daily build (`build.protomaps.com`), extracted by [`scripts/build-tiles.ts`](scripts/build-tiles.ts); build id recorded in the manifest `basemap.source` | **ODbL-1.0**, "© OpenStreetMap contributors" shown on the map | 2026-10-02 |
+| Label glyphs `public/fonts/` (Noto Sans Regular/Medium, Latin ranges) | [protomaps/basemaps-assets](https://github.com/protomaps/basemaps-assets), fetched by [`scripts/fetch-glyphs.ts`](scripts/fetch-glyphs.ts)                                                            | SIL Open Font License 1.1 (`public/fonts/OFL.txt`)            | 2026-10-02 |
+| Map style                                                             | Written for Evacua ([`src/ui/map/style.ts`](src/ui/map/style.ts)) for the Protomaps v4 tile schema                                                                                                    | Project license                                               | n/a        |
+
+```bash
+npm run data:tiles    # re-extract tiles from the latest Protomaps build and update the manifest
+npm run data:glyphs   # re-download the label glyphs
+```
+
+## Official guidance texts
+
+Shown in the hazard guidance card, quoted verbatim in Spanish from SENAPRED (English is a labeled
+translation). Retrieved 2026-10-02.
+
+| Hazard     | Source page                                                         | Quoted recommendations                                                                                                                                                                                                                                  |
+| ---------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Tsunami    | https://www.senapred.cl/tsunami/ ("¿Qué hacer en caso de tsunami?") | Evacuate immediately if a quake makes it hard to stay standing in a tsunami evacuation area; evacuate to high ground if the sea recedes unusually; prefer horizontal evacuation to a meeting point / safety area.                                       |
+| Earthquake | https://www.senapred.cl/sismos/ ("¿Qué hacer en caso sismo?")       | Go to a "Lugar de Protección Sísmica"; protect yourself under or next to something sturdy; outdoors, move away from buildings, poles and cables; on the coast, if the quake made it hard to stay standing, evacuate immediately toward a meeting point. |
+
+Note: SENAPRED's guidance does not use "agáchate, cúbrete y afírmate", so Evacua does not either.
+
 ## Safety-relevant constants
 
 All in [`src/domain/constants.ts`](src/domain/constants.ts).
@@ -85,8 +110,7 @@ FEMA uses these speeds to space evacuation structures, not to promise arrival ti
 | Need                           | Status                                                                                                                                                                                                                                                                                                                                           |
 | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Wildfire layer                 | Out of the pilot for now (owner decision 2026-10-02, [docs/PLAN.md](docs/PLAN.md) D2 = C). No official, licensed wildfire layer for Yobilo has been identified yet. Options: an approximate layer derived from OpenStreetMap vegetation, clearly labeled; an official CONAF/SENAPRED layer if one is found; or dropping wildfire from the pilot. |
-| Earthquake meeting points      | No official open-space meeting points found for Yobilo. Earthquake guidance will rely on official SENAPRED/SHOA instructions and, near the coast, on the tsunami layers above.                                                                                                                                                                   |
-| Basemap                        | Phase 3: OpenStreetMap data (© OpenStreetMap contributors, ODbL), attribution visible on the map.                                                                                                                                                                                                                                                |
+| Earthquake meeting points      | No official open-space meeting points found for Yobilo. Earthquake mode shows SENAPRED's official guidance and, near the coast, the tsunami layers above.                                                                                                                                                                                        |
 | Pedestrian network for routing | Phase 4: derived from OpenStreetMap (ODbL).                                                                                                                                                                                                                                                                                                      |
 
 ## How to update the data

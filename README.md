@@ -1,22 +1,22 @@
 # Evacua
 
 Offline-first evacuation map (installable web app / PWA) for the **Yobilo** pilot sector of
-Coronel, Chile. Pick a hazard — tsunami, wildfire or earthquake — and the app shows where to
-evacuate from your location, even with no internet.
+Coronel, Chile. Pick a hazard — tsunami or earthquake — and the app shows official evacuation areas,
+routes and meeting points on an offline map, even with no internet.
 
 > **Support tool only.** It does not replace the authorities (SENAPRED, SHOA, Municipality of
 > Coronel). Always follow their official instructions.
 
 **Live demo:** https://evacua-phi.vercel.app
 
-**Status:** work in progress for WarriorHacks 2.0 — Phase 2 of 7 (official data layer). Data sources: [DATA_SOURCES.md](DATA_SOURCES.md).
+**Status:** work in progress for WarriorHacks 2.0 — Phase 3 of 7 (offline map). Data sources: [DATA_SOURCES.md](DATA_SOURCES.md).
 The full README (problem, audience, demo, screenshots, architecture, limits, roadmap) comes in Phase 7.
 
 ## Resumen en español
 
 Mapa de evacuación que funciona sin internet para el sector Yobilo de Coronel. Eliges la
-amenaza (tsunami, incendio forestal o terremoto) y te muestra hacia dónde evacuar según tu
-ubicación. Es una herramienta de apoyo: no reemplaza a SENAPRED, al SHOA ni a la
+amenaza (tsunami o terremoto) y te muestra las áreas, vías y puntos de encuentro oficiales
+en un mapa que funciona sin internet. Es una herramienta de apoyo: no reemplaza a SENAPRED, al SHOA ni a la
 Municipalidad. Sigue siempre sus instrucciones oficiales.
 
 ## Run it locally
