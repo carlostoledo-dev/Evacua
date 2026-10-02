@@ -56,3 +56,5 @@ visibly labeled DEMO. See `DATA_SOURCES.md`.
   selector, legend, guidance card and tests, and verified licenses of every map asset.
 - AI checked SENAPRED's official pages before writing guidance text, which corrected an
   assumption in the plan ("agáchate, cúbrete y afírmate" is not SENAPRED's guidance).
+- At the owner's request, AI redesigned the UI as a mobile app shell (tab bar, themes,
+  battery-saving map settings) and updated the tests.
