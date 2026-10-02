@@ -80,6 +80,38 @@ npm run data:tiles    # re-extract tiles from the latest Protomaps build and upd
 npm run data:glyphs   # re-download the label glyphs
 ```
 
+## Pedestrian network and routing
+
+| Asset                                                                                              | Source                                                                                                                                                                                                                                                      | License                                     | Retrieved  |
+| -------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- | ---------- |
+| `public/data/communes/coronel/graph.json` (12,540 nodes, 14,197 street segments, ≈ 115 KB gzipped) | OpenStreetMap walkable ways (footways, paths, residential and other streets; motorways excluded; `access=private` / `foot=no` excluded) via the Overpass API, built by [`scripts/build-graph.ts`](scripts/build-graph.ts); largest connected component kept | **ODbL-1.0** (© OpenStreetMap contributors) | 2026-10-02 |
+
+```bash
+npm run data:graph   # rebuild the walking network from OpenStreetMap and update the manifest
+```
+
+How a route is computed ([`src/domain/routing.ts`](src/domain/routing.ts)), all on the phone:
+
+1. Outside the pilot service area → no route, only a message.
+2. Inside SENAPRED's evacuation area → the shortest walk (by street) to **leave the area**,
+   then the nearest official meeting point reachable **without walking back into the area**.
+   If none is, the destination is the safe zone itself. This follows SENAPRED's instruction to
+   prioritize reaching a meeting point and/or safety area.
+3. Outside the evacuation area → the nearest meeting point through safe ground, or "already safe".
+4. No street network, start farther than 250 m from any street, or no path → only a straight
+   line with distance and compass direction, labeled "not a route".
+
+Walking time is shown as a range between FEMA P-646's average healthy pace (4 mph) and its
+mobility-impaired pace (2 mph), never as a promise.
+
+## DEMO locations
+
+`demoLocations` in the manifest are test positions for "Simular ubicación (DEMO)", chosen by the
+Evacua team to demonstrate each case. Their labels only repeat what the official data says about
+them (inside / outside the evacuation area, outside the pilot sector); a test checks each one
+behaves as labeled. Whenever one is in use, the app shows a **DEMO** label on the map and in the
+route panel.
+
 ## Official guidance texts
 
 Shown in the hazard guidance card, quoted verbatim in Spanish from SENAPRED (English is a labeled
@@ -107,11 +139,10 @@ FEMA uses these speeds to space evacuation structures, not to promise arrival ti
 
 ## Not available yet (no data is invented to fill these gaps)
 
-| Need                           | Status                                                                                                                                                                                                                                                                                                                                           |
-| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Wildfire layer                 | Out of the pilot for now (owner decision 2026-10-02, [docs/PLAN.md](docs/PLAN.md) D2 = C). No official, licensed wildfire layer for Yobilo has been identified yet. Options: an approximate layer derived from OpenStreetMap vegetation, clearly labeled; an official CONAF/SENAPRED layer if one is found; or dropping wildfire from the pilot. |
-| Earthquake meeting points      | No official open-space meeting points found for Yobilo. Earthquake mode shows SENAPRED's official guidance and, near the coast, the tsunami layers above.                                                                                                                                                                                        |
-| Pedestrian network for routing | Phase 4: derived from OpenStreetMap (ODbL).                                                                                                                                                                                                                                                                                                      |
+| Need                      | Status                                                                                                                                                                                                                                                                                                                                           |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Wildfire layer            | Out of the pilot for now (owner decision 2026-10-02, [docs/PLAN.md](docs/PLAN.md) D2 = C). No official, licensed wildfire layer for Yobilo has been identified yet. Options: an approximate layer derived from OpenStreetMap vegetation, clearly labeled; an official CONAF/SENAPRED layer if one is found; or dropping wildfire from the pilot. |
+| Earthquake meeting points | No official open-space meeting points found for Yobilo. Earthquake mode shows SENAPRED's official guidance and, near the coast, the tsunami layers above.                                                                                                                                                                                        |
 
 ## How to update the data
 
