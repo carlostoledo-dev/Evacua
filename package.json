@@ -20,9 +20,12 @@
     "icons": "pwa-assets-generator",
     "check": "npm run format:check && npm run lint && npm run typecheck && npm run test && npm run build",
     "data:import": "node scripts/import-senapred.ts && prettier --write public/data/communes",
-    "data:validate": "node scripts/validate-data.ts"
+    "data:validate": "node scripts/validate-data.ts",
+    "data:tiles": "node scripts/build-tiles.ts && prettier --write public/data/communes",
+    "data:glyphs": "node scripts/fetch-glyphs.ts"
   },
   "dependencies": {
+    "maplibre-gl": "^6.11.2",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "workbox-window": "^7.4.1",
@@ -44,6 +47,7 @@
     "eslint-plugin-jsx-a11y-x": "^0.2.0",
     "eslint-plugin-react-hooks": "^7.1.1",
     "globals": "^17.13.0",
+    "pmtiles": "^4.5.0",
     "prettier": "^3.9.9",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.71.0",
