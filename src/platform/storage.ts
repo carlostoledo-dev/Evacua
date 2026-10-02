@@ -11,6 +11,7 @@ export interface KeyValueStore {
 
 export const STORAGE_KEYS = {
   locale: 'evacua:locale',
+  theme: 'evacua:theme',
 } as const;
 
 /**

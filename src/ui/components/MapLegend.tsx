@@ -4,6 +4,7 @@ import type { LayerRole } from '../../data/schema.ts';
 import { useI18n } from '../../i18n/I18nContext.ts';
 import { ROLE_LABEL } from '../labels.ts';
 import { LayerBadge } from './LayerBadge.tsx';
+import { LayersIcon } from './icons.tsx';
 
 // Swatches repeat the map's shapes (hatch, solid line, dashed line, dot) so the legend never
 // relies on color alone. Colors come from CSS custom properties shared with the theme.
@@ -42,12 +43,16 @@ const SWATCH: Record<LayerRole, ReactNode> = {
   ),
 };
 
+/** Collapsible legend floating over the map (native <details>: keyboard and screen readers work). */
 export function MapLegend({ layers }: { layers: readonly LoadedLayer[] }) {
   const { t } = useI18n();
   return (
-    <section className="map-legend" aria-labelledby="legend-title">
-      <h3 id="legend-title">{t('map.legend')}</h3>
-      <ul>
+    <details className="map-legend" data-testid="map-legend">
+      <summary>
+        <LayersIcon />
+        <span>{t('map.legend')}</span>
+      </summary>
+      <ul aria-label={t('map.legend')}>
         {layers.map((layer) => (
           <li key={layer.entry.id} data-testid={`legend-${layer.entry.id}`}>
             {SWATCH[layer.entry.role]}
@@ -56,6 +61,6 @@ export function MapLegend({ layers }: { layers: readonly LoadedLayer[] }) {
           </li>
         ))}
       </ul>
-    </section>
+    </details>
   );
 }

@@ -29,7 +29,7 @@ export default defineConfig({
         scope: '/',
         display: 'standalone',
         orientation: 'portrait',
-        background_color: '#ffffff',
+        background_color: '#0b4f8a', // splash screen when launched from the home screen
         theme_color: '#0b4f8a',
         categories: ['navigation', 'utilities'],
         icons: [

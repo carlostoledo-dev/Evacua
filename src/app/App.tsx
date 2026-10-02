@@ -1,94 +1,101 @@
-import { lazy, Suspense, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { DEFAULT_HAZARD, layersForHazard, type HazardId } from '../domain/hazards.ts';
 import { useI18n } from '../i18n/I18nContext.ts';
-import { AppStatus } from '../ui/components/AppStatus.tsx';
-import { DataSources } from '../ui/components/DataSources.tsx';
+import { ConnectionPill } from '../ui/components/ConnectionPill.tsx';
 import { Disclaimer } from '../ui/components/Disclaimer.tsx';
-import { HazardGuidance } from '../ui/components/HazardGuidance.tsx';
-import { HazardSelector } from '../ui/components/HazardSelector.tsx';
-import { LanguageSwitcher } from '../ui/components/LanguageSwitcher.tsx';
-import { MapLegend } from '../ui/components/MapLegend.tsx';
+import { TabBar, type View } from '../ui/components/TabBar.tsx';
 import { UpdatePrompt } from '../ui/components/UpdatePrompt.tsx';
 import { useCommuneData } from '../ui/hooks/useCommuneData.ts';
 import { useOnlineStatus } from '../ui/hooks/useOnlineStatus.ts';
 import { useServiceWorker } from '../ui/hooks/useServiceWorker.ts';
+import { useTheme } from '../ui/hooks/useTheme.ts';
+import { DataScreen } from '../ui/screens/DataScreen.tsx';
+import { GuideScreen } from '../ui/screens/GuideScreen.tsx';
+import { MapScreen } from '../ui/screens/MapScreen.tsx';
+import { SettingsScreen } from '../ui/screens/SettingsScreen.tsx';
 
-// MapLibre is large; load it only once there is data to draw.
-const MapView = lazy(() => import('../ui/map/MapView.tsx'));
+const VIEW_TITLE_ID: Record<View, string> = {
+  map: 'view-title-map',
+  guide: 'view-title-guide',
+  data: 'data-title',
+  settings: 'view-title-settings',
+};
 
 export function App() {
   const { t } = useI18n();
   const online = useOnlineStatus();
   const serviceWorker = useServiceWorker();
   const commune = useCommuneData();
+  const { preference, theme, setPreference } = useTheme();
   const [hazard, setHazard] = useState<HazardId>(DEFAULT_HAZARD);
+  const [view, setView] = useState<View>('map');
+
+  // After a tab change, move focus to the new screen's title so screen readers announce it.
+  const firstRenderRef = useRef(true);
+  useEffect(() => {
+    if (firstRenderRef.current) {
+      firstRenderRef.current = false;
+      return;
+    }
+    document.getElementById(VIEW_TITLE_ID[view])?.focus();
+  }, [view]);
 
   const data = commune.state.status === 'ready' ? commune.state.data : null;
   const visibleIds = new Set(
     data
       ? layersForHazard(
           hazard,
-          data.layers.map((layer) => layer.entry),
+          data.layers.map((l) => l.entry),
         ).map((e) => e.id)
       : [],
   );
-  const visibleLayers = data ? data.layers.filter((layer) => visibleIds.has(layer.entry.id)) : [];
+  const visibleLayers = data ? data.layers.filter((l) => visibleIds.has(l.entry.id)) : [];
 
   return (
-    <div className="layout">
+    <div className="app">
       <a className="skip-link" href="#main">
         {t('nav.skipToContent')}
       </a>
 
-      <header className="header">
+      <header className="app-bar">
         <div className="brand">
-          <img className="brand__logo" src="/logo.svg" alt="" width="48" height="48" />
-          <div>
-            <p className="brand__name">{t('app.name')}</p>
-            <p className="brand__tagline">{t('app.tagline')}</p>
-          </div>
+          <img className="brand__logo" src="/logo.svg" alt="" width="36" height="36" />
+          <p className="brand__name">{t('app.name')}</p>
         </div>
-        <LanguageSwitcher />
+        <ConnectionPill offline={serviceWorker.offline} online={online} />
       </header>
 
       {serviceWorker.updateAvailable && (
         <UpdatePrompt onApply={serviceWorker.applyUpdate} onDismiss={serviceWorker.dismissUpdate} />
       )}
 
-      <main id="main" className="main" tabIndex={-1}>
-        <AppStatus offline={serviceWorker.offline} online={online} />
-
-        <section className="card" aria-labelledby="home-title">
-          <h1 id="home-title">{t('home.title')}</h1>
-          <p className="pilot">{t('app.pilotSector')}</p>
-          <p>{t('home.intro')}</p>
-          <HazardSelector value={hazard} onChange={setHazard} />
-        </section>
-
-        {data && (
-          <section className="card card--map" aria-label={t('map.title')}>
-            <Suspense
-              fallback={
-                <p className="map-frame map-overlay" role="status">
-                  {t('map.loading')}
-                </p>
-              }
-            >
-              <MapView commune={data} hazard={hazard} />
-            </Suspense>
-            <MapLegend layers={visibleLayers} />
-            <p className="muted small">{t('home.comingSoon')}</p>
-          </section>
+      <main id="main" className="app-main" tabIndex={-1}>
+        <MapScreen
+          active={view === 'map'}
+          commune={commune.state}
+          hazard={hazard}
+          onHazardChange={setHazard}
+          visibleLayers={visibleLayers}
+          theme={theme}
+          onShowData={() => {
+            setView('data');
+          }}
+        />
+        {view === 'guide' && <GuideScreen hazard={hazard} onHazardChange={setHazard} />}
+        {view === 'data' && <DataScreen state={commune.state} onRetry={commune.retry} />}
+        {view === 'settings' && (
+          <SettingsScreen
+            offline={serviceWorker.offline}
+            online={online}
+            themePreference={preference}
+            onThemeChange={setPreference}
+          />
         )}
-
-        <HazardGuidance hazard={hazard} />
-
-        <DataSources state={commune.state} onRetry={commune.retry} />
       </main>
 
-      <footer className="footer">
+      <footer className="app-footer">
         <Disclaimer />
-        <p className="footer__version">{t('footer.version', { version: __APP_VERSION__ })}</p>
+        <TabBar value={view} onChange={setView} />
       </footer>
     </div>
   );
