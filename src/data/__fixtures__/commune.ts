@@ -9,6 +9,7 @@ export function source(overrides: Record<string, unknown> = {}) {
     id: 'demo-source',
     name: 'Demo source',
     publisher: 'Evacua tests',
+    attribution: 'Evacua tests',
     url: 'https://example.org/data',
     license: 'CC0-1.0',
     retrievedAt: '2026-10-01',

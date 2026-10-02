@@ -55,6 +55,7 @@
       "id": "senapred-tsunami-2024",
       "name": "Amenaza por Tsunami 2024 (SENAPRED)",
       "publisher": "Servicio Nacional de Prevención y Respuesta ante Desastres (SENAPRED)",
+      "attribution": "SENAPRED",
       "url": "https://services5.arcgis.com/i7S5PSnIJAUcWvSE/ArcGIS/rest/services/Amenaza_por_Tsunami_2024/FeatureServer",
       "catalogUrl": "https://geoportal.cl/geoportal/catalog/35413/Amenaza%20por%20Tsunami",
       "license": "No explicit license published; used citing SENAPRED as the providing institution, as IDE Chile requests",
