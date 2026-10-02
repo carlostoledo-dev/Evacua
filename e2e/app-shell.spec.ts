@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { openTab, waitForOfflineReady } from './helpers.ts';
 
 /** Records every request URL and every CSP violation or page error while a test runs. */
 function watchPage(page: Page) {
@@ -12,19 +13,33 @@ function watchPage(page: Page) {
   return { requests, problems };
 }
 
-async function waitForOfflineReady(page: Page) {
-  await expect(page.getByTestId('offline-status')).toHaveText('Lista para usar sin conexión', {
-    timeout: 15_000,
-  });
-}
-
-test('shows the app and the permanent disclaimer naming the authorities', async ({ page }) => {
+test('opens on the map with the tab bar and the permanent disclaimer', async ({ page }) => {
   await page.goto('/');
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('¿Hacia dónde evacuar?');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Mapa del sector');
+  const nav = page.getByRole('navigation', { name: 'Navegación principal' });
+  await expect(nav.getByRole('button')).toHaveCount(4);
+  await expect(nav.getByRole('button', { name: 'Mapa' })).toHaveAttribute('aria-current', 'page');
   const disclaimer = page.getByRole('complementary', { name: 'Importante' });
   await expect(disclaimer).toBeVisible();
   await expect(disclaimer).toContainText('SENAPRED');
   await expect(disclaimer).toContainText('SHOA');
+});
+
+test('every tab keeps the disclaimer visible and moves focus to the screen title', async ({
+  page,
+}) => {
+  await page.goto('/');
+  for (const [tab, title] of [
+    ['Qué hacer', '¿Hacia dónde evacuar?'],
+    ['Datos', 'Datos del sector'],
+    ['Ajustes', 'Ajustes'],
+    ['Mapa', 'Mapa del sector'],
+  ] as const) {
+    await openTab(page, tab);
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText(title);
+    await expect(page.locator(':focus')).toHaveText(title);
+    await expect(page.getByRole('complementary', { name: 'Importante' })).toBeVisible();
+  }
 });
 
 test('serves a strict CSP and only talks to its own origin, without errors', async ({
@@ -51,7 +66,9 @@ test('keeps working offline after the first visit', async ({ page, context }) =>
   await context.setOffline(true);
   await page.reload();
 
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('¿Hacia dónde evacuar?');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Mapa del sector');
+  await expect(page.getByTestId('connection-pill')).toHaveText('Sin conexión');
+  await openTab(page, 'Ajustes');
   await expect(page.getByTestId('network-status')).toHaveText(
     'Sin conexión: usando datos guardados',
   );
@@ -60,17 +77,25 @@ test('keeps working offline after the first visit', async ({ page, context }) =>
 
 test('switches to English and remembers the choice', async ({ page }) => {
   await page.goto('/');
-  await page.getByRole('button', { name: 'English' }).click();
+  await openTab(page, 'Ajustes');
+  await page.getByRole('radio', { name: 'English' }).check();
 
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Where should I evacuate?');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Settings');
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
-  await expect(page.getByRole('button', { name: 'English' })).toHaveAttribute(
-    'aria-pressed',
-    'true',
-  );
 
   await page.reload();
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Where should I evacuate?');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Sector map');
+});
+
+test('the dark theme can be forced and is remembered', async ({ page }) => {
+  await page.goto('/');
+  await openTab(page, 'Ajustes');
+  await page.getByRole('radio', { name: /Oscuro/ }).check();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(0, 0, 0)');
+
+  await page.reload();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
 });
 
 test.describe('with an English browser', () => {
@@ -78,7 +103,7 @@ test.describe('with an English browser', () => {
 
   test('starts in English automatically', async ({ page }) => {
     await page.goto('/');
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Where should I evacuate?');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Sector map');
     await expect(page.getByRole('complementary', { name: 'Important' })).toContainText(
       'does not replace the authorities',
     );
@@ -94,6 +119,7 @@ test('still works when storage is blocked', async ({ page }) => {
     });
   });
   await page.goto('/');
-  await page.getByRole('button', { name: 'English' }).click();
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Where should I evacuate?');
+  await openTab(page, 'Ajustes');
+  await page.getByRole('radio', { name: 'English' }).check();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Settings');
 });
