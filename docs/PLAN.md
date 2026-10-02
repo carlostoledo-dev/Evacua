@@ -8,8 +8,8 @@ explicit owner approval before the next one starts.
 | 0. Questions, plan, CLAUDE.md                   | Done — answered 2026-10-01      |
 | 1. Skeleton, CI, PWA, i18n                      | Done — approved 2026-10-01      |
 | 2. Data layer: schema + labeled DEMO data       | Done — approved 2026-10-02      |
-| 3. Offline map + hazard layers and selector     | Built — awaiting owner approval |
-| 4. Evacuation guidance: safe point, route, time | Not started                     |
+| 3. Offline map + hazard layers and selector     | Done — approved 2026-10-02      |
+| 4. Evacuation guidance: safe point, route, time | Built — awaiting owner approval |
 | 5. Profiles + accessibility                     | Not started                     |
 | 6. Security, tests, Lighthouse                  | Not started                     |
 | 7. Docs, screenshots, demo script               | Not started                     |
@@ -156,11 +156,29 @@ explicit owner approval before the next one starts.
 
 **Acceptance criteria**
 
-- [ ] Unit tests: shortest path, unreachable goal, multi-goal, hazard cost differences, ETA.
-- [ ] E2E: the same demo point yields different destinations for tsunami vs. wildfire.
-- [ ] Outside zone → clear message, no route drawn.
-- [ ] No GPS / denied / timeout → explicit state + manual option.
-- [ ] No route is ever drawn when graph or safe points are missing.
+- [x] Unit tests: shortest path, unreachable goal, multi-goal (network-nearest beats air-nearest),
+      node filters, ETA ranges; real-data test checks every DEMO location against its label.
+      Domain coverage: 99 % statements, 100 % lines.
+- [~] "Same demo point, different destinations for tsunami vs. wildfire": not applicable after
+  D2 = C (no wildfire). Instead, e2e checks that earthquake mode adds SENAPRED's
+  protect-first instruction to the same route.
+- [x] Outside zone → clear message, no route drawn (e2e).
+- [x] No GPS / denied / timeout → explicit state + manual "Elegir en el mapa" (e2e for denied;
+      unit tests for every geolocation error code).
+- [x] No route is ever drawn without a graph or reachable safe ground: straight-line fallback,
+      labeled "no es un camino" (unit tests).
+
+**Phase 4 notes (2026-10-02)**
+
+- Safety-first routing (changed during implementation after reviewing real cases): the route
+  first leaves SENAPRED's evacuation area by the shortest street path, then continues to the
+  nearest meeting point without re-entering the area. From Camilo Olavarría, plain
+  "nearest meeting point" left the danger zone only after 1.7 km; safety-first leaves it after 1.46 km.
+- Performance on real data: graph + safe-node index ≈ 30 ms once; each plan 1–10 ms. The
+  polygon test uses a latitude-band index (583 ms → 8 ms for all 12.5k nodes, identical results).
+- Location: one GPS reading on request (no tracking, battery-friendly), or a tap on the map, or a
+  labeled DEMO point. Location is kept in memory only (e2e checks nothing is stored).
+- Offline bundle is now ≈ 4.0 MB (graph adds ≈ 430 KB raw / 115 KB gzipped).
 
 ## Phase 5 — Profiles and accessibility
 

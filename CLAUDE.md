@@ -152,6 +152,7 @@ ESLint + Prettier, GitHub Actions, Dependabot, Vercel static hosting.
 - `npm run dev` — dev server (no service worker, no CSP).
 - `npm run check` — format check, lint (0 warnings), typecheck, unit tests, build. Run before handing over a phase.
 - `npm run test:e2e` — Playwright against `vite preview` with the real security headers (offline test included).
+- `npm run data:graph` — rebuild the OSM walking network (`graph.json`, recorded in the manifest).
 - `npm run data:tiles` / `npm run data:glyphs` — re-extract basemap tiles (written to
   `public/tiles/<id>/`, recorded in the manifest) and label glyphs.
 - `npm run icons` — regenerate PWA PNG icons from `public/logo.svg` (commit the output).

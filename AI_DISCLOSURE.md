@@ -58,3 +58,10 @@ visibly labeled DEMO. See `DATA_SOURCES.md`.
   assumption in the plan ("agáchate, cúbrete y afírmate" is not SENAPRED's guidance).
 - At the owner's request, AI redesigned the UI as a mobile app shell (tab bar, themes,
   battery-saving map settings) and updated the tests.
+
+### Phase 4 — Evacuation guidance (2026-10-02)
+
+- AI wrote the OpenStreetMap graph builder, the geometry and A*/Dijkstra routing domain with
+  tests, the GPS adapter, the route panel and map overlays, and the e2e tests.
+- AI proposed the safety-first routing rule after checking real routes against SENAPRED's
+  guidance; the DEMO test locations were chosen by AI and verified by tests against the data.
