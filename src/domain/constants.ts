@@ -20,6 +20,13 @@ export function mphToMetersPerSecond(mph: number): number {
  * Caution: FEMA uses these to space evacuation structures, not to promise arrival times.
  * 4 mph is an optimistic pace, so estimates must be shown as a range and never as "you have time".
  */
+/**
+ * Farthest a position (or a meeting point) may be from the walking network before Evacua stops
+ * computing a route and shows only a labeled straight line.
+ * Engineering choice, not a safety standard: beyond ~250 m the path to the network is unknown.
+ */
+export const MAX_SNAP_DISTANCE_M = 250;
+
 export const WALKING_SPEED_MPS = {
   averageHealthyAdult: mphToMetersPerSecond(4),
   mobilityImpaired: mphToMetersPerSecond(2),
