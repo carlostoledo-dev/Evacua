@@ -36,7 +36,7 @@ export const LIGHT_PALETTE: MapPalette = {
   route: '#0b6e3a',
   meetingPoint: '#0b6e3a',
   meetingPointStroke: '#ffffff',
-  userRoute: '#1a4fd6',
+  userRoute: '#0a5bd8',
   userRouteCasing: '#ffffff',
 };
 
@@ -55,7 +55,7 @@ export const DARK_PALETTE: MapPalette = {
   route: '#5fe39a',
   meetingPoint: '#5fe39a',
   meetingPointStroke: '#000000',
-  userRoute: '#7ab8ff',
+  userRoute: '#64a8ff',
   userRouteCasing: '#000000',
 };
 

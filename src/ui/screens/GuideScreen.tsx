@@ -2,6 +2,7 @@ import type { HazardId } from '../../domain/hazards.ts';
 import { useI18n } from '../../i18n/I18nContext.ts';
 import { HazardGuidance } from '../components/HazardGuidance.tsx';
 import { HazardSelector } from '../components/HazardSelector.tsx';
+import { KitChecklist } from '../components/KitChecklist.tsx';
 
 interface GuideScreenProps {
   hazard: HazardId;
@@ -19,7 +20,7 @@ export function GuideScreen({ hazard, onHazardChange }: GuideScreenProps) {
       <p>{t('home.intro')}</p>
       <HazardSelector value={hazard} onChange={onHazardChange} />
       <HazardGuidance hazard={hazard} />
-      <p className="muted small">{t('home.comingSoon')}</p>
+      <KitChecklist />
     </section>
   );
 }

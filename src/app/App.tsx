@@ -11,6 +11,9 @@ import { locationPosition, useLocation } from '../ui/hooks/useLocation.ts';
 import { useOnlineStatus } from '../ui/hooks/useOnlineStatus.ts';
 import { useServiceWorker } from '../ui/hooks/useServiceWorker.ts';
 import { useTheme } from '../ui/hooks/useTheme.ts';
+import { useUserProfile } from '../ui/hooks/useUserProfile.ts';
+import { Tour } from '../ui/components/Tour.tsx';
+import { Onboarding } from '../ui/screens/Onboarding.tsx';
 import { DataScreen } from '../ui/screens/DataScreen.tsx';
 import { GuideScreen } from '../ui/screens/GuideScreen.tsx';
 import { MapScreen } from '../ui/screens/MapScreen.tsx';
@@ -31,6 +34,8 @@ export function App() {
   const { preference, theme, setPreference } = useTheme();
   const [hazard, setHazard] = useState<HazardId>(DEFAULT_HAZARD);
   const [view, setView] = useState<View>('map');
+  const profile = useUserProfile();
+  const [tourRequested, setTourRequested] = useState(false);
 
   // After a tab change, move focus to the new screen's title so screen readers announce it.
   const firstRenderRef = useRef(true);
@@ -56,6 +61,19 @@ export function App() {
 
   const location = useLocation();
   const plan = useEvacuationPlan(data, visibleLayers, locationPosition(location.state));
+
+  if (!profile.user) {
+    return (
+      <Onboarding
+        onDone={(user) => {
+          profile.save(user);
+          setView('map');
+        }}
+      />
+    );
+  }
+  const user = profile.user;
+  const showTour = view === 'map' && (!user.tourDone || tourRequested);
 
   return (
     <div className="app">
@@ -89,6 +107,7 @@ export function App() {
           location={location.state}
           locationActions={location}
           plan={plan}
+          profile={profile.config}
         />
         {view === 'guide' && <GuideScreen hazard={hazard} onHazardChange={setHazard} />}
         {view === 'data' && <DataScreen state={commune.state} onRetry={commune.retry} />}
@@ -98,14 +117,37 @@ export function App() {
             online={online}
             themePreference={preference}
             onThemeChange={setPreference}
+            user={user}
+            onSaveUser={profile.save}
+            onReplayTour={() => {
+              setTourRequested(true);
+              setView('map');
+            }}
+            onDeleteAll={() => {
+              location.clear();
+              profile.deleteAll();
+            }}
           />
         )}
       </main>
 
       <footer className="app-footer">
-        <Disclaimer />
-        <TabBar value={view} onChange={setView} />
+        <div data-tour="disclaimer">
+          <Disclaimer />
+        </div>
+        <div data-tour="tabs">
+          <TabBar value={view} onChange={setView} />
+        </div>
       </footer>
+
+      {showTour && (
+        <Tour
+          onClose={() => {
+            setTourRequested(false);
+            if (!user.tourDone) profile.save({ ...user, tourDone: true });
+          }}
+        />
+      )}
     </div>
   );
 }

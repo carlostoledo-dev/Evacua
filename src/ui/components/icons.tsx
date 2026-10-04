@@ -198,3 +198,76 @@ export function AutoIcon(props: IconProps) {
     </Svg>
   );
 }
+
+export function PersonIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <circle cx="12" cy="6" r="3" />
+      <path d="M12 9v7M8 21l4-5 4 5M7 12h10" />
+    </Svg>
+  );
+}
+
+export function SeniorIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <circle cx="10" cy="5" r="2.5" />
+      <path d="M10 8v6l-3 7M10 14l3 7M10 10l4 2" />
+      <path d="M17 11v10M17 11a2 2 0 0 0-2-2" />
+    </Svg>
+  );
+}
+
+export function ChildIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <circle cx="12" cy="8" r="3.5" />
+      <path d="M12 11.5v5M9 21l3-4.5 3 4.5M8.5 14h7" />
+    </Svg>
+  );
+}
+
+export function OfflineIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M12 3v12M7 10l5 5 5-5" />
+      <path d="M5 20h14" />
+    </Svg>
+  );
+}
+
+export function LockIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <rect x="5" y="11" width="14" height="10" rx="2" />
+      <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+    </Svg>
+  );
+}
+
+export function SpeakerIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M4 9v6h4l5 4V5L8 9H4Z" />
+      <path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12" />
+    </Svg>
+  );
+}
+
+export function TimerIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <circle cx="12" cy="13" r="8" />
+      <path d="M12 9v4l3 2M9 2h6" />
+    </Svg>
+  );
+}
+
+export function InstallIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <rect x="6" y="2" width="12" height="20" rx="3" />
+      <path d="M12 7v7M9 11l3 3 3-3M10 18h4" />
+    </Svg>
+  );
+}

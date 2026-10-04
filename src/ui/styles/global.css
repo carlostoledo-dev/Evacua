@@ -5,16 +5,16 @@
 :root {
   color-scheme: light;
 
-  --color-bg: #eef1f5;
+  --color-bg: #f2f2f7;
   --color-surface: #ffffff;
   --color-text: #0b1220;
   --color-text-muted: #3d4a5c;
-  --color-primary: #0b4f8a;
+  --color-primary: #0a5bd8;
   --color-primary-contrast: #ffffff;
-  --color-bar: #0b4f8a;
-  --color-bar-text: #ffffff;
+  --color-bar: rgba(242, 242, 247, 0.82);
+  --color-bar-text: #0b1220;
   --color-border: #6b7a8f;
-  --color-focus: #0b4f8a;
+  --color-focus: #0a5bd8;
   --color-warning-bg: #fff4ce;
   --color-warning-text: #3d2a00;
   --color-warning-border: #8a6100;
@@ -26,7 +26,14 @@
   --map-safe-line: #6a1b9a;
   --map-route: #0b6e3a;
 
-  --radius: 0.75rem;
+  --radius: 0.875rem;
+  --radius-lg: 1.375rem;
+  /* Glass materials (contrast-checked: text stays ≥ 4.5:1 over any map color). */
+  --glass-bg: rgba(255, 255, 255, 0.8);
+  --glass-strong: rgba(255, 255, 255, 0.92);
+  --glass-border: rgba(255, 255, 255, 0.7);
+  --glass-shadow: 0 8px 32px rgba(15, 23, 42, 0.16);
+  --glass-blur: saturate(180%) blur(20px);
   --space-1: 0.25rem;
   --space-2: 0.5rem;
   --space-3: 1rem;
@@ -44,10 +51,14 @@
     --color-surface: #0d0f12;
     --color-text: #f1f4f8;
     --color-text-muted: #b8c3d1;
-    --color-primary: #8cc8ff;
+    --color-primary: #64a8ff;
     --color-primary-contrast: #000000;
-    --color-bar: #000000;
+    --color-bar: rgba(0, 0, 0, 0.78);
     --color-bar-text: #f1f4f8;
+    --glass-bg: rgba(22, 22, 26, 0.78);
+    --glass-strong: rgba(22, 22, 26, 0.92);
+    --glass-border: rgba(255, 255, 255, 0.12);
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
     --color-border: #5d6878;
     --color-focus: #ffd166;
     --color-warning-bg: #1f1800;
@@ -70,10 +81,14 @@
   --color-surface: #0d0f12;
   --color-text: #f1f4f8;
   --color-text-muted: #b8c3d1;
-  --color-primary: #8cc8ff;
+  --color-primary: #64a8ff;
   --color-primary-contrast: #000000;
-  --color-bar: #000000;
+  --color-bar: rgba(0, 0, 0, 0.78);
   --color-bar-text: #f1f4f8;
+  --glass-bg: rgba(22, 22, 26, 0.78);
+  --glass-strong: rgba(22, 22, 26, 0.92);
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
   --color-border: #5d6878;
   --color-focus: #ffd166;
   --color-warning-bg: #1f1800;
@@ -95,6 +110,8 @@
 
 html {
   height: 100%;
+  /* Profile text size (Adulto mayor 1.3×, Niño/a 1.15×), set by useUserProfile. */
+  font-size: calc(100% * var(--text-scale, 1));
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
 }
@@ -376,9 +393,9 @@ a {
 }
 
 .screen--map {
-  display: flex;
-  flex-direction: column;
+  position: relative;
   height: 100%;
+  overflow: hidden;
 }
 
 .card {
@@ -491,9 +508,8 @@ button,
 
 /* Map */
 .map-area {
-  position: relative;
-  flex: 1;
-  min-height: 260px;
+  position: absolute;
+  inset: 0;
   background: var(--color-bg);
 }
 
@@ -1033,4 +1049,635 @@ button,
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* ========================================================================================== */
+/* Glass, Apple-like layer (phase 5). Translucent materials only where content sits behind.    */
+
+.glass-card,
+.glass-sheet,
+.app-bar,
+.app-footer,
+.map-top .hazard-selector--compact,
+.map-legend summary,
+.map-legend ul {
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+
+.glass-card {
+  padding: var(--space-4) var(--space-3);
+  background: var(--glass-strong);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-shadow);
+}
+
+.app-bar {
+  position: relative;
+  z-index: 10;
+  background: var(--color-bar);
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.app-footer {
+  position: relative;
+  z-index: 10;
+  background: var(--glass-strong);
+}
+
+.brand__name {
+  font-size: 1.3rem;
+  letter-spacing: -0.01em;
+}
+
+/* Buttons: rounded, flat, iOS-like */
+button,
+.button {
+  border-radius: var(--radius);
+}
+
+.button--ghost {
+  border-color: transparent;
+  background: transparent;
+}
+
+.button--danger {
+  color: #ffffff;
+  background: var(--color-error);
+  border-color: var(--color-error);
+}
+
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+button svg.icon {
+  vertical-align: middle;
+}
+
+/* Floating segmented hazard control */
+.map-top {
+  position: absolute;
+  top: var(--space-2);
+  left: max(var(--space-2), env(safe-area-inset-left));
+  right: max(var(--space-2), env(safe-area-inset-right));
+  z-index: 5;
+}
+
+.map-top .hazard-selector--compact {
+  padding: 4px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 999px;
+  box-shadow: var(--glass-shadow);
+}
+
+.map-top .hazard-selector__options {
+  gap: 4px;
+}
+
+.map-top .hazard-option {
+  min-height: var(--touch-target);
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  flex-wrap: nowrap;
+}
+
+.map-top .hazard-option > span {
+  flex-basis: auto;
+}
+
+.map-top .hazard-option .icon--large {
+  width: 1.4rem;
+  height: 1.4rem;
+}
+
+/* Map controls sit below the floating selector */
+.screen--map .maplibregl-ctrl-top-left,
+.screen--map .maplibregl-ctrl-top-right {
+  top: 4.5rem;
+}
+
+.screen--map .maplibregl-ctrl-group {
+  border-radius: var(--radius);
+  box-shadow: var(--glass-shadow);
+}
+
+.screen--map .maplibregl-ctrl-bottom-right {
+  bottom: var(--sheet-h, 0px);
+}
+
+.screen--map .maplibregl-ctrl-attrib {
+  border-top-left-radius: var(--radius);
+}
+
+.map-legend {
+  top: 7.25rem;
+  bottom: auto;
+}
+
+.map-legend summary,
+.map-legend ul {
+  background: var(--glass-bg);
+  border-color: var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+.map-demo-chip {
+  /* Under the legend button, away from the route and the "Tú" marker. */
+  top: 10.75rem;
+  left: max(var(--space-2), env(safe-area-inset-left));
+  box-shadow: var(--glass-shadow);
+}
+
+/* Route sheet: glass bottom sheet over the map */
+.map-sheet {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 5;
+  max-height: 55%;
+  display: flex;
+}
+
+.glass-sheet {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-bottom: 0;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  box-shadow: var(--glass-shadow);
+}
+
+.map-sheet .route-panel {
+  flex: 1;
+  max-height: none;
+}
+
+.route-panel::before {
+  content: '';
+  display: block;
+  width: 2.5rem;
+  height: 5px;
+  margin: 0 auto var(--space-2);
+  border-radius: 999px;
+  background: var(--color-border);
+  opacity: 0.6;
+}
+
+.guardian {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  color: var(--color-primary-contrast);
+  background: var(--color-primary);
+  border-radius: var(--radius);
+  font-size: 1.1rem;
+}
+
+.voice {
+  margin: var(--space-2) 0;
+}
+
+.voice .button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+}
+
+.more-options summary {
+  display: flex;
+  align-items: center;
+  min-height: var(--touch-target);
+  font-weight: 700;
+  color: var(--color-primary);
+  cursor: pointer;
+}
+
+.drill {
+  margin: var(--space-2) 0;
+  padding: var(--space-3);
+  border: 2px dashed var(--color-primary);
+  border-radius: var(--radius);
+}
+
+.drill h3 {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: 0;
+}
+
+.drill__clock {
+  font-size: 1.6rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+/* Simple mode (Adulto mayor, Niño/a): one big primary action */
+:root[data-profile='senior'] .location-chooser--simple > .button--primary,
+:root[data-profile='child'] .location-chooser--simple > .button--primary {
+  min-height: 64px;
+  font-size: 1.15rem;
+}
+
+/* ---------------------------------------------------------------------------------------- */
+/* Onboarding                                                                                */
+
+.onboarding {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background:
+    radial-gradient(circle at 15% 10%, rgba(10, 91, 216, 0.28), transparent 45%),
+    radial-gradient(circle at 85% 30%, rgba(27, 110, 58, 0.22), transparent 40%),
+    radial-gradient(circle at 50% 95%, rgba(200, 16, 46, 0.16), transparent 45%), var(--color-bg);
+}
+
+.onboarding__main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: max(var(--space-4), env(safe-area-inset-top)) var(--space-3) var(--space-4);
+}
+
+.onboarding__card {
+  width: 100%;
+  max-width: 30rem;
+  display: grid;
+  gap: var(--space-2);
+}
+
+.onboarding__card h1 {
+  font-size: 1.9rem;
+  letter-spacing: -0.02em;
+  margin-bottom: 0;
+}
+
+.onboarding__progress,
+.tour__progress {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.onboarding__icon {
+  display: inline-flex;
+  width: 3.5rem;
+  height: 3.5rem;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary-contrast);
+  background: var(--color-primary);
+  border-radius: 1rem;
+}
+
+.onboarding__icon .icon {
+  width: 2rem;
+  height: 2rem;
+}
+
+.onboarding__icon--ok {
+  background: var(--color-ok);
+}
+
+.onboarding__actions {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.welcome-art {
+  width: 100%;
+  height: auto;
+  max-height: 11rem;
+}
+
+.art-card {
+  fill: var(--color-surface);
+  stroke: var(--color-border);
+  stroke-width: 1;
+}
+
+.art-danger {
+  fill: var(--map-area);
+  fill-opacity: 0.18;
+}
+
+.art-hatch {
+  fill: var(--map-area);
+  opacity: 0.55;
+}
+
+.art-safe {
+  fill: var(--map-route);
+  fill-opacity: 0.16;
+}
+
+.art-route {
+  fill: none;
+  stroke: var(--color-primary);
+  stroke-width: 6;
+  stroke-linecap: round;
+}
+
+.art-you {
+  fill: var(--color-primary);
+  stroke: var(--color-surface);
+  stroke-width: 4;
+}
+
+.art-goal {
+  fill: var(--map-route);
+}
+
+.art-check {
+  fill: none;
+  stroke: var(--color-surface);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.feature-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-2);
+}
+
+.feature-list li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-weight: 600;
+}
+
+.feature-list .icon {
+  color: var(--color-primary);
+}
+
+.install-hint {
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-bg);
+  border-radius: var(--radius);
+}
+
+.field {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.field label {
+  font-weight: 700;
+}
+
+.field input {
+  min-height: var(--touch-target);
+  padding: var(--space-2) var(--space-3);
+  font: inherit;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.field input:focus-visible {
+  border-color: var(--color-focus);
+}
+
+/* Profile cards */
+.profile-picker {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: grid;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.profile-picker legend {
+  font-weight: 700;
+  margin-bottom: var(--space-2);
+}
+
+.profile-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 72px;
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-surface);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.profile-card input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.profile-card__icon {
+  display: inline-flex;
+  flex: none;
+  width: 3rem;
+  height: 3rem;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary);
+  background: var(--color-bg);
+  border-radius: 0.875rem;
+}
+
+.profile-card__icon .icon {
+  width: 1.75rem;
+  height: 1.75rem;
+}
+
+.profile-card__text {
+  display: grid;
+  gap: 2px;
+}
+
+.profile-card__text span {
+  color: var(--color-text-muted);
+  font-size: 0.9375rem;
+}
+
+/* Selected: thick border + filled icon, never color alone */
+.profile-card:has(input:checked) {
+  border-color: var(--color-primary);
+  border-width: 4px;
+}
+
+.profile-card:has(input:checked) .profile-card__icon {
+  color: var(--color-primary-contrast);
+  background: var(--color-primary);
+}
+
+.profile-card:has(input:focus-visible) {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+/* Settings cards */
+.settings-card {
+  display: grid;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+
+.settings-card h2 {
+  margin: 0;
+}
+
+.settings-card .choice-list {
+  margin: 0;
+}
+
+/* ---------------------------------------------------------------------------------------- */
+/* Tutorial                                                                                  */
+
+.tour {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+}
+
+.tour__spotlight {
+  position: fixed;
+  border-radius: var(--radius-lg);
+  /* Dims everything except the highlighted element. */
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.55);
+  outline: 3px solid #ffffff;
+  pointer-events: none;
+}
+
+.tour__card {
+  position: fixed;
+  overflow-y: auto;
+  left: max(var(--space-3), env(safe-area-inset-left));
+  right: max(var(--space-3), env(safe-area-inset-right));
+  max-width: 28rem;
+  margin: 0 auto;
+  display: grid;
+  gap: var(--space-2);
+}
+
+.tour__card h2 {
+  margin: 0;
+}
+
+.tour__card p {
+  margin: 0;
+}
+
+.tour__actions {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.tour__nav {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: var(--space-2);
+}
+
+/* No translucency for people who ask for it, or browsers without backdrop-filter. */
+@media (prefers-reduced-transparency: reduce) {
+  .glass-card,
+  .glass-sheet,
+  .app-bar,
+  .app-footer,
+  .map-top .hazard-selector--compact,
+  .map-legend summary,
+  .map-legend ul {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: var(--color-surface);
+  }
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass-card,
+  .glass-sheet,
+  .app-bar,
+  .app-footer,
+  .map-top .hazard-selector--compact,
+  .map-legend summary,
+  .map-legend ul {
+    background: var(--color-surface);
+  }
+}
+
+/* Emergency backpack checklist */
+.kit {
+  margin-top: var(--space-3);
+}
+
+.kit h2 {
+  margin-top: 0;
+}
+
+.kit__progress {
+  font-weight: 800;
+  color: var(--color-primary);
+}
+
+.kit__list {
+  list-style: none;
+  margin: 0 0 var(--space-2);
+  padding: 0;
+  display: grid;
+  gap: var(--space-1);
+}
+
+.kit__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--touch-target);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.kit__item input {
+  flex: none;
+  width: 1.5rem;
+  height: 1.5rem;
+  margin: 0;
+  accent-color: var(--color-ok);
+}
+
+/* Checked: struck through + check, never color alone */
+.kit__item:has(input:checked) span {
+  text-decoration: line-through;
+  color: var(--color-text-muted);
+}
+
+.kit__item:has(input:focus-visible) {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
 }

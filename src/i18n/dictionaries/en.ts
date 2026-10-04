@@ -47,7 +47,6 @@ export const en: Dictionary = {
   'home.title': 'Where should I evacuate?',
   'home.intro':
     'Evacua shows you where to evacuate in a tsunami or an earthquake, using official data, even without internet.',
-  'home.comingSoon': 'The route from your location arrives in the next version.',
 
   'hazard.tsunami': 'Tsunami',
   'hazard.wildfire': 'Wildfire',
@@ -105,10 +104,9 @@ export const en: Dictionary = {
   'route.title': 'Where to evacuate',
   'route.inDanger': 'You are inside the tsunami evacuation area.',
   'route.notInDanger': 'You are outside the tsunami evacuation area.',
-  'route.toSafety': 'Leave the danger area: {distance} on foot ({fast}–{slow} min).',
-  'route.toMeetingPoint': 'Then, meeting point {code}: {distance} in total ({fast}–{slow} min).',
-  'route.nearestMeetingPoint':
-    'Nearest meeting point: {code}, {distance} away ({fast}–{slow} min).',
+  'route.toSafety': 'Leave the danger area: {distance} on foot {time}.',
+  'route.toMeetingPoint': 'Then, meeting point {code}: {distance} in total {time}.',
+  'route.nearestMeetingPoint': 'Nearest meeting point: {code}, {distance} away {time}.',
   'route.toSafeArea':
     'Destination: the nearest safe zone. No meeting point can be reached without going back into the danger area.',
   'route.alreadySafe':
@@ -137,6 +135,110 @@ export const en: Dictionary = {
   'compass.SW': 'southwest',
   'compass.W': 'west',
   'compass.NW': 'northwest',
+
+  'onboarding.step': 'Step {current} of {total}',
+  'onboarding.welcome.title': 'Welcome to Evacua',
+  'onboarding.welcome.body':
+    'It shows you where to evacuate in the Yobilo sector of Coronel during a tsunami or an earthquake.',
+  'onboarding.welcome.official': 'Official SENAPRED data',
+  'onboarding.welcome.offline': 'Works without internet',
+  'onboarding.welcome.private': 'Your data never leaves this phone',
+  'onboarding.start': 'Get started',
+  'onboarding.next': 'Continue',
+  'onboarding.back': 'Back',
+  'onboarding.install.title': 'Install it on your phone',
+  'onboarding.install.body':
+    'Open it with one tap from your home screen, like any app, even without internet.',
+  'onboarding.install.button': 'Install Evacua',
+  'onboarding.install.done': 'Evacua is already installed on this phone.',
+  'onboarding.install.ios': 'On iPhone: tap the Share button, then “Add to Home Screen”.',
+  'onboarding.install.other':
+    'You can install it from your browser menu (“Install app” or “Add to Home screen”).',
+  'onboarding.install.skip': 'Not now',
+  'onboarding.profile.title': 'Create your profile',
+  'onboarding.profile.body': 'We adapt text size, voice and instructions to you.',
+  'onboarding.profile.name': 'What is your name? (optional)',
+  'onboarding.profile.nameHint': 'It is only kept on this phone. It is never sent.',
+  'onboarding.profile.who': 'Who will use Evacua?',
+  'onboarding.ready.title': 'All set!',
+  'onboarding.ready.titleNamed': 'All set, {name}!',
+  'onboarding.ready.body': 'Now we will show you how the map works in 5 short steps.',
+  'onboarding.ready.button': 'Open the map',
+
+  'profile.adult': 'Adult',
+  'profile.adult.description': 'Route, distances and estimated time.',
+  'profile.senior': 'Older adult',
+  'profile.senior.description': 'Large text, simple steps and a voice that reads instructions.',
+  'profile.child': 'Child',
+  'profile.child.description': 'Icons, short phrases and a game-like drill.',
+
+  'tour.label': 'Tutorial',
+  'tour.progress': '{current} of {total}',
+  'tour.next': 'Next',
+  'tour.previous': 'Previous',
+  'tour.finish': 'Got it',
+  'tour.skip': 'Skip tutorial',
+  'tour.hazard.title': 'Choose the hazard',
+  'tour.hazard.body': 'Tsunami or earthquake. The map and guidance adapt to your choice.',
+  'tour.map.title': 'Read the map',
+  'tour.map.body':
+    'The hatched area is the evacuation area according to SENAPRED. Areas without hatching are safe. Green dots are official meeting points.',
+  'tour.route.title': 'Say where you are',
+  'tour.route.body':
+    'Use GPS, tap the map or try a DEMO point. We show you the shortest way out of danger.',
+  'tour.tabs.title': 'More information',
+  'tour.tabs.body':
+    '“What to do” has the official guidance; “Data”, where each piece of data comes from; “Settings”, your profile and language.',
+  'tour.disclaimer.title': 'Always follow the authorities',
+  'tour.disclaimer.body':
+    'Evacua is a support tool. If SENAPRED, SHOA or the Municipality say otherwise, follow them.',
+
+  'voice.listen': 'Listen to instructions',
+  'voice.stop': 'Stop voice',
+  'voice.unsupported': 'This phone has no voice available; the instructions are written above.',
+
+  'route.time.range': '({fast}–{slow} min)',
+  'route.time.slow': '(about {slow} min at a gentle pace)',
+  'route.guardian': 'Find your grown-up or teacher and follow the plan.',
+  'route.moreOptions': 'Other ways to locate yourself',
+
+  'drill.title': 'Drill mode',
+  'drill.body': 'Practice with your grown-up: walk together to the meeting point.',
+  'drill.start': 'Start drill',
+  'drill.running': 'Walking… {seconds} s',
+  'drill.arrived': 'We made it!',
+  'drill.result':
+    'Great job! You arrived in {minutes} min {seconds} s. Practice again to get faster.',
+  'drill.again': 'Again',
+
+  'settings.profile': 'Your profile',
+  'settings.profileHint': 'Kept only on this phone.',
+  'settings.save': 'Save',
+  'settings.saved': 'Saved.',
+  'settings.tour': 'Show the tutorial again',
+  'settings.delete': 'Delete my data',
+  'settings.deleteConfirm': 'Tap again to delete your profile, language and theme from this phone',
+  'settings.privacy':
+    'Evacua has no accounts or servers: your name, profile and settings live only on this phone, and your location is never stored.',
+
+  'kit.title': 'Emergency backpack',
+  'kit.note':
+    'Consider the special needs of your household, for example infants, people with autism (ASD) or pregnant people, among others.',
+  'kit.source': "Translated from SENAPRED's official list.",
+  'kit.sourceLink': 'See the emergency kit (Spanish)',
+  'kit.progress': '{done} of {total} ready',
+  'kit.reset': 'Uncheck all',
+  'kit.item.1': 'Water: plan two liters per person per day',
+  'kit.item.2': 'Flashlights or portable light with batteries or a dynamo',
+  'kit.item.3': 'Toilet paper and paper towels',
+  'kit.item.4': 'Non-perishable food that can be eaten without cooking',
+  'kit.item.5': 'Cash',
+  'kit.item.6': 'First-aid kit; add any medicines you need',
+  'kit.item.7': 'Copies of your house keys',
+  'kit.item.8': 'Battery radio and extra batteries',
+  'kit.item.9': 'Can opener',
+  'kit.item.10': 'Copy of the Emergency Plan',
+  'kit.item.11': 'Copies of identity documents, passport, birth certificate',
 
   'data.title': 'Sector data',
   'data.sector': '{sector} sector, {commune} ({region})',

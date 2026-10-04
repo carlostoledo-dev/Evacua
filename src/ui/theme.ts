@@ -14,6 +14,6 @@ export function resolveTheme(preference: ThemePreference, systemPrefersDark: boo
 
 /** Browser chrome color per theme (address bar, task switcher). Matches --color-bar in CSS. */
 export const THEME_BAR_COLOR: Readonly<Record<Theme, string>> = {
-  light: '#0b4f8a',
+  light: '#f2f2f7',
   dark: '#000000',
 };

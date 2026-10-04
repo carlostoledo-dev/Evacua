@@ -4,6 +4,8 @@ import { useI18n } from '../../i18n/I18nContext.ts';
 
 interface LocationChooserProps {
   demoLocations: readonly DemoLocation[];
+  /** Simple mode: one primary button (GPS); the other options are folded away. */
+  simple: boolean;
   onGps: () => void;
   onPick: () => void;
   onSimulate: (demo: DemoLocation) => void;
@@ -12,17 +14,16 @@ interface LocationChooserProps {
 /** The three ways to say where you are: GPS, a tap on the map, or a labeled DEMO point. */
 export function LocationChooser({
   demoLocations,
+  simple,
   onGps,
   onPick,
   onSimulate,
 }: LocationChooserProps) {
   const { t, locale } = useI18n();
   const selectId = useId();
-  return (
-    <div className="location-chooser">
-      <button type="button" className="button button--primary button--block" onClick={onGps}>
-        {t('location.useGps')}
-      </button>
+
+  const others = (
+    <>
       <button type="button" className="button button--block" onClick={onPick}>
         {t('location.pickOnMap')}
       </button>
@@ -52,6 +53,22 @@ export function LocationChooser({
             ))}
           </select>
         </div>
+      )}
+    </>
+  );
+
+  return (
+    <div className={simple ? 'location-chooser location-chooser--simple' : 'location-chooser'}>
+      <button type="button" className="button button--primary button--block" onClick={onGps}>
+        {t('location.useGps')}
+      </button>
+      {simple ? (
+        <details className="more-options">
+          <summary>{t('route.moreOptions')}</summary>
+          <div className="location-chooser">{others}</div>
+        </details>
+      ) : (
+        others
       )}
     </div>
   );

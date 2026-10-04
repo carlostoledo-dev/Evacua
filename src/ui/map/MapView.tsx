@@ -80,6 +80,8 @@ interface MapViewProps {
   onPick: (position: [number, number]) => void;
   /** The position is simulated: a DEMO label must be visible on the map. */
   demo: boolean;
+  /** Heights (px) covered by floating glass panels, kept clear when framing the route. */
+  insets: { top: number; bottom: number };
 }
 
 /** Highest device pixel ratio we render at: 3× screens cost ~2× the GPU work for little gain. */
@@ -102,6 +104,7 @@ export default function MapView({
   picking,
   onPick,
   demo,
+  insets,
 }: MapViewProps) {
   const { t } = useI18n();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -164,6 +167,7 @@ export default function MapView({
     mapRef.current = map;
     map.addControl(new NavigationControl({ showCompass: false }), 'top-right');
     map.addControl(new ScaleControl({ unit: 'metric' }), 'top-left');
+    // Bottom-right, lifted above the route sheet by CSS (--sheet-h).
     map.addControl(new AttributionControl({ compact: false }), 'bottom-right');
     map.setMissingStyleImageResolver((id) => {
       if (id === HATCH_IMAGE_ID && !map.hasImage(id)) {
@@ -224,14 +228,14 @@ export default function MapView({
       map.jumpTo({ center: first, zoom: Math.max(map.getZoom(), 15) });
     } else {
       const bounds = points.reduce((b, p) => b.extend(p), new LngLatBounds(first, first));
-      // Extra room at the top-left (scale bar, DEMO label) and bottom (legend, credits).
+      // Keep the route clear of the floating panels, the controls and the DEMO label.
       map.fitBounds(bounds, {
-        padding: { top: 96, right: 72, bottom: 80, left: 72 },
+        padding: { top: insets.top + 88, right: 72, bottom: insets.bottom + 40, left: 56 },
         animate: false,
         maxZoom: 17,
       });
     }
-  }, [position, path, destination, mapVersion]);
+  }, [position, path, destination, mapVersion, insets.top, insets.bottom]);
 
   return (
     <div
