@@ -14,6 +14,9 @@ export default defineConfig({
   use: {
     baseURL: `http://localhost:${String(PORT)}`,
     locale: 'es-CL',
+    // Most tests start as a returning user (profile created, tutorial seen). The onboarding
+    // tests opt out with an empty storage state.
+    storageState: 'e2e/state/onboarded.json',
     trace: 'on-first-retry',
     // Software WebGL so MapLibre can draw in headless CI browsers.
     launchOptions: { args: ['--enable-unsafe-swiftshader', '--use-angle=swiftshader'] },

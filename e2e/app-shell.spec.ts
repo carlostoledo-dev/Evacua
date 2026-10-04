@@ -110,7 +110,9 @@ test.describe('with an English browser', () => {
   });
 });
 
-test('still works when storage is blocked', async ({ page }) => {
+test('still works when storage is blocked (profile lives only for the session)', async ({
+  page,
+}) => {
   await page.addInitScript(() => {
     Object.defineProperty(window, 'localStorage', {
       get() {
@@ -119,6 +121,13 @@ test('still works when storage is blocked', async ({ page }) => {
     });
   });
   await page.goto('/');
+  // Nothing can be stored, so onboarding runs; the app must still work end to end.
+  await page.getByRole('button', { name: 'Comenzar' }).click();
+  await page.getByRole('button', { name: 'Continuar' }).click();
+  await page.getByRole('radio', { name: /^Adulto Ruta/ }).check();
+  await page.getByRole('button', { name: 'Continuar' }).click();
+  await page.getByRole('button', { name: 'Ver el mapa' }).click();
+  await page.getByRole('button', { name: 'Saltar tutorial' }).click();
   await openTab(page, 'Ajustes');
   await page.getByRole('radio', { name: 'English' }).check();
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Settings');
