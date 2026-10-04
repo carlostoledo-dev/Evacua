@@ -124,6 +124,10 @@ translation). Retrieved 2026-10-02.
 
 Note: SENAPRED's guidance does not use "agáchate, cúbrete y afírmate", so Evacua does not either.
 
+| Content                                                               | Source page                                                   | Use                                                                                                                                                             |
+| --------------------------------------------------------------------- | ------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Emergency backpack checklist (11 items) and the note on special needs | https://senapred.cl/kit-de-emergencia/ (retrieved 2026-10-04) | Shown verbatim in Spanish in "Qué hacer"; English is a labeled translation. SENAPRED publishes no per-profile list, so all profiles see the same official list. |
+
 ## Safety-relevant constants
 
 All in [`src/domain/constants.ts`](src/domain/constants.ts).

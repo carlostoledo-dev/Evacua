@@ -65,3 +65,11 @@ visibly labeled DEMO. See `DATA_SOURCES.md`.
   tests, the GPS adapter, the route panel and map overlays, and the e2e tests.
 - AI proposed the safety-first routing rule after checking real routes against SENAPRED's
   guidance; the DEMO test locations were chosen by AI and verified by tests against the data.
+
+### Phase 5 — Profiles, onboarding and accessibility (2026-10-04)
+
+- At the owner's request (native-app feel, account-like profile, interactive tutorial,
+  Apple-like glass style), AI built the onboarding, install prompt, on-device profile, tutorial,
+  profile presets, voice, drill game, SENAPRED backpack checklist, glass styling and tests.
+- AI adapted the "account" idea to the project's privacy rules (local-only profile, optional name,
+  delete button) and drew the SVG illustrations; no generated images were used.

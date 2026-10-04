@@ -9,8 +9,8 @@ explicit owner approval before the next one starts.
 | 1. Skeleton, CI, PWA, i18n                      | Done — approved 2026-10-01      |
 | 2. Data layer: schema + labeled DEMO data       | Done — approved 2026-10-02      |
 | 3. Offline map + hazard layers and selector     | Done — approved 2026-10-02      |
-| 4. Evacuation guidance: safe point, route, time | Built — awaiting owner approval |
-| 5. Profiles + accessibility                     | Not started                     |
+| 4. Evacuation guidance: safe point, route, time | Done — approved 2026-10-04      |
+| 5. Profiles + accessibility                     | Built — awaiting owner approval |
 | 6. Security, tests, Lighthouse                  | Not started                     |
 | 7. Docs, screenshots, demo script               | Not started                     |
 
@@ -192,10 +192,42 @@ explicit owner approval before the next one starts.
 
 **Acceptance criteria**
 
-- [ ] No profile-name branching in UI components (profiles are pure data).
-- [ ] axe-core (Playwright): 0 serious/critical violations on main screens × 3 profiles.
-- [ ] Touch targets ≥ 48 px; full flow doable keyboard-only.
-- [ ] Voice unavailable → text shown, no error. Storage throwing → app works with defaults.
+- [x] No profile-name branching in UI components: profiles are typed presets
+      (`src/domain/profiles.ts`: text scale, time display, auto voice, simple mode, guardian
+      message, drill) read by the UI.
+- [x] axe-core (Playwright, WCAG 2.0–2.2 A/AA tags): 0 serious/critical violations on welcome,
+      ready, tutorial, map, guide, data and settings (older-adult profile, the largest text).
+- [x] Touch targets ≥ 48 px (map controls e2e-checked); onboarding, tutorial and tabs work with
+      the keyboard (native controls, focus moved to each new title, Escape closes the tutorial).
+- [x] Voice unavailable → the text stays and a note says so. Storage throwing → onboarding runs
+      every visit and the app still works end to end (e2e).
+
+**Phase 5 notes (2026-10-04)**
+
+- First run: welcome → install (native prompt on Android/Chrome, instructions on iPhone,
+  "already installed" in standalone) → profile (optional name + Adulto / Adulto mayor /
+  Niño-a) → ready → 5-step tutorial over the map (card never leaves the screen, e2e-checked
+  for the largest text). Returning users go straight to the map.
+- Profiles: Adulto mayor = 1.3× text, slow-pace times only, voice reads new instructions
+  automatically, one primary button. Niño/a = 1.15× text, "Busca a tu adulto o profesor y sigue
+  el plan", no times, drill game. Screen text and voice come from the same function.
+- Backpack checklist: SENAPRED's official 11-item kit, verbatim, plus its note on special needs.
+  SENAPRED publishes no per-profile kit, so none was invented.
+- Privacy: the profile (optional first name, type, tutorial flag) and checklist ticks live only in
+  localStorage; "Borrar mis datos" removes every key (e2e-checked). Location is still never stored.
+- Look: iOS-like grouped background, accessible vivid blue (#0a5bd8, 6:1), glass bars, floating
+  segmented hazard control and route sheet over the map; solid fallback for
+  `prefers-reduced-transparency` and browsers without `backdrop-filter`.
+- Dev-only dependency `@axe-core/playwright` is MPL-2.0; it is never shipped in the app.
+
+**Owner additions (2026-10-04)**
+
+- Feel like a native mobile app: install prompt, first-run onboarding, a profile "like an account"
+  (name + Adulto / Adulto mayor / Niño-a), then the map with an interactive tutorial.
+- Apple-like, simple, glassmorphism style.
+- Resolved against the rules: the profile lives **only on the device** (name optional, never
+  sent, "Borrar mis datos" in Settings); glass keeps AA contrast, falls back to solid with
+  `prefers-reduced-transparency`; illustrations are self-made SVG (no external images needed).
 
 ## Phase 6 — Security, tests, Lighthouse
 

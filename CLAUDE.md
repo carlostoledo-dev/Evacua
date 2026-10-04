@@ -80,13 +80,16 @@ Delivery plan, phase status, pending decisions and risks: `docs/PLAN.md`.
   anyone may use and modify it, nobody may charge for it. Never call the project "open
   source" (OSI); say "source-available, free for noncommercial use". Data is NOT relicensed:
   OSM-derived data stays ODbL, SENAPRED data keeps its terms. Only add dependencies whose
-  licenses allow inclusion (MIT, ISC, BSD, Apache-2.0, OFL for fonts).
+  licenses allow inclusion (MIT, ISC, BSD, Apache-2.0, OFL for fonts). Dev-only test tools may
+  differ if never shipped (e.g. `@axe-core/playwright`, MPL-2.0).
 
 ### 3. Privacy
 
 - Collect no personal data. No accounts, analytics, trackers, telemetry or third-party error reporting.
 - Profile and settings are stored on-device only (localStorage/IndexedDB), every access
   wrapped in try/catch; the app must work with defaults if storage throws.
+- The "account" is a local profile (owner request 2026-10-04): optional first name + profile
+  type, never sent anywhere, removable with "Borrar mis datos" (clears every `STORAGE_KEYS` entry).
 - Location is used in memory only: never persisted, never sent anywhere.
 
 ### 4. Security

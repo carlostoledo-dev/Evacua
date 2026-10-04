@@ -9,7 +9,7 @@ routes and meeting points on an offline map, even with no internet.
 
 **Live demo:** https://evacua-phi.vercel.app
 
-**Status:** work in progress for WarriorHacks 2.0 — Phase 4 of 7 (evacuation routes). Data sources: [DATA_SOURCES.md](DATA_SOURCES.md).
+**Status:** work in progress for WarriorHacks 2.0 — Phase 5 of 7 (profiles, onboarding, accessibility). Data sources: [DATA_SOURCES.md](DATA_SOURCES.md).
 The full README (problem, audience, demo, screenshots, architecture, limits, roadmap) comes in Phase 7.
 
 ## Resumen en español
