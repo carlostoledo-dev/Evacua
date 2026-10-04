@@ -46,7 +46,6 @@ export const esCL = {
   'home.title': '¿Hacia dónde evacuar?',
   'home.intro':
     'Evacua te muestra hacia dónde evacuar ante un tsunami o un terremoto, con datos oficiales e incluso sin internet.',
-  'home.comingSoon': 'La ruta desde tu ubicación llegará en la próxima versión.',
 
   'hazard.tsunami': 'Tsunami',
   'hazard.wildfire': 'Incendio forestal',
@@ -109,11 +108,9 @@ export const esCL = {
   'route.title': 'Hacia dónde evacuar',
   'route.inDanger': 'Estás dentro del área a evacuar por tsunami.',
   'route.notInDanger': 'Estás fuera del área a evacuar por tsunami.',
-  'route.toSafety': 'Sal del área de peligro: {distance} a pie ({fast}–{slow} min).',
-  'route.toMeetingPoint':
-    'Luego, punto de encuentro {code}: {distance} en total ({fast}–{slow} min).',
-  'route.nearestMeetingPoint':
-    'Punto de encuentro más cercano: {code}, a {distance} ({fast}–{slow} min).',
+  'route.toSafety': 'Sal del área de peligro: {distance} a pie {time}.',
+  'route.toMeetingPoint': 'Luego, punto de encuentro {code}: {distance} en total {time}.',
+  'route.nearestMeetingPoint': 'Punto de encuentro más cercano: {code}, a {distance} {time}.',
   'route.toSafeArea':
     'Destino: la zona segura más cercana. Ningún punto de encuentro se alcanza sin volver al área de peligro.',
   'route.alreadySafe':
@@ -142,6 +139,112 @@ export const esCL = {
   'compass.SW': 'suroeste',
   'compass.W': 'oeste',
   'compass.NW': 'noroeste',
+
+  'onboarding.step': 'Paso {current} de {total}',
+  'onboarding.welcome.title': 'Bienvenido a Evacua',
+  'onboarding.welcome.body':
+    'Te muestra hacia dónde evacuar en el sector Yobilo de Coronel ante un tsunami o un terremoto.',
+  'onboarding.welcome.official': 'Datos oficiales de SENAPRED',
+  'onboarding.welcome.offline': 'Funciona sin internet',
+  'onboarding.welcome.private': 'Tus datos no salen de este teléfono',
+  'onboarding.start': 'Comenzar',
+  'onboarding.next': 'Continuar',
+  'onboarding.back': 'Atrás',
+  'onboarding.install.title': 'Instálala en tu teléfono',
+  'onboarding.install.body':
+    'Así la abres con un toque desde tu pantalla de inicio, igual que cualquier app, aunque no tengas internet.',
+  'onboarding.install.button': 'Instalar Evacua',
+  'onboarding.install.done': 'Evacua ya está instalada en este teléfono.',
+  'onboarding.install.ios': 'En iPhone: toca el botón Compartir y luego «Agregar a inicio».',
+  'onboarding.install.other':
+    'Puedes instalarla desde el menú de tu navegador («Instalar app» o «Agregar a la pantalla de inicio»).',
+  'onboarding.install.skip': 'Ahora no',
+  'onboarding.profile.title': 'Crea tu perfil',
+  'onboarding.profile.body': 'Adaptamos el tamaño de letra, la voz y las indicaciones a ti.',
+  'onboarding.profile.name': '¿Cómo te llamas? (opcional)',
+  'onboarding.profile.nameHint': 'Solo queda guardado en este teléfono. No se envía a nadie.',
+  'onboarding.profile.who': '¿Quién usará Evacua?',
+  'onboarding.ready.title': '¡Todo listo!',
+  'onboarding.ready.titleNamed': '¡Todo listo, {name}!',
+  'onboarding.ready.body': 'Ahora te mostramos cómo funciona el mapa en 5 pasos cortos.',
+  'onboarding.ready.button': 'Ver el mapa',
+
+  'profile.adult': 'Adulto',
+  'profile.adult.description': 'Ruta, distancias y tiempo estimado.',
+  'profile.senior': 'Adulto mayor',
+  'profile.senior.description': 'Letra grande, pasos simples y voz que lee las indicaciones.',
+  'profile.child': 'Niño o niña',
+  'profile.child.description': 'Íconos, frases cortas y un simulacro tipo juego.',
+
+  'tour.label': 'Tutorial',
+  'tour.progress': '{current} de {total}',
+  'tour.next': 'Siguiente',
+  'tour.previous': 'Anterior',
+  'tour.finish': 'Entendido',
+  'tour.skip': 'Saltar tutorial',
+  'tour.hazard.title': 'Elige la amenaza',
+  'tour.hazard.body': 'Tsunami o terremoto. El mapa y las indicaciones se adaptan a lo que elijas.',
+  'tour.map.title': 'Lee el mapa',
+  'tour.map.body':
+    'Lo rayado es el área a evacuar según SENAPRED. Lo que no tiene rayas es zona segura. Los puntos verdes son puntos de encuentro oficiales.',
+  'tour.route.title': 'Di dónde estás',
+  'tour.route.body':
+    'Usa el GPS, toca el mapa o prueba con un punto DEMO. Te mostramos el camino más corto para salir del peligro.',
+  'tour.tabs.title': 'Más información',
+  'tour.tabs.body':
+    '«Qué hacer» tiene las indicaciones oficiales; «Datos», de dónde viene cada dato; «Ajustes», tu perfil e idioma.',
+  'tour.disclaimer.title': 'Siempre sigue a las autoridades',
+  'tour.disclaimer.body':
+    'Evacua es una herramienta de apoyo. Si SENAPRED, el SHOA o la Municipalidad indican otra cosa, hazles caso a ellos.',
+
+  'voice.listen': 'Escuchar indicaciones',
+  'voice.stop': 'Detener voz',
+  'voice.unsupported':
+    'Este teléfono no tiene voz disponible; las indicaciones están escritas arriba.',
+
+  'route.time.range': '({fast}–{slow} min)',
+  'route.time.slow': '(unos {slow} min a paso tranquilo)',
+  'route.guardian': 'Busca a tu adulto o profesor y sigue el plan.',
+  'route.moreOptions': 'Otras formas de ubicarte',
+
+  'drill.title': 'Modo simulacro',
+  'drill.body': 'Practica con tu adulto: caminen juntos hasta el punto de encuentro.',
+  'drill.start': 'Empezar simulacro',
+  'drill.running': 'Caminando… {seconds} s',
+  'drill.arrived': '¡Llegamos!',
+  'drill.result':
+    '¡Muy bien! Llegaron en {minutes} min {seconds} s. Practiquen otra vez para hacerlo más rápido.',
+  'drill.again': 'Repetir',
+
+  'settings.profile': 'Tu perfil',
+  'settings.profileHint': 'Se guarda solo en este teléfono.',
+  'settings.save': 'Guardar',
+  'settings.saved': 'Guardado.',
+  'settings.tour': 'Ver el tutorial otra vez',
+  'settings.delete': 'Borrar mis datos',
+  'settings.deleteConfirm': 'Toca otra vez para borrar tu perfil, idioma y tema de este teléfono',
+  'settings.privacy':
+    'Evacua no tiene cuentas ni servidores: tu nombre, tu perfil y tus ajustes viven solo en este teléfono, y tu ubicación nunca se guarda.',
+
+  // Verbatim from SENAPRED (https://senapred.cl/kit-de-emergencia/), retrieved 2026-10-04.
+  'kit.title': 'Mochila de emergencia',
+  'kit.note':
+    'Considera las necesidades especiales de tu grupo familiar, por ejemplo de lactantes, personas con TEA, embarazadas entre otros.',
+  'kit.source': 'Lista oficial de SENAPRED.',
+  'kit.sourceLink': 'Ver el kit de emergencia',
+  'kit.progress': '{done} de {total} listos',
+  'kit.reset': 'Desmarcar todo',
+  'kit.item.1': 'Agua: considera dos litros por persona al día',
+  'kit.item.2': 'Linternas o luz portátil con baterías o a dínamo',
+  'kit.item.3': 'Papel higiénico y toalla de papel',
+  'kit.item.4': 'Alimentos no perecibles que se puedan consumir sin cocinar',
+  'kit.item.5': 'Dinero en efectivo',
+  'kit.item.6': 'Botiquín de primeros auxilios, agrega medicamentos necesarios',
+  'kit.item.7': 'Copias de llaves de la casa',
+  'kit.item.8': 'Radio a pilas y baterías adicionales',
+  'kit.item.9': 'Abridor de latas',
+  'kit.item.10': 'Copia del Plan de Emergencia',
+  'kit.item.11': 'Copia de documentos de identidad, pasaporte, nacimiento',
 
   'data.title': 'Datos del sector',
   'data.sector': 'Sector {sector}, {commune} ({region})',

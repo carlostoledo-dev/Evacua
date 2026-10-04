@@ -1,13 +1,15 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, type CSSProperties } from 'react';
 import type { LoadedLayer } from '../../data/loader.ts';
 import type { DemoLocation } from '../../data/schema.ts';
 import type { HazardId } from '../../domain/hazards.ts';
+import type { ProfileConfig } from '../../domain/profiles.ts';
 import type { EvacuationPlan } from '../../domain/routing.ts';
 import { useI18n } from '../../i18n/I18nContext.ts';
 import { HazardSelector } from '../components/HazardSelector.tsx';
 import { MapLegend } from '../components/MapLegend.tsx';
 import { RoutePanel } from '../components/RoutePanel.tsx';
 import type { CommuneState } from '../hooks/useCommuneData.ts';
+import { useElementHeight } from '../hooks/useElementHeight.ts';
 import { locationPosition, type LocationState } from '../hooks/useLocation.ts';
 import type { Theme } from '../theme.ts';
 
@@ -33,6 +35,7 @@ interface MapScreenProps {
   location: LocationState;
   locationActions: LocationActions;
   plan: EvacuationPlan | null;
+  profile: ProfileConfig;
 }
 
 const NO_DEMO_LOCATIONS: readonly DemoLocation[] = [];
@@ -52,8 +55,11 @@ export function MapScreen({
   location,
   locationActions,
   plan,
+  profile,
 }: MapScreenProps) {
   const { t } = useI18n();
+  const [topRef, topHeight] = useElementHeight();
+  const [sheetRef, sheetHeight] = useElementHeight();
   const route = plan?.kind === 'route' ? plan : null;
   const overlay = {
     position: locationPosition(location),
@@ -66,12 +72,16 @@ export function MapScreen({
     commune.status === 'ready' ? commune.data.manifest.demoLocations : NO_DEMO_LOCATIONS;
 
   return (
-    <section className="screen screen--map" aria-labelledby="view-title-map" hidden={!active}>
+    <section
+      className="screen screen--map"
+      aria-labelledby="view-title-map"
+      hidden={!active}
+      style={{ '--sheet-h': `${String(sheetHeight)}px` } as CSSProperties}
+    >
       <h1 id="view-title-map" className="visually-hidden" tabIndex={-1}>
         {t('map.title')}
       </h1>
-      <HazardSelector value={hazard} onChange={onHazardChange} compact />
-      <div className="map-area">
+      <div className="map-area" data-tour="map">
         {commune.status === 'ready' && (
           <>
             <Suspense
@@ -89,6 +99,7 @@ export function MapScreen({
                 picking={location.kind === 'picking'}
                 onPick={locationActions.pick}
                 demo={location.kind === 'demo'}
+                insets={{ top: topHeight, bottom: sheetHeight }}
               />
             </Suspense>
             <MapLegend layers={visibleLayers} />
@@ -108,20 +119,26 @@ export function MapScreen({
           </div>
         )}
       </div>
+      <div className="map-top" ref={topRef} data-tour="hazard">
+        <HazardSelector value={hazard} onChange={onHazardChange} compact />
+      </div>
       {commune.status === 'ready' && (
-        <RoutePanel
-          location={location}
-          plan={plan}
-          hazard={hazard}
-          sectorName={commune.data.manifest.sector.name}
-          demoLocations={demoLocations}
-          onGps={locationActions.locateWithGps}
-          onPick={locationActions.startPicking}
-          onSimulate={(demo) => {
-            locationActions.simulate(demo.id, demo.coordinates);
-          }}
-          onClear={locationActions.clear}
-        />
+        <div className="map-sheet" ref={sheetRef}>
+          <RoutePanel
+            location={location}
+            plan={plan}
+            hazard={hazard}
+            profile={profile}
+            sectorName={commune.data.manifest.sector.name}
+            demoLocations={demoLocations}
+            onGps={locationActions.locateWithGps}
+            onPick={locationActions.startPicking}
+            onSimulate={(demo) => {
+              locationActions.simulate(demo.id, demo.coordinates);
+            }}
+            onClear={locationActions.clear}
+          />
+        </div>
       )}
     </section>
   );
