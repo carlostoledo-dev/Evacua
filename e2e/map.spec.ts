@@ -79,3 +79,19 @@ test('the map works offline after the first visit', async ({ page, context }) =>
   await expect(page.getByTestId('map').getByText('© OpenStreetMap contributors')).toBeVisible();
   expect(failed).toEqual([]);
 });
+
+test('the official SENAPRED backpack checklist can be ticked and is remembered', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await openTab(page, 'Qué hacer');
+  const kit = page.getByTestId('kit');
+  await expect(kit.getByRole('checkbox')).toHaveCount(11);
+  await expect(kit).toContainText('0 de 11 listos');
+  await kit.getByRole('checkbox', { name: /Agua: considera dos litros/ }).check();
+  await kit.getByRole('checkbox', { name: /Dinero en efectivo/ }).check();
+  await expect(kit).toContainText('2 de 11 listos');
+  await page.reload();
+  await openTab(page, 'Qué hacer');
+  await expect(page.getByTestId('kit')).toContainText('2 de 11 listos');
+});
