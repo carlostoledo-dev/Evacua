@@ -68,7 +68,9 @@ test.describe('with GPS permission', () => {
   test('uses the GPS position, shows its accuracy and plans the route', async ({ page }) => {
     await page.goto('/');
     await waitForMap(page);
-    await panel(page).getByRole('button', { name: 'Usar mi ubicación (GPS)' }).click();
+    await panel(page)
+      .getByRole('button', { name: /Buscar mi ruta de evacuación/ })
+      .click();
     await expect(panel(page)).toContainText('Ubicación del GPS (precisión ±');
     await expect(panel(page).getByTestId('plan')).toContainText('Estás dentro del área a evacuar');
     await expect(page.getByTestId('map-demo')).toHaveCount(0);
@@ -82,7 +84,9 @@ test.describe('without GPS permission', () => {
   test('explains the denied permission and offers the manual options', async ({ page }) => {
     await page.goto('/');
     await waitForMap(page);
-    await panel(page).getByRole('button', { name: 'Usar mi ubicación (GPS)' }).click();
+    await panel(page)
+      .getByRole('button', { name: /Buscar mi ruta de evacuación/ })
+      .click();
     await expect(panel(page).getByRole('alert')).toContainText('No diste permiso');
     await expect(panel(page).getByRole('button', { name: 'Elegir en el mapa' })).toBeVisible();
   });
@@ -115,5 +119,7 @@ test('the location is never stored on the device', async ({ page }) => {
   await openTab(page, 'Mapa');
   await page.reload();
   await waitForMap(page);
-  await expect(panel(page).getByRole('button', { name: 'Usar mi ubicación (GPS)' })).toBeVisible();
+  await expect(
+    panel(page).getByRole('button', { name: /Buscar mi ruta de evacuación/ }),
+  ).toBeVisible();
 });

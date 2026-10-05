@@ -1,6 +1,6 @@
 /**
- * On-device key/value storage: language, theme and the local profile (optional first name and
- * profile type). Nothing here is ever sent anywhere; location is never stored.
+ * On-device key/value storage: language, theme and the local profile (profile type and tutorial
+ * flag, no personal data). Nothing here is ever sent anywhere; location is never stored.
  */
 export interface KeyValueStore {
   /** Returns the stored value, or null if missing or if storage is unavailable. */

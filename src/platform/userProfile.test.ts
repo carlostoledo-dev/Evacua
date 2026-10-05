@@ -3,7 +3,6 @@ import { createSafeStore, STORAGE_KEYS } from './storage.ts';
 import {
   createUserProfile,
   deleteAllLocalData,
-  NAME_MAX_LENGTH,
   readUserProfile,
   writeUserProfile,
 } from './userProfile.ts';
@@ -34,20 +33,19 @@ describe('user profile on the device', () => {
     expect(readUserProfile(memoryStore().store)).toBeNull();
   });
 
-  it('round-trips a profile, trimming the name', () => {
+  it('round-trips a profile', () => {
     const { store } = memoryStore();
-    writeUserProfile(store, createUserProfile('  Ana  ', 'senior'));
-    expect(readUserProfile(store)).toEqual({
-      version: 1,
-      name: 'Ana',
-      profile: 'senior',
-      tourDone: false,
-    });
+    writeUserProfile(store, createUserProfile('senior'));
+    expect(readUserProfile(store)).toEqual({ version: 1, profile: 'senior', tourDone: false });
   });
 
-  it('keeps the name optional and short', () => {
-    expect(createUserProfile('', 'child').name).toBe('');
-    expect(createUserProfile('x'.repeat(100), 'adult').name).toHaveLength(NAME_MAX_LENGTH);
+  it('drops a name stored by an earlier build: no personal data is kept', () => {
+    const { store, data } = memoryStore();
+    data.set(STORAGE_KEYS.user, JSON.stringify({ version: 1, name: 'Ana', profile: 'adult' }));
+    const profile = readUserProfile(store);
+    expect(profile).toEqual({ version: 1, profile: 'adult', tourDone: false });
+    if (profile) writeUserProfile(store, profile);
+    expect(data.get(STORAGE_KEYS.user)).not.toContain('Ana');
   });
 
   it('treats corrupted or tampered data as "no profile" instead of crashing', () => {
@@ -60,7 +58,7 @@ describe('user profile on the device', () => {
 
   it('"Borrar mis datos" removes every key Evacua stores', () => {
     const { store, data } = memoryStore();
-    writeUserProfile(store, createUserProfile('Ana', 'adult'));
+    writeUserProfile(store, createUserProfile('adult'));
     store.write(STORAGE_KEYS.locale, 'en');
     store.write(STORAGE_KEYS.theme, 'dark');
     deleteAllLocalData(store);

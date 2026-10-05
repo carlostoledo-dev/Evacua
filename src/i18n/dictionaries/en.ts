@@ -4,6 +4,7 @@ export const en: Dictionary = {
   'app.name': 'Evacua',
   'app.tagline': 'Offline evacuation map',
   'app.pilotSector': 'Pilot sector: Yobilo, Coronel (Chile)',
+  'app.place': '{commune} · {sector}',
 
   'nav.skipToContent': 'Skip to content',
   'language.label': 'Language',
@@ -82,8 +83,10 @@ export const en: Dictionary = {
 
   'location.demoBadge': 'DEMO',
   'location.title': 'Your location',
-  'location.useGps': 'Use my location (GPS)',
+  'location.findRoute': 'Find my evacuation route',
+  'location.useGps': 'Use your current location (GPS)',
   'location.pickOnMap': 'Pick on the map',
+  'location.pickOnMapHint': 'Tap the place where you are',
   'location.simulate': 'Simulate a location (DEMO)',
   'location.simulatePlaceholder': 'Choose a test point…',
   'location.locating': 'Finding your location… GPS answers faster outdoors.',
@@ -102,6 +105,7 @@ export const en: Dictionary = {
   'location.privacy': 'Your location is used only on this phone: never stored or sent.',
 
   'route.title': 'Where to evacuate',
+  'route.subtitle': 'Find your safe zone and follow the plan.',
   'route.inDanger': 'You are inside the tsunami evacuation area.',
   'route.notInDanger': 'You are outside the tsunami evacuation area.',
   'route.toSafety': 'Leave the danger area: {distance} on foot {time}.',
@@ -137,18 +141,20 @@ export const en: Dictionary = {
   'compass.NW': 'northwest',
 
   'onboarding.step': 'Step {current} of {total}',
-  'onboarding.welcome.title': 'Welcome to Evacua',
   'onboarding.welcome.body':
     'It shows you where to evacuate in the Yobilo sector of Coronel during a tsunami or an earthquake.',
-  'onboarding.welcome.official': 'Official SENAPRED data',
+  'onboarding.welcome.official': 'Official data',
+  'onboarding.welcome.officialBody': 'Information from SENAPRED.',
   'onboarding.welcome.offline': 'Works without internet',
-  'onboarding.welcome.private': 'Your data never leaves this phone',
+  'onboarding.welcome.offlineBody': 'It is stored on your phone.',
+  'onboarding.welcome.private': 'Your information is private',
+  'onboarding.welcome.privateBody': 'It never leaves your phone.',
   'onboarding.start': 'Get started',
   'onboarding.next': 'Continue',
   'onboarding.back': 'Back',
-  'onboarding.install.title': 'Install it on your phone',
+  'onboarding.install.title': 'Install Evacua on your phone',
   'onboarding.install.body':
-    'Open it with one tap from your home screen, like any app, even without internet.',
+    'Open it from your home screen like any other app, even without internet.',
   'onboarding.install.button': 'Install Evacua',
   'onboarding.install.done': 'Evacua is already installed on this phone.',
   'onboarding.install.ios': 'On iPhone: tap the Share button, then “Add to Home Screen”.',
@@ -156,12 +162,11 @@ export const en: Dictionary = {
     'You can install it from your browser menu (“Install app” or “Add to Home screen”).',
   'onboarding.install.skip': 'Not now',
   'onboarding.profile.title': 'Create your profile',
-  'onboarding.profile.body': 'We adapt text size, voice and instructions to you.',
-  'onboarding.profile.name': 'What is your name? (optional)',
-  'onboarding.profile.nameHint': 'It is only kept on this phone. It is never sent.',
+  'onboarding.profile.body': 'We adapt text size, voice and instructions for you.',
+  'onboarding.profile.privacy':
+    'We do not ask for your name or any other personal data. Your choice is only kept on this phone.',
   'onboarding.profile.who': 'Who will use Evacua?',
   'onboarding.ready.title': 'All set!',
-  'onboarding.ready.titleNamed': 'All set, {name}!',
   'onboarding.ready.body': 'Now we will show you how the map works in 5 short steps.',
   'onboarding.ready.button': 'Open the map',
 
@@ -219,7 +224,7 @@ export const en: Dictionary = {
   'settings.delete': 'Delete my data',
   'settings.deleteConfirm': 'Tap again to delete your profile, language and theme from this phone',
   'settings.privacy':
-    'Evacua has no accounts or servers: your name, profile and settings live only on this phone, and your location is never stored.',
+    'Evacua has no accounts or servers and never asks for your name: your profile and settings live only on this phone, and your location is never stored.',
 
   'kit.title': 'Emergency backpack',
   'kit.note':

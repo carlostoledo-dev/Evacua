@@ -5,14 +5,15 @@ import { openTab, waitForMap } from './helpers.ts';
 // A first-time visitor: no profile stored yet.
 test.use({ storageState: { cookies: [], origins: [] } });
 
-async function onboard(page: Page, profile: RegExp, name = '') {
+async function onboard(page: Page, profile: RegExp) {
   await page.goto('/');
   await expect(page.getByTestId('onboarding-welcome')).toBeVisible();
   await expect(page.getByRole('complementary', { name: 'Importante' })).toBeVisible();
   await page.getByRole('button', { name: 'Comenzar' }).click();
   await expect(page.getByTestId('onboarding-install')).toBeVisible();
   await page.getByRole('button', { name: /Continuar|Ahora no/ }).click();
-  if (name) await page.getByLabel('¿Cómo te llamas? (opcional)').fill(name);
+  // No name or other personal data is asked for.
+  await expect(page.getByRole('textbox')).toHaveCount(0);
   const next = page.getByRole('button', { name: 'Continuar' });
   await expect(next).toBeDisabled(); // a profile must be chosen
   await page.getByRole('radio', { name: profile }).check();
@@ -22,8 +23,8 @@ async function onboard(page: Page, profile: RegExp, name = '') {
 test('first run: welcome, install, profile, ready, then the tutorial over the map', async ({
   page,
 }) => {
-  await onboard(page, /Adulto mayor/, 'Ana');
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('¡Todo listo, Ana!');
+  await onboard(page, /Adulto mayor/);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('¡Todo listo!');
   await page.getByRole('button', { name: 'Ver el mapa' }).click();
   await waitForMap(page);
 
@@ -69,18 +70,18 @@ test('child profile: guardian message, no times, and the drill game', async ({ p
 });
 
 test('profile can be changed and all local data deleted from Settings', async ({ page }) => {
-  await onboard(page, /^Adulto Ruta/, 'Leo');
+  await onboard(page, /^Adulto Ruta/);
   await page.getByRole('button', { name: 'Ver el mapa' }).click();
   await page.getByRole('button', { name: 'Saltar tutorial' }).click();
   await openTab(page, 'Ajustes');
 
-  await expect(page.getByLabel('¿Cómo te llamas? (opcional)')).toHaveValue('Leo');
+  await expect(page.getByRole('textbox')).toHaveCount(0);
   await page.getByRole('radio', { name: /Adulto mayor/ }).check();
   await page.getByRole('button', { name: 'Guardar' }).click();
   await expect(page.locator('html')).toHaveAttribute('data-profile', 'senior');
 
   const stored = await page.evaluate(() => localStorage.getItem('evacua:user'));
-  expect(stored).toContain('"profile":"senior"');
+  expect(stored).toBe('{"version":1,"profile":"senior","tourDone":true}');
 
   await page.getByRole('button', { name: 'Borrar mis datos' }).click();
   await page.getByRole('button', { name: /Toca otra vez para borrar/ }).click();

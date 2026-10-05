@@ -1,6 +1,33 @@
-import { useId } from 'react';
+import { useId, type ComponentType } from 'react';
 import type { DemoLocation } from '../../data/schema.ts';
 import { useI18n } from '../../i18n/I18nContext.ts';
+import { ChevronRightIcon, PinIcon, WalkIcon } from './icons.tsx';
+
+interface ActionCardProps {
+  icon: ComponentType<{ className?: string }>;
+  title: string;
+  hint: string;
+  primary?: boolean;
+  onClick: () => void;
+}
+
+/** A big tappable card: icon, title, one-line hint and a chevron. */
+function ActionCard({ icon: Icon, title, hint, primary = false, onClick }: ActionCardProps) {
+  return (
+    <button
+      type="button"
+      className={primary ? 'action-card action-card--primary' : 'action-card'}
+      onClick={onClick}
+    >
+      <Icon className="icon action-card__icon" />
+      <span className="action-card__text">
+        <strong>{title}</strong>
+        <span>{hint}</span>
+      </span>
+      <ChevronRightIcon className="icon action-card__chevron" />
+    </button>
+  );
+}
 
 interface LocationChooserProps {
   demoLocations: readonly DemoLocation[];
@@ -24,9 +51,12 @@ export function LocationChooser({
 
   const others = (
     <>
-      <button type="button" className="button button--block" onClick={onPick}>
-        {t('location.pickOnMap')}
-      </button>
+      <ActionCard
+        icon={PinIcon}
+        title={t('location.pickOnMap')}
+        hint={t('location.pickOnMapHint')}
+        onClick={onPick}
+      />
       {demoLocations.length > 0 && (
         <div className="demo-select">
           <label htmlFor={selectId}>
@@ -59,9 +89,13 @@ export function LocationChooser({
 
   return (
     <div className={simple ? 'location-chooser location-chooser--simple' : 'location-chooser'}>
-      <button type="button" className="button button--primary button--block" onClick={onGps}>
-        {t('location.useGps')}
-      </button>
+      <ActionCard
+        icon={WalkIcon}
+        title={t('location.findRoute')}
+        hint={t('location.useGps')}
+        primary
+        onClick={onGps}
+      />
       {simple ? (
         <details className="more-options">
           <summary>{t('route.moreOptions')}</summary>
