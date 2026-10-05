@@ -14,7 +14,7 @@ import {
   ShareIcon,
   ShieldCheckIcon,
 } from '../components/icons.tsx';
-import { CoastArt, PhoneArt } from '../components/illustrations.tsx';
+import { PhoneArt } from '../components/illustrations.tsx';
 import { ProfilePicker } from '../components/ProfilePicker.tsx';
 import { useInstall, type InstallState } from '../hooks/useInstall.ts';
 
@@ -145,12 +145,20 @@ export function Onboarding({ onDone }: OnboardingProps) {
     content = (
       <div className="welcome" data-testid="onboarding-welcome">
         <div className="welcome__hero">
-          <img className="welcome__logo" src="/logo.svg" alt="" width="96" height="96" />
-          <h1 ref={titleRef} tabIndex={-1} className="welcome__title">
-            {t('app.name')}
-          </h1>
-          <p className="welcome__tagline">{t('onboarding.welcome.body')}</p>
-          <CoastArt />
+          <div className="welcome__intro">
+            <img className="welcome__logo" src="/logo.png" alt="" width="512" height="512" />
+            <h1 ref={titleRef} tabIndex={-1} className="welcome__title">
+              {t('app.name')}
+            </h1>
+            <p className="welcome__tagline">{t('onboarding.welcome.body')}</p>
+          </div>
+          <img
+            className="welcome__art"
+            src="/images/welcome-hero.webp"
+            alt=""
+            width="900"
+            height="1125"
+          />
         </div>
         <div className="welcome__sheet">
           {progress}

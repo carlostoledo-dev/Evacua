@@ -180,6 +180,9 @@ export const esCL = {
   'profile.senior.description': 'Letra grande, pasos simples y voz que lee las indicaciones.',
   'profile.child': 'Niño o niña',
   'profile.child.description': 'Íconos, frases cortas y un simulacro tipo juego.',
+  'profile.child.age': 'Menos de {age} años',
+  'profile.adult.age': '{from} a {to} años',
+  'profile.senior.age': '{age} años o más',
 
   'tour.label': 'Tutorial',
   'tour.progress': '{current} de {total}',

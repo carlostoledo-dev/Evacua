@@ -159,7 +159,7 @@ ESLint + Prettier, GitHub Actions, Dependabot, Vercel static hosting.
 - `npm run data:graph` — rebuild the OSM walking network (`graph.json`, recorded in the manifest).
 - `npm run data:tiles` / `npm run data:glyphs` — re-extract basemap tiles (written to
   `public/tiles/<id>/`, recorded in the manifest) and label glyphs.
-- `npm run icons` — regenerate PWA PNG icons from `public/logo.svg` (commit the output).
+- `npm run icons` — regenerate PWA PNG icons from `public/logo.png` (commit the output).
 - Security headers live only in `vercel.json`; `config/headers.ts` feeds them to `vite preview`
   and `tests/security-headers.test.ts` asserts the policy.
 - ESLint 10 with `@eslint-react` + `eslint-plugin-jsx-a11y-x`; JSX string literals are lint

@@ -1,6 +1,7 @@
 // Profiles are presets: data, not branches. UI code reads these fields instead of checking ids.
 
-export const PROFILE_IDS = ['adult', 'senior', 'child'] as const;
+// Ordered by age: the profile picker lists them in this order.
+export const PROFILE_IDS = ['child', 'adult', 'senior'] as const;
 export type ProfileId = (typeof PROFILE_IDS)[number];
 
 export interface ProfileConfig {

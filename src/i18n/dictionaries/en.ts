@@ -176,6 +176,9 @@ export const en: Dictionary = {
   'profile.senior.description': 'Large text, simple steps and a voice that reads instructions.',
   'profile.child': 'Child',
   'profile.child.description': 'Icons, short phrases and a game-like drill.',
+  'profile.child.age': 'Under {age}',
+  'profile.adult.age': '{from} to {to} years old',
+  'profile.senior.age': '{age} or older',
 
   'tour.label': 'Tutorial',
   'tour.progress': '{current} of {total}',
