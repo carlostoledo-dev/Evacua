@@ -306,6 +306,17 @@ explicit owner approval before the next one starts.
   official source.
 - Offline bundle after the change: ≈ 5.6 MB stored, ≈ 2.4 MB to download (tiles 1.8 MB, walking
   network 0.9 MB raw). E2e tests that wait for the offline precache are marked slow.
+- Official-data audit (2026-10-04, owner: "basémonos en los datos oficiales"). Official
+  (SENAPRED): evacuation area, safe line, meeting points, evacuation routes (drawn), guidance text.
+  Computed by Evacua: the walking path over OpenStreetMap streets and its time (FEMA paces).
+  Lagunillas' 3.2 km exit is set by the official area itself (≈ 2.4 km even in a straight line).
+  Share of each DEMO route on official evacuation routes: Yobilo 45 %, Villa La Peña 69 %,
+  Lagunillas 53 %, Coronel Centro 6 %. Forcing official routes in the centre would lengthen the
+  exit from the danger area from ≈ 490 m to ≈ 825 m (+70 %, to PE015 instead of PE016). A milder
+  rule (prefer official routes only if the exit grows ≤ 10 %) raises the exit's share on official
+  routes from 31 % to 41 % across 65 sample points, +1.1 % length on average. Not applied:
+  pending owner decision (routing is safety-critical; the current rule is "leave the area by the
+  shortest way", in line with SENAPRED's "prioriza la evacuación horizontal").
 
 ## Phase 6 — Security, tests, Lighthouse
 
