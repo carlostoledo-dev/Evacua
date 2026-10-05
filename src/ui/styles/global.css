@@ -8,6 +8,7 @@
   color-scheme: light;
 
   --color-bg: #f3f5fa;
+  --color-desktop: #d9e1ee;
   --color-surface: #ffffff;
   --color-surface-2: #eef2f8;
   --color-text: #0b1530;
@@ -65,6 +66,7 @@
   :root:not([data-theme='light']) {
     color-scheme: dark;
     --color-bg: #000000;
+    --color-desktop: #10151f;
     --color-surface: #0f1218;
     --color-surface-2: #181d27;
     --color-text: #f1f4f8;
@@ -109,6 +111,7 @@
 :root[data-theme='dark'] {
   color-scheme: dark;
   --color-bg: #000000;
+  --color-desktop: #10151f;
   --color-surface: #0f1218;
   --color-surface-2: #181d27;
   --color-text: #f1f4f8;
@@ -1945,30 +1948,26 @@ button svg.icon {
   gap: var(--space-2);
 }
 
-/* Wider screens: a little more room, same layout. */
-@media (min-width: 48rem) {
+/* Evacua is a phone app: on a computer it keeps the phone layout in a centered column. */
+@media (min-width: 40rem) {
   body {
-    font-size: 1.125rem;
+    background: var(--color-desktop);
   }
 
-  .disclaimer:not(.disclaimer--card) {
-    font-size: 0.9375rem;
-    justify-content: center;
-  }
-
-  .tab-bar {
-    max-width: 44rem;
+  #root {
+    position: relative;
+    max-width: 26.875rem; /* 430 px: a large phone */
     margin: 0 auto;
-  }
-
-  .onboarding {
+    overflow: hidden;
     background: var(--color-bg);
+    box-shadow:
+      0 0 0 1px var(--color-hairline),
+      0 24px 64px rgba(10, 26, 63, 0.25);
   }
 
-  .onboarding__main {
-    min-height: 100dvh;
-    background: var(--color-surface);
-    box-shadow: var(--shadow-card);
+  /* The tutorial card is fixed to the window: keep it as narrow as the phone column. */
+  .tour__card {
+    max-width: 24.875rem;
   }
 }
 
