@@ -12,7 +12,15 @@ import type { LocationState } from '../hooks/useLocation.ts';
 import { useSpeech } from '../hooks/useSpeech.ts';
 import { DrillMode } from './DrillMode.tsx';
 import { LocationChooser } from './LocationChooser.tsx';
-import { CheckIcon, ChevronRightIcon, ChildIcon, SpeakerIcon, WarningIcon } from './icons.tsx';
+import { LOW_ACCURACY_M } from '../../domain/constants.ts';
+import {
+  CheckIcon,
+  ChevronRightIcon,
+  ChildIcon,
+  LockIcon,
+  SpeakerIcon,
+  WarningIcon,
+} from './icons.tsx';
 
 const GPS_ERROR: Record<GeoErrorKind, MessageKey> = {
   unsupported: 'location.error.unsupported',
@@ -116,6 +124,8 @@ export function RoutePanel({
     say(text);
   }, [profile.autoSpeak, text, say]);
 
+  const choosing = location.kind === 'none' || location.kind === 'gps-error';
+
   return (
     <section
       ref={panelRef}
@@ -124,10 +134,11 @@ export function RoutePanel({
       data-testid="route-panel"
       data-tour="route"
     >
+      {/* Stays at the top while the sheet scrolls, so folding is always one tap away. */}
       <div className="route-panel__head">
-        <div>
+        <div className="route-panel__titles">
           <h2 id="route-title">{t('route.title')}</h2>
-          <p className="route-panel__subtitle">{t('route.subtitle')}</p>
+          {choosing && <p className="route-panel__subtitle">{t('route.subtitle')}</p>}
         </div>
         <button
           type="button"
@@ -151,7 +162,7 @@ export function RoutePanel({
       )}
 
       <div id={bodyId} className="route-panel__body" hidden={folded}>
-        {(location.kind === 'none' || location.kind === 'gps-error') && (
+        {choosing && (
           <>
             {location.kind === 'gps-error' && (
               <p className="plan plan--warning" role="alert">
@@ -182,20 +193,45 @@ export function RoutePanel({
 
         {'position' in location && (
           <>
-            <p className="location-source">
-              {location.kind === 'demo' && (
-                <span className="badge" data-status="demo">
-                  {t('location.demoBadge')}
-                </span>
-              )}{' '}
-              {location.kind === 'gps' &&
-                t('location.source.gps', {
-                  meters: formatDistance(location.accuracyMeters, locale),
-                })}
-              {location.kind === 'manual' && t('location.source.manual')}
-              {location.kind === 'demo' &&
-                t('location.source.demo', { label: demo ? demo.label[locale] : location.demoId })}
-            </p>
+            <div className="location-row">
+              <p className="location-source">
+                {location.kind === 'demo' && (
+                  <span className="badge" data-status="demo">
+                    {t('location.demoBadge')}
+                  </span>
+                )}{' '}
+                {location.kind === 'gps' &&
+                  t('location.source.gps', {
+                    meters: formatDistance(location.accuracyMeters, locale),
+                  })}
+                {location.kind === 'manual' && t('location.source.manual')}
+                {location.kind === 'demo' &&
+                  t('location.source.demo', { label: demo ? demo.label[locale] : location.demoId })}
+              </p>
+              <button
+                type="button"
+                className="button button--quiet"
+                aria-label={t('location.change')}
+                onClick={onClear}
+              >
+                {t('location.changeShort')}
+              </button>
+            </div>
+            {location.kind === 'gps' && location.accuracyMeters > LOW_ACCURACY_M && (
+              <div className="plan plan--warning low-accuracy" data-testid="low-accuracy">
+                <WarningIcon />
+                <div>
+                  <p>
+                    {t('location.lowAccuracy', {
+                      meters: formatDistance(location.accuracyMeters, locale),
+                    })}
+                  </p>
+                  <button type="button" className="button button--block" onClick={onPick}>
+                    {t('location.pickOnMap')}
+                  </button>
+                </div>
+              </div>
+            )}
             <div aria-live="polite">{description && <PlanView description={description} />}</div>
             {text && (
               <div className="voice">
@@ -218,13 +254,13 @@ export function RoutePanel({
               </div>
             )}
             {profile.drill && plan?.kind === 'route' && <DrillMode />}
-            <button type="button" className="button button--block" onClick={onClear}>
-              {t('location.change')}
-            </button>
           </>
         )}
 
-        <p className="muted small">{t('location.privacy')}</p>
+        <p className="privacy-line">
+          <LockIcon />
+          <span>{t('location.privacy')}</span>
+        </p>
       </div>
     </section>
   );

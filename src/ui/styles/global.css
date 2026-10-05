@@ -364,8 +364,8 @@ button svg.icon {
   align-items: center;
   justify-content: space-between;
   gap: var(--space-2);
-  padding: max(0.625rem, env(safe-area-inset-top)) max(var(--space-3), env(safe-area-inset-right))
-    0.625rem max(var(--space-3), env(safe-area-inset-left));
+  padding: max(0.5rem, env(safe-area-inset-top)) max(var(--space-3), env(safe-area-inset-right))
+    0.375rem max(var(--space-3), env(safe-area-inset-left));
   background: var(--color-header);
   color: var(--color-header-text);
 }
@@ -383,12 +383,13 @@ button svg.icon {
 
 .brand__logo {
   flex: none;
-  border-radius: 0.625rem;
+  width: 2.25rem;
+  height: 2.25rem;
 }
 
 .brand__name {
   margin: 0;
-  font-size: 1.375rem;
+  font-size: 1.25rem;
   font-weight: 800;
   line-height: 1.1;
   letter-spacing: -0.02em;
@@ -396,7 +397,7 @@ button svg.icon {
 
 .brand__place {
   margin: 0;
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   font-weight: 600;
   line-height: 1.3;
   color: var(--color-header-muted);
@@ -429,12 +430,12 @@ button svg.icon {
   align-items: center;
   gap: var(--space-1);
   margin: 0;
-  padding: var(--space-1) 0.75rem;
-  min-height: 36px;
+  padding: 0.1875rem 0.625rem;
+  min-height: 2rem;
   border-radius: 999px;
   background: var(--color-surface);
   color: var(--color-text);
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   font-weight: 700;
 }
 
@@ -495,11 +496,11 @@ button svg.icon {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2px;
-  min-height: 62px;
-  padding: var(--space-1) var(--space-1) 0.625rem;
+  gap: 1px;
+  min-height: 3.5rem;
+  padding: 0.25rem 0.25rem 0.5rem;
   font: inherit;
-  font-size: 0.8125rem;
+  font-size: 0.75rem;
   font-weight: 600;
   color: var(--color-text-muted);
   background: transparent;
@@ -510,8 +511,8 @@ button svg.icon {
 }
 
 .tab-bar__icon {
-  width: 1.6rem;
-  height: 1.6rem;
+  width: 1.5rem;
+  height: 1.5rem;
 }
 
 .tab-bar__item[aria-current='page'] {
@@ -522,9 +523,9 @@ button svg.icon {
 .tab-bar__item[aria-current='page']::after {
   content: '';
   position: absolute;
-  bottom: 4px;
+  bottom: 3px;
   left: 50%;
-  width: 2.75rem;
+  width: 2.5rem;
   height: 4px;
   border-radius: 999px;
   background: var(--color-primary);
@@ -538,13 +539,13 @@ button svg.icon {
 /* Permanent disclaimer: compact bar above the tabs, always visible. */
 .disclaimer {
   display: flex;
-  gap: var(--space-2);
+  gap: 0.625rem;
   align-items: center;
-  padding: 0.375rem var(--space-3);
+  padding: 0.3125rem var(--space-3);
   color: var(--color-warning-text);
   background: var(--color-warning-bg);
   font-size: 0.8125rem;
-  line-height: 1.4;
+  line-height: 1.35;
 }
 
 .disclaimer p {
@@ -552,29 +553,25 @@ button svg.icon {
 }
 
 .disclaimer .icon {
-  width: 1.6em;
-  height: 1.6em;
+  width: 1.4em;
+  height: 1.4em;
 }
 
 /* Same notice as a card inside the onboarding pages. */
 .disclaimer--card {
   align-items: flex-start;
-  gap: 0.75rem;
-  padding: var(--space-3);
+  gap: 0.625rem;
+  padding: 0.625rem 0.75rem;
   background: var(--color-warning-soft);
   border: 1px solid var(--color-warning-border);
-  border-radius: var(--radius-lg);
-  font-size: 0.9375rem;
-}
-
-.disclaimer--card strong {
-  display: block;
-  font-size: 1rem;
+  border-radius: var(--radius);
+  font-size: 0.8125rem;
+  line-height: 1.4;
 }
 
 .disclaimer--card .icon {
-  width: 2rem;
-  height: 2rem;
+  width: 1.5rem;
+  height: 1.5rem;
   color: var(--color-warning-icon);
 }
 
@@ -588,12 +585,12 @@ button svg.icon {
 .screen--panel {
   max-width: 44rem;
   margin: 0 auto;
-  padding: var(--space-4) max(var(--space-3), env(safe-area-inset-right)) var(--space-4)
+  padding: var(--space-3) max(var(--space-3), env(safe-area-inset-right)) var(--space-3)
     max(var(--space-3), env(safe-area-inset-left));
 }
 
 .screen--panel > h1 {
-  font-size: 2rem;
+  font-size: 1.75rem;
 }
 
 .screen--map {
@@ -617,7 +614,7 @@ button svg.icon {
 
 /* Solid white cards with a soft shadow (Settings, checklist, tutorial). */
 .glass-card {
-  padding: var(--space-4) var(--space-3);
+  padding: var(--space-3);
   background: var(--color-surface);
   border: 1px solid var(--color-hairline);
   border-radius: var(--radius-lg);
@@ -696,14 +693,14 @@ button svg.icon {
   left: 0;
   right: 0;
   z-index: 5;
-  padding: 0.25rem max(0.75rem, env(safe-area-inset-right)) 0.75rem
+  padding: 0.125rem max(0.75rem, env(safe-area-inset-right)) 0.5rem
     max(0.75rem, env(safe-area-inset-left));
   background: var(--color-header);
   box-shadow: 0 6px 16px rgba(10, 26, 63, 0.25);
 }
 
 .map-top .hazard-selector--compact {
-  padding: 4px;
+  padding: 3px;
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 999px;
@@ -719,7 +716,7 @@ button svg.icon {
   background: transparent;
   border: 0;
   border-radius: 999px;
-  font-size: 1.0625rem;
+  font-size: 1rem;
 }
 
 .map-top .hazard-option:has(input:checked) {
@@ -814,14 +811,14 @@ button svg.icon {
 
 /* Right column under the legend: round zoom and "find me" buttons. */
 .screen--map .maplibregl-ctrl-top-right {
-  top: calc(var(--top-h, 0px) + 3.75rem);
+  top: calc(var(--top-h, 0px) + 3.5rem);
   right: max(0px, env(safe-area-inset-right));
 }
 
 .screen--map .maplibregl-ctrl-top-right .maplibregl-ctrl-group {
   display: grid;
-  gap: 0.5rem;
-  margin: 0.5rem 0.75rem 0 0;
+  gap: 0.375rem;
+  margin: 0.375rem 0.75rem 0 0;
   background: transparent;
   box-shadow: none;
 }
@@ -852,7 +849,8 @@ button svg.icon {
 }
 
 .screen--map .maplibregl-ctrl-attrib {
-  border-top-left-radius: var(--radius);
+  margin: 0;
+  border-top-right-radius: var(--radius);
 }
 
 /* MapLibre's control icons are dark SVG backgrounds; invert them on dark themes. */
@@ -997,8 +995,8 @@ button svg.icon {
   right: 0;
   bottom: 0;
   z-index: 5;
-  /* Leave most of the screen to the map; the rest of the sheet scrolls. */
-  max-height: 46%;
+  /* Leave most of the screen to the map; the rest of the sheet scrolls under its header. */
+  max-height: 50%;
   display: flex;
 }
 
@@ -1011,31 +1009,39 @@ button svg.icon {
 .route-panel {
   flex: 1;
   overflow-y: auto;
-  padding: var(--space-3) max(var(--space-3), env(safe-area-inset-right)) var(--space-3)
+  padding: 0 max(var(--space-3), env(safe-area-inset-right)) 0.75rem
     max(var(--space-3), env(safe-area-inset-left));
 }
 
-/* Decorative grab handle, as on native bottom sheets. */
-.route-panel::before {
-  content: '';
-  display: block;
-  width: 2.75rem;
-  height: 5px;
-  margin: -0.25rem auto 0.5rem;
-  border-radius: 999px;
-  background: var(--color-hairline);
-}
-
+/* Title row stays visible while the sheet's content scrolls under it. */
 .route-panel__head {
+  position: sticky;
+  top: 0;
+  z-index: 1;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: var(--space-2);
+  padding: 1rem 0 0.5rem;
+  background: var(--color-surface);
+}
+
+/* Decorative grab handle, as on native bottom sheets. */
+.route-panel__head::before {
+  content: '';
+  position: absolute;
+  top: 0.375rem;
+  left: 50%;
+  width: 2.75rem;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--color-hairline);
+  transform: translateX(-50%);
 }
 
 .route-panel h2 {
   margin: 0;
-  font-size: 1.625rem;
+  font-size: 1.375rem;
   letter-spacing: -0.025em;
 }
 
@@ -1066,26 +1072,56 @@ button svg.icon {
 }
 
 .route-panel__subtitle {
-  margin: 0 0 0.75rem;
-  font-size: 1rem;
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.35;
   color: var(--color-text-muted);
+}
+
+.route-panel__body {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.route-panel__body > * {
+  margin: 0;
+}
+
+.privacy-line {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+.privacy-line .icon {
+  width: 1rem;
+  height: 1rem;
 }
 
 .location-chooser {
   display: grid;
   /* minmax(0, 1fr): long option labels must not widen the panel past the screen. */
   grid-template-columns: minmax(0, 1fr);
-  gap: 0.625rem;
+  gap: 0.5rem;
+}
+
+/* "Pick on the map" and the DEMO points side by side. */
+.location-chooser__row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
 }
 
 /* Big tappable cards: icon · title + hint · chevron */
 .action-card {
   display: flex;
   align-items: center;
-  gap: 0.875rem;
+  gap: 0.75rem;
   width: 100%;
   min-height: 4rem;
-  padding: 0.625rem var(--space-3);
+  padding: 0.5rem 0.875rem;
   text-align: left;
   color: var(--color-text);
   background: var(--color-surface-2);
@@ -1149,35 +1185,52 @@ button svg.icon {
   height: 1.5rem;
 }
 
+.action-card--compact {
+  gap: 0.5rem;
+  min-height: 3.5rem;
+  padding: 0.375rem 0.625rem;
+}
+
+.action-card--compact .action-card__badge {
+  width: 2.25rem;
+  height: 2.25rem;
+}
+
+.action-card--compact .action-card__icon {
+  width: 1.375rem;
+  height: 1.375rem;
+}
+
+.action-card--compact .action-card__text strong {
+  font-size: 0.9375rem;
+}
+
 /* Simple mode (Adulto mayor, Niño/a): one big primary action */
 :root[data-profile='senior'] .location-chooser--simple > .action-card--primary,
 :root[data-profile='child'] .location-chooser--simple > .action-card--primary {
   min-height: 5.25rem;
 }
 
-.demo-select {
+/* DEMO points: styled as DEMO (warning colors, dashed edge) so a simulation is never
+   mistaken for a real position. */
+.demo-pick {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: var(--space-2);
-  padding: 0.75rem var(--space-3);
-  border: 1px solid var(--color-hairline);
-  border-radius: 1.125rem;
+  min-width: 0;
 }
 
-.demo-select label {
-  font-weight: 700;
-}
-
-.demo-select select {
+.demo-pick select {
   width: 100%;
   min-width: 0;
-  min-height: var(--touch-target);
-  padding: var(--space-2) 0.75rem;
+  min-height: 3.5rem;
+  padding: 0.375rem 0.625rem;
   font: inherit;
-  color: var(--color-text);
-  background: var(--color-surface);
-  border: 2px solid var(--color-border);
-  border-radius: var(--radius);
+  font-size: 0.9375rem;
+  font-weight: 800;
+  color: var(--color-warning-text);
+  background-color: var(--color-warning-soft);
+  border: 2px dashed var(--color-warning-border);
+  border-radius: 1.125rem;
+  cursor: pointer;
 }
 
 .route-wait {
@@ -1192,9 +1245,37 @@ button svg.icon {
   margin: 0;
 }
 
+/* Where the plan starts from, with a quick way to change it. */
+.location-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .location-source {
-  font-size: 0.9375rem;
+  flex: 1;
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.35;
   color: var(--color-text-muted);
+}
+
+.button--quiet {
+  flex: none;
+  padding-inline: 0.75rem;
+  font-size: 0.9375rem;
+  border-width: 1px;
+  border-color: var(--color-hairline);
+  background: var(--color-surface-2);
+}
+
+.low-accuracy {
+  display: flex;
+}
+
+.low-accuracy p {
+  margin: 0 0 0.5rem;
+  font-weight: 600;
 }
 
 /* Plan messages: icon + bold text + border, never color alone */
@@ -1242,16 +1323,17 @@ button svg.icon {
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  margin: 0 0 var(--space-2);
-  padding: var(--space-2) var(--space-3);
+  margin: 0 0 0.5rem;
+  padding: 0.375rem 0.75rem;
   color: var(--color-primary-contrast);
   background: var(--color-primary);
   border-radius: var(--radius);
-  font-size: 1.1rem;
+  font-size: 1rem;
+  line-height: 1.3;
 }
 
 .voice {
-  margin: var(--space-2) 0;
+  margin: 0;
 }
 
 .more-options summary {
@@ -1288,7 +1370,7 @@ button svg.icon {
 /* Official guidance, settings, data                                                         */
 
 .guidance {
-  margin-top: var(--space-3);
+  margin-top: 0.75rem;
   padding: var(--space-3);
   background: var(--color-surface);
   border: 2px solid var(--color-primary);
@@ -1385,24 +1467,44 @@ button svg.icon {
   color: var(--color-error);
 }
 
+/* New version: one slim row (update · dismiss) instead of a block. */
 .update-prompt {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-2) var(--space-3);
-  background: var(--color-surface);
-  border-bottom: 2px solid var(--color-primary);
+  gap: 0.5rem;
+  padding: 0.25rem 0.25rem 0.25rem var(--space-3);
+  color: var(--color-text);
+  background: var(--color-primary-soft);
+  border-bottom: 1px solid var(--color-hairline);
+}
+
+.update-prompt > .icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--color-primary);
 }
 
 .update-prompt p {
+  flex: 1;
+  min-width: 0;
   margin: 0;
-  flex: 1 1 12rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
 }
 
-.update-prompt__actions {
-  display: flex;
-  gap: var(--space-2);
+.update-prompt .button--primary {
+  padding-inline: 0.875rem;
+  box-shadow: none;
+}
+
+.update-prompt__dismiss {
+  display: grid;
+  place-items: center;
+  padding: 0;
+  color: var(--color-text);
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
 }
 
 .layer-list {
@@ -1504,7 +1606,7 @@ button svg.icon {
 .settings-card {
   display: grid;
   gap: var(--space-2);
-  margin-top: var(--space-3);
+  margin-top: 0.75rem;
 }
 
 .settings-card h2 {
@@ -1517,7 +1619,7 @@ button svg.icon {
 
 /* Emergency backpack checklist */
 .kit {
-  margin-top: var(--space-3);
+  margin-top: 0.75rem;
 }
 
 .kit h2 {
@@ -1567,19 +1669,26 @@ button svg.icon {
 }
 
 /* ---------------------------------------------------------------------------------------- */
-/* Onboarding                                                                                */
+/* Onboarding: every step fills exactly one screen. Text and actions keep their size; the    */
+/* illustration absorbs whatever height is left, so a phone never needs to scroll. Very     */
+/* short screens fall back to scrolling instead of clipping anything.                       */
 
 .onboarding {
+  display: flex;
+  flex-direction: column;
   min-height: 100dvh;
   background: var(--color-surface);
 }
 
 .onboarding__main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
   max-width: 32rem;
   margin: 0 auto;
 }
 
-.onboarding__progress,
 .tour__progress {
   margin: 0;
   font-size: 0.875rem;
@@ -1589,44 +1698,41 @@ button svg.icon {
   letter-spacing: 0.06em;
 }
 
-/* Welcome: the owner's illustration fills the hero; its open sky holds the logo and title.
-   The image is always a daytime scene, so the text stays navy in both themes (≥ 7:1 on the sky). */
+/* Welcome: sky with the logo and title, the owner's illustration, then a white sheet. */
+.welcome {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* The illustration is always a daytime scene, so the text stays navy in both themes
+   (≥ 7:1 on this sky blue, which is the image's own top color). */
 .welcome__hero {
-  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
   text-align: center;
   color: #0a1a3f;
-  /* Same blue as the image's top edge, in case the text needs more room than the sky. */
   background: #45affd;
   overflow: hidden;
 }
 
 .welcome__intro {
-  position: relative;
-  z-index: 1;
-  padding: max(var(--space-4), env(safe-area-inset-top)) var(--space-3) var(--space-3);
-}
-
-/* The image slides up under the text only by its cloudless sky band (top 36 % of its height =
-   45 % of its width; vertical % margins are relative to the width), so the text never sits on
-   clouds, hills or trees. */
-.welcome__art {
-  display: block;
-  width: 100%;
-  height: auto;
-  margin-top: -45%;
+  flex: none;
+  padding: max(var(--space-3), env(safe-area-inset-top)) var(--space-3) var(--space-1);
 }
 
 .welcome__logo {
   display: block;
-  width: 5.5rem;
-  height: 5.5rem;
+  width: 4rem;
+  height: 4rem;
   margin: 0 auto;
-  filter: drop-shadow(0 10px 18px rgba(10, 26, 63, 0.3));
+  filter: drop-shadow(0 8px 14px rgba(10, 26, 63, 0.3));
 }
 
 .welcome__title {
-  margin: 0.5rem 0 0.25rem;
-  font-size: 3.25rem;
+  margin: 0.25rem 0 0;
+  font-size: 2.75rem;
   font-weight: 900;
   line-height: 1;
   letter-spacing: -0.04em;
@@ -1634,24 +1740,47 @@ button svg.icon {
 
 .welcome__tagline {
   max-width: 22rem;
-  margin: 0 auto;
-  font-size: 1.125rem;
+  margin: 0.375rem auto 0;
+  font-size: 1rem;
   font-weight: 600;
-  line-height: 1.4;
+  line-height: 1.35;
+}
+
+/* Fills the free height; the crop keeps the family's faces on the path in view. */
+.welcome__art {
+  position: relative;
+  flex: 1 1 0;
+  min-height: 6rem;
+}
+
+.welcome__art img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 65%;
+}
+
+/* Blends the crop's top edge into the solid sky behind the title. */
+.welcome__art::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 1;
+  height: 1.5rem;
+  background: linear-gradient(#45affd, rgba(69, 175, 253, 0));
 }
 
 .welcome__sheet {
+  flex: none;
   position: relative;
   display: grid;
-  gap: 1.25rem;
-  margin-top: -1.75rem;
-  padding: var(--space-4) var(--space-3) max(var(--space-4), env(safe-area-inset-bottom));
+  gap: 0.875rem;
+  margin-top: -1.25rem;
+  padding: 1.25rem var(--space-3) max(var(--space-3), env(safe-area-inset-bottom));
   background: var(--color-surface);
   border-radius: var(--radius-xl) var(--radius-xl) 0 0;
-}
-
-.welcome__sheet .onboarding__progress {
-  text-align: center;
 }
 
 .features {
@@ -1660,7 +1789,7 @@ button svg.icon {
   padding: 0;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.75rem;
+  gap: 0.5rem;
   text-align: center;
 }
 
@@ -1668,28 +1797,29 @@ button svg.icon {
   display: grid;
   justify-items: center;
   align-content: start;
-  gap: 0.25rem;
-  font-size: 0.9375rem;
+  gap: 0.125rem;
+  font-size: 0.875rem;
   line-height: 1.3;
 }
 
 .feature strong {
-  font-size: 1rem;
+  font-size: 0.9375rem;
   font-weight: 800;
+  line-height: 1.25;
 }
 
 .feature__icon {
   display: grid;
   place-items: center;
-  width: 4rem;
-  height: 4rem;
-  margin-bottom: var(--space-1);
+  width: 3.25rem;
+  height: 3.25rem;
+  margin-bottom: 0.25rem;
   border-radius: 50%;
 }
 
 .feature__icon .icon {
-  width: 2rem;
-  height: 2rem;
+  width: 1.625rem;
+  height: 1.625rem;
 }
 
 .feature__icon[data-tone='green'] {
@@ -1722,22 +1852,24 @@ button svg.icon {
 
   .feature__icon {
     grid-row: span 2;
-    width: 3rem;
-    height: 3rem;
+    width: 2.75rem;
+    height: 2.75rem;
   }
 }
 
-/* Steps 2–4 */
+/* Steps 2–4: stepper · title · content · (flexible illustration) · actions + disclaimer. */
 .onboarding__page {
-  display: grid;
-  gap: var(--space-3);
-  padding: max(var(--space-4), env(safe-area-inset-top)) 1.25rem
-    max(var(--space-4), env(safe-area-inset-bottom));
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: max(var(--space-3), env(safe-area-inset-top)) 1.25rem
+    max(var(--space-3), env(safe-area-inset-bottom));
 }
 
 .onboarding__page h1 {
-  margin: 0.375rem 0 0;
-  font-size: clamp(2rem, 9vw, 2.75rem);
+  margin: 0.25rem 0 0;
+  font-size: clamp(1.75rem, 8vw, 2.5rem);
   font-weight: 900;
   line-height: 1.05;
   letter-spacing: -0.035em;
@@ -1745,8 +1877,8 @@ button svg.icon {
 }
 
 .onboarding__lead {
-  margin: var(--space-2) 0 0;
-  font-size: 1.125rem;
+  margin: 0;
+  font-size: 1.0625rem;
   color: var(--color-text-muted);
 }
 
@@ -1758,30 +1890,32 @@ button svg.icon {
   text-align: left;
 }
 
-.onboarding__split {
+.onboarding__art {
+  position: relative;
+  flex: 1 1 0;
+  min-height: 6rem;
+}
+
+.onboarding__art img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Actions and the disclaimer sit at the bottom of the screen, within thumb reach. */
+.onboarding__footer {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 46%;
-  align-items: center;
-  gap: var(--space-1);
-}
-
-.onboarding__split h1 {
-  font-size: clamp(1.75rem, 8vw, 2.5rem);
-}
-
-/* The phone bleeds to the right edge of the screen, as in the owner's mockup. */
-.phone-art {
-  width: calc(100% + 1.25rem);
-  max-width: none;
-  height: auto;
-  margin-right: -1.25rem;
+  gap: 0.75rem;
+  margin-top: auto;
 }
 
 .stepper {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 0 0 var(--space-2);
+  margin: 0;
   padding: 0;
   list-style: none;
 }
@@ -1790,17 +1924,17 @@ button svg.icon {
   position: relative;
   display: grid;
   place-items: center;
-  width: 2.25rem;
-  height: 2.25rem;
+  width: 2rem;
+  height: 2rem;
   border-radius: 50%;
-  font-size: 1rem;
+  font-size: 0.9375rem;
   font-weight: 800;
   color: var(--color-primary-contrast);
   background: var(--color-primary);
 }
 
 .stepper__dot + .stepper__dot {
-  margin-left: 2.25rem;
+  margin-left: 2rem;
 }
 
 .stepper__dot + .stepper__dot::before {
@@ -1808,19 +1942,19 @@ button svg.icon {
   position: absolute;
   right: 100%;
   top: 50%;
-  width: 2.25rem;
+  width: 2rem;
   height: 4px;
   background: var(--color-primary);
   transform: translateY(-50%);
 }
 
 .stepper__dot[data-state='current'] {
-  box-shadow: 0 0 0 5px var(--color-primary-soft);
+  box-shadow: 0 0 0 4px var(--color-primary-soft);
 }
 
 .stepper__dot[data-state='todo'] {
-  width: 1.75rem;
-  height: 1.75rem;
+  width: 1.5rem;
+  height: 1.5rem;
   background: var(--color-hairline);
 }
 
@@ -1831,32 +1965,33 @@ button svg.icon {
 .hint-card {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-3);
+  gap: 0.75rem;
+  padding: 0.75rem;
   background: var(--tint-blue-bg);
   border-radius: var(--radius-lg);
 }
 
 .hint-card p {
   margin: 0;
-  font-size: 1.0625rem;
+  font-size: 1rem;
   font-weight: 600;
+  line-height: 1.4;
 }
 
 .hint-card__icon {
   flex: none;
   display: grid;
   place-items: center;
-  width: 3.5rem;
-  height: 3.5rem;
+  width: 3rem;
+  height: 3rem;
   color: var(--tint-blue);
   background: var(--color-surface);
   border-radius: var(--radius);
 }
 
 .hint-card__icon .icon {
-  width: 2rem;
-  height: 2rem;
+  width: 1.75rem;
+  height: 1.75rem;
 }
 
 .hint-card[data-state='installed'] {
@@ -1878,49 +2013,42 @@ button svg.icon {
   align-items: flex-start;
   gap: var(--space-2);
   margin: 0;
-  font-size: 0.9375rem;
+  font-size: 0.875rem;
   color: var(--color-text-muted);
 }
 
 .privacy-note .icon {
-  width: 1.25rem;
-  height: 1.25rem;
+  width: 1.125rem;
+  height: 1.125rem;
   margin-top: 0.1em;
 }
 
-.ready-art {
-  justify-self: center;
-  width: min(100%, 19rem);
-  height: auto;
-}
-
-/* Profile cards: avatar · name + what changes · radio */
+/* Profile cards: avatar · name, age band and what changes · radio */
 .profile-picker {
   margin: 0;
   padding: 0;
   border: 0;
   display: grid;
-  gap: 0.75rem;
+  gap: 0.5rem;
   min-width: 0;
 }
 
 .profile-picker legend {
-  margin-bottom: 0.75rem;
-  font-size: 1.375rem;
+  margin-bottom: 0.5rem;
+  font-size: 1.125rem;
   font-weight: 800;
-  letter-spacing: -0.01em;
 }
 
 .profile-card {
   position: relative;
   display: flex;
   align-items: center;
-  gap: var(--space-3);
-  min-height: 5.5rem;
-  padding: 0.75rem var(--space-3);
+  gap: 0.75rem;
+  min-height: 4.5rem;
+  padding: 0.5rem 0.75rem;
   background: var(--color-surface);
   border: 2px solid var(--color-hairline);
-  border-radius: 1.25rem;
+  border-radius: 1.125rem;
   box-shadow: var(--shadow-card);
   cursor: pointer;
 }
@@ -1937,45 +2065,50 @@ button svg.icon {
 
 .avatar {
   flex: none;
-  width: 4.5rem;
-  height: 4.5rem;
+  width: 3.5rem;
+  height: 3.5rem;
+}
+
+/* Name and age band share the first line (the band wraps under the name if it must). */
+.profile-card__text {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px 0.5rem;
+  min-width: 0;
+}
+
+.profile-card__text strong {
+  font-size: 1.125rem;
+  font-weight: 800;
+  line-height: 1.25;
 }
 
 .profile-card__text .profile-card__age {
-  justify-self: start;
-  margin-top: 2px;
-  padding: 1px 0.5rem;
-  font-size: 0.875rem;
+  order: 1;
+  padding: 0 0.4375rem;
+  font-size: 0.75rem;
   font-weight: 800;
+  line-height: 1.5;
   color: var(--color-text);
   background: var(--color-surface-2);
   border: 1px solid var(--color-hairline);
   border-radius: 999px;
 }
 
-.profile-card__text {
-  flex: 1;
-  display: grid;
-  gap: 2px;
-  min-width: 0;
-}
-
-.profile-card__text strong {
-  font-size: 1.25rem;
-  font-weight: 800;
-  letter-spacing: -0.01em;
-}
-
-.profile-card__text span {
-  color: var(--color-text-muted);
-  font-size: 0.9375rem;
+.profile-card__text .profile-card__desc {
+  order: 2;
+  flex-basis: 100%;
+  font-size: 0.875rem;
   line-height: 1.35;
+  color: var(--color-text-muted);
 }
 
 .profile-card__radio {
   flex: none;
-  width: 1.75rem;
-  height: 1.75rem;
+  width: 1.625rem;
+  height: 1.625rem;
   border: 2px solid var(--color-border);
   border-radius: 50%;
 }
@@ -1994,6 +2127,58 @@ button svg.icon {
 .profile-card:has(input:focus-visible) {
   outline: 3px solid var(--color-focus);
   outline-offset: 3px;
+}
+
+/* Short screens (small phones with browser bars): tighter type, feature details only for
+   screen readers. */
+@media (max-height: 40rem) {
+  .welcome__logo {
+    width: 3rem;
+    height: 3rem;
+  }
+
+  .welcome__title {
+    font-size: 2.25rem;
+  }
+
+  .welcome__tagline {
+    font-size: 0.9375rem;
+  }
+
+  .feature__body {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .onboarding__page {
+    gap: 0.5rem;
+  }
+
+  .onboarding__page h1 {
+    font-size: 1.75rem;
+  }
+
+  .onboarding__lead {
+    font-size: 1rem;
+  }
+
+  .profile-picker {
+    gap: 0.375rem;
+  }
+
+  .profile-card {
+    min-height: 4rem;
+    padding: 0.375rem 0.625rem;
+  }
+
+  .avatar {
+    width: 3rem;
+    height: 3rem;
+  }
 }
 
 /* ---------------------------------------------------------------------------------------- */

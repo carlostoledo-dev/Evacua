@@ -105,7 +105,7 @@ test.describe('with an English browser', () => {
     await page.goto('/');
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Sector map');
     await expect(page.getByRole('complementary', { name: 'Important' })).toContainText(
-      'does not replace the authorities',
+      'does not replace SENAPRED',
     );
   });
 });

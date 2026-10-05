@@ -51,6 +51,28 @@ test('first run: welcome, install, profile, ready, then the tutorial over the ma
   expect(parseFloat(fontSize)).toBeCloseTo(16 * 1.3, 0);
 });
 
+test('every onboarding step fits one phone screen, without scrolling', async ({ page }) => {
+  const overflow = () =>
+    page.evaluate(() => document.documentElement.scrollHeight - window.innerHeight);
+  // Pixel 7 (412 × 839) and a small phone with browser bars (360 × 640).
+  for (const size of [null, { width: 360, height: 640 }]) {
+    if (size) await page.setViewportSize(size);
+    await page.goto('/');
+    await expect(page.getByTestId('onboarding-welcome')).toBeVisible();
+    expect(await overflow()).toBeLessThanOrEqual(1);
+    await page.getByRole('button', { name: 'Comenzar' }).click();
+    await expect(page.getByTestId('onboarding-install')).toBeVisible();
+    expect(await overflow()).toBeLessThanOrEqual(1);
+    await page.getByRole('button', { name: /Continuar|Ahora no/ }).click();
+    await expect(page.getByTestId('onboarding-profile')).toBeVisible();
+    expect(await overflow()).toBeLessThanOrEqual(1);
+    await page.getByRole('radio', { name: /Adulto mayor/ }).check();
+    await page.getByRole('button', { name: 'Continuar' }).click();
+    await expect(page.getByTestId('onboarding-ready')).toBeVisible();
+    expect(await overflow()).toBeLessThanOrEqual(1);
+  }
+});
+
 test('child profile: guardian message, no times, and the drill game', async ({ page }) => {
   await onboard(page, /Niño o niña/);
   await page.getByRole('button', { name: 'Ver el mapa' }).click();

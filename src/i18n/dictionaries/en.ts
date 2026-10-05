@@ -31,7 +31,7 @@ export const en: Dictionary = {
 
   'disclaimer.title': 'Important',
   'disclaimer.body':
-    'This app is a support tool. It does not replace the authorities (SENAPRED, SHOA, Municipality of Coronel). Always follow their official instructions.',
+    'A support tool only: it does not replace SENAPRED, SHOA or the Municipality of Coronel. Always follow their official instructions.',
 
   'status.label': 'App status',
   'status.offline.ready': 'Ready to use offline',
@@ -41,7 +41,7 @@ export const en: Dictionary = {
   'status.network.online': 'Online',
   'status.network.offline': 'Offline: using saved data',
 
-  'update.available': 'A new version is available.',
+  'update.available': 'A new version is ready.',
   'update.apply': 'Update',
   'update.dismiss': 'Later',
 
@@ -87,13 +87,13 @@ export const en: Dictionary = {
   'location.findRoute': 'Find my evacuation route',
   'location.useGps': 'Use your current location (GPS)',
   'location.pickOnMap': 'Pick on the map',
-  'location.pickOnMapHint': 'Tap the place where you are',
   'location.simulate': 'Simulate a location (DEMO)',
-  'location.simulatePlaceholder': 'Choose a test point…',
+  'location.simulatePlaceholder': 'Simulate (DEMO)',
   'location.locating': 'Finding your location… GPS answers faster outdoors.',
   'location.picking': 'Tap the map where you are.',
   'location.cancel': 'Cancel',
   'location.change': 'Change location',
+  'location.changeShort': 'Change',
   'location.error.unsupported': 'This browser cannot use GPS. Pick your location on the map.',
   'location.error.denied':
     'You did not allow location access. Pick your location on the map or allow it in the browser.',
@@ -103,7 +103,9 @@ export const en: Dictionary = {
   'location.source.gps': 'GPS location (accuracy ± {meters})',
   'location.source.manual': 'Location picked on the map',
   'location.source.demo': 'Simulated location: {label}',
-  'location.privacy': 'Your location is used only on this phone: never stored or sent.',
+  'location.privacy': 'Your location is never stored or sent.',
+  'location.lowAccuracy':
+    'Low accuracy (± {meters}): your position may be wrong. For a reliable result, pick your location on the map.',
 
   'route.title': 'Where to evacuate',
   'route.subtitle': 'Find your safe zone and follow the plan.',
@@ -146,11 +148,11 @@ export const en: Dictionary = {
   'onboarding.welcome.body':
     'It shows you where to evacuate in the Yobilo sector of Coronel during a tsunami or an earthquake.',
   'onboarding.welcome.official': 'Official data',
-  'onboarding.welcome.officialBody': 'Information from SENAPRED.',
-  'onboarding.welcome.offline': 'Works without internet',
-  'onboarding.welcome.offlineBody': 'It is stored on your phone.',
-  'onboarding.welcome.private': 'Your information is private',
-  'onboarding.welcome.privateBody': 'It never leaves your phone.',
+  'onboarding.welcome.officialBody': 'From SENAPRED.',
+  'onboarding.welcome.offline': 'Offline',
+  'onboarding.welcome.offlineBody': 'No internet needed.',
+  'onboarding.welcome.private': 'Private',
+  'onboarding.welcome.privateBody': 'Nothing leaves your phone.',
   'onboarding.start': 'Get started',
   'onboarding.next': 'Continue',
   'onboarding.back': 'Back',
@@ -160,24 +162,21 @@ export const en: Dictionary = {
   'onboarding.install.button': 'Install Evacua',
   'onboarding.install.done': 'Evacua is already installed on this phone.',
   'onboarding.install.ios': 'On iPhone: tap the Share button, then “Add to Home Screen”.',
-  'onboarding.install.other':
-    'You can install it from your browser menu (“Install app” or “Add to Home screen”).',
+  'onboarding.install.other': 'From the browser menu: “Install app” or “Add to Home screen”.',
   'onboarding.install.skip': 'Not now',
   'onboarding.profile.title': 'Create your profile',
-  'onboarding.profile.body': 'We adapt text size, voice and instructions for you.',
-  'onboarding.profile.privacy':
-    'We do not ask for your name or any other personal data. Your choice is only kept on this phone.',
+  'onboarding.profile.privacy': 'No personal data; it stays on your phone.',
   'onboarding.profile.who': 'Who will use Evacua?',
   'onboarding.ready.title': 'All set!',
   'onboarding.ready.body': 'Now we will show you how the map works in 5 short steps.',
   'onboarding.ready.button': 'Open the map',
 
   'profile.adult': 'Adult',
-  'profile.adult.description': 'Route, distances and estimated time.',
+  'profile.adult.description': 'Route, distances and time.',
   'profile.senior': 'Older adult',
-  'profile.senior.description': 'Large text, simple steps and a voice that reads instructions.',
+  'profile.senior.description': 'Large text, voice and simple steps.',
   'profile.child': 'Child',
-  'profile.child.description': 'Icons, short phrases and a game-like drill.',
+  'profile.child.description': 'Icons, short phrases and a drill.',
   'profile.child.age': 'Under {age}',
   'profile.adult.age': '{from} to {to} years old',
   'profile.senior.age': '{age} or older',
