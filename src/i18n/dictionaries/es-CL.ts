@@ -2,8 +2,8 @@
 export const esCL = {
   'app.name': 'Evacua',
   'app.tagline': 'Mapa de evacuación sin conexión',
-  'app.pilotSector': 'Sector piloto: Yobilo, Coronel',
-  'app.place': '{commune} · {sector}',
+  'app.pilotSector': 'Zona piloto: {sector} ({commune})',
+  'app.place': '{commune} · zona piloto',
 
   'nav.skipToContent': 'Saltar al contenido',
   'language.label': 'Idioma',
@@ -46,7 +46,7 @@ export const esCL = {
 
   'home.title': '¿Hacia dónde evacuar?',
   'home.intro':
-    'Evacua te muestra hacia dónde evacuar ante un tsunami o un terremoto, con datos oficiales e incluso sin internet.',
+    'Evacua te muestra hacia dónde evacuar ante un tsunami, con datos oficiales e incluso sin internet.',
 
   'hazard.tsunami': 'Tsunami',
   'hazard.wildfire': 'Incendio forestal',
@@ -135,7 +135,7 @@ export const esCL = {
   'route.alreadySafe':
     'Estás fuera del área a evacuar según SENAPRED. Mantente atento a las autoridades.',
   'route.outside':
-    'Estás fuera del sector piloto ({sector}). Evacua solo tiene datos de ese sector: sigue las indicaciones de las autoridades.',
+    'Estás fuera de la zona piloto ({sector}). Evacua solo tiene datos de esa zona: sigue las indicaciones de las autoridades.',
   'route.straightLine.title': 'Sin ruta calculada: esto es una línea recta, no un camino.',
   'route.straightLine.body':
     'Punto de encuentro {code} a {distance} en línea recta, hacia el {direction}.',
@@ -161,7 +161,7 @@ export const esCL = {
 
   'onboarding.step': 'Paso {current} de {total}',
   'onboarding.welcome.body':
-    'Te muestra hacia dónde evacuar en el sector Yobilo de Coronel ante un tsunami o un terremoto.',
+    'Te muestra hacia dónde evacuar ante un tsunami en Coronel: Lagunillas, Yobilo y el centro.',
   'onboarding.welcome.official': 'Datos oficiales',
   'onboarding.welcome.officialBody': 'De SENAPRED.',
   'onboarding.welcome.offline': 'Sin internet',
@@ -268,7 +268,7 @@ export const esCL = {
   'kit.item.11': 'Copia de documentos de identidad, pasaporte, nacimiento',
 
   'data.title': 'Datos del sector',
-  'data.sector': 'Sector {sector}, {commune} ({region})',
+  'data.sector': 'Zona piloto: {sector}. {commune}, {region}.',
   'data.serviceAreaExplainer':
     'El área piloto de este sector la definió Evacua; no es un límite administrativo oficial.',
   'data.loading': 'Cargando los datos del sector…',

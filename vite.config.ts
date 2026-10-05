@@ -22,7 +22,7 @@ export default defineConfig({
         name: 'Evacua',
         short_name: 'Evacua',
         description:
-          'Mapa de evacuación sin conexión para el sector Yobilo de Coronel. Herramienta de apoyo: sigue siempre a las autoridades.',
+          'Mapa de evacuación por tsunami, sin conexión, para la zona piloto de Coronel, Chile (Lagunillas, Yobilo y Coronel Centro). Herramienta de apoyo: sigue siempre a las autoridades.',
         lang: 'es-CL',
         dir: 'ltr',
         start_url: '/',

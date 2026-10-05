@@ -28,15 +28,16 @@ test('first run: welcome, install, profile, ready, then the tutorial over the ma
   await page.getByRole('button', { name: 'Ver el mapa' }).click();
   await waitForMap(page);
 
-  const tour = page.getByRole('dialog', { name: 'Elige la amenaza' });
+  // Four steps: with a single hazard there is no "choose the hazard" step.
+  const tour = page.getByRole('dialog', { name: 'Lee el mapa' });
   await expect(tour).toBeVisible();
   const viewport = page.viewportSize();
-  for (let step = 1; step <= 5; step++) {
+  for (let step = 1; step <= 4; step++) {
     const card = await page.locator('.tour__card').boundingBox();
     expect(card && viewport && card.y >= 0 && card.y + card.height <= viewport.height + 1).toBe(
       true,
     );
-    await page.getByRole('button', { name: step === 5 ? 'Entendido' : 'Siguiente' }).click();
+    await page.getByRole('button', { name: step === 4 ? 'Entendido' : 'Siguiente' }).click();
   }
   await expect(page.getByRole('dialog')).toHaveCount(0);
 

@@ -289,9 +289,10 @@ export default function MapView({
       map.jumpTo({ center: first, zoom: Math.max(map.getZoom(), 15) });
     } else {
       const bounds = points.reduce((b, p) => b.extend(p), new LngLatBounds(first, first));
-      // Keep the route clear of the floating panels, the controls and the DEMO label.
+      // Keep the route clear of the floating panels, the controls, the DEMO label and the
+      // "go here" label above the destination.
       map.fitBounds(bounds, {
-        padding: { top: insets.top + 88, right: 72, bottom: insets.bottom + 40, left: 56 },
+        padding: { top: insets.top + 120, right: 72, bottom: insets.bottom + 40, left: 56 },
         animate: false,
         maxZoom: 17,
       });

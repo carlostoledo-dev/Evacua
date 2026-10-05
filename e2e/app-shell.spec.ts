@@ -46,6 +46,7 @@ test('serves a strict CSP and only talks to its own origin, without errors', asy
   page,
   baseURL,
 }) => {
+  test.slow(); // waits for the offline precache
   const { requests, problems } = watchPage(page);
   const response = await page.goto('/');
   const csp = response?.headers()['content-security-policy'] ?? '';
@@ -60,6 +61,7 @@ test('serves a strict CSP and only talks to its own origin, without errors', asy
 });
 
 test('keeps working offline after the first visit', async ({ page, context }) => {
+  test.slow(); // waits for the offline precache
   await page.goto('/');
   await waitForOfflineReady(page);
 

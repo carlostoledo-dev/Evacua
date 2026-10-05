@@ -1,9 +1,12 @@
 import { expect, type Page } from '@playwright/test';
 
-/** The service worker finished precaching: the app bar says it works offline. */
+/**
+ * The service worker finished precaching (≈ 200 files, 5.6 MB): the app bar says it works
+ * offline. Slow with many parallel workers, so callers mark their test as slow.
+ */
 export async function waitForOfflineReady(page: Page) {
   await expect(page.getByTestId('connection-pill')).toHaveText('Lista sin internet', {
-    timeout: 20_000,
+    timeout: 75_000,
   });
 }
 
