@@ -1,8 +1,8 @@
 import { useId } from 'react';
+import { PROFILE_AGE } from '../../domain/constants.ts';
 import { PROFILE_IDS, type ProfileId } from '../../domain/profiles.ts';
 import { useI18n } from '../../i18n/I18nContext.ts';
 import type { MessageKey } from '../../i18n/translate.ts';
-import { ProfileAvatar } from './illustrations.tsx';
 
 const LABEL: Record<ProfileId, MessageKey> = {
   adult: 'profile.adult',
@@ -14,6 +14,22 @@ const DESCRIPTION: Record<ProfileId, MessageKey> = {
   adult: 'profile.adult.description',
   senior: 'profile.senior.description',
   child: 'profile.child.description',
+};
+
+// Legal age bands (sources in src/domain/constants.ts).
+const AGE: Record<ProfileId, { key: MessageKey; params: Record<string, number> }> = {
+  child: { key: 'profile.child.age', params: { age: PROFILE_AGE.childUnder } },
+  adult: {
+    key: 'profile.adult.age',
+    params: { from: PROFILE_AGE.childUnder, to: PROFILE_AGE.seniorFrom - 1 },
+  },
+  senior: { key: 'profile.senior.age', params: { age: PROFILE_AGE.seniorFrom } },
+};
+
+const AVATAR: Record<ProfileId, string> = {
+  child: '/images/avatar-child.webp',
+  adult: '/images/avatar-adult.webp',
+  senior: '/images/avatar-senior.webp',
 };
 
 export const PROFILE_LABEL = LABEL;
@@ -42,10 +58,11 @@ export function ProfilePicker({ value, onChange, legend }: ProfilePickerProps) {
               onChange(profile);
             }}
           />
-          <ProfileAvatar profile={profile} />
+          <img className="avatar" src={AVATAR[profile]} alt="" width="192" height="192" />
           <span className="profile-card__text">
             <strong>{t(LABEL[profile])}</strong>
             <span>{t(DESCRIPTION[profile])}</span>
+            <span className="profile-card__age">{t(AGE[profile].key, AGE[profile].params)}</span>
           </span>
           {/* Visual radio: ring, plus a filled dot when selected (shape, not only color). */}
           <span className="profile-card__radio" aria-hidden="true" />

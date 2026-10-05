@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { mphToMetersPerSecond, WALKING_SPEED_MPS } from './constants.ts';
+import { mphToMetersPerSecond, PROFILE_AGE, WALKING_SPEED_MPS } from './constants.ts';
+
+describe('PROFILE_AGE (Ley 21.430 and Ley 19.828, art. 1)', () => {
+  it('uses the legal ages: child under 14, older adult from 60', () => {
+    expect(PROFILE_AGE).toEqual({ childUnder: 14, seniorFrom: 60 });
+  });
+});
 
 describe('mphToMetersPerSecond', () => {
   it('converts miles per hour to meters per second', () => {

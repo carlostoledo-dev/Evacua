@@ -83,7 +83,7 @@ export function App() {
 
       <header className="app-bar">
         <div className="brand">
-          <img className="brand__logo" src="/logo.svg" alt="" width="40" height="40" />
+          <img className="brand__logo" src="/logo.png" alt="" width="40" height="40" />
           <div>
             <p className="brand__name">{t('app.name')}</p>
             {data && (

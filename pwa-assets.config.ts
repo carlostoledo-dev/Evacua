@@ -1,4 +1,4 @@
-// Generates the PWA icon set from public/logo.svg (run `npm run icons`, then commit the PNGs).
+// Generates the PWA icon set from public/logo.png (run `npm run icons`, then commit the PNGs).
 import { defineConfig, minimal2023Preset } from '@vite-pwa/assets-generator/config';
 
 const BRAND_BACKGROUND = '#0a1a3f';
@@ -10,5 +10,5 @@ export default defineConfig({
     maskable: { ...minimal2023Preset.maskable, resizeOptions: { background: BRAND_BACKGROUND } },
     apple: { ...minimal2023Preset.apple, resizeOptions: { background: BRAND_BACKGROUND } },
   },
-  images: ['public/logo.svg'],
+  images: ['public/logo.png'],
 });

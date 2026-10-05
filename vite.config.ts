@@ -16,7 +16,7 @@ export default defineConfig({
       // The UI offers "Actualizar" instead.
       registerType: 'prompt',
       injectRegister: false,
-      includeAssets: ['favicon.ico', 'logo.svg', 'apple-touch-icon-180x180.png'],
+      includeAssets: ['favicon.ico', 'logo.png', 'apple-touch-icon-180x180.png'],
       manifest: {
         id: '/',
         name: 'Evacua',

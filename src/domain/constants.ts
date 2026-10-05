@@ -27,6 +27,24 @@ export function mphToMetersPerSecond(mph: number): number {
  */
 export const MAX_SNAP_DISTANCE_M = 250;
 
+/**
+ * Age bands printed on the profile cards (labels only: nothing is computed from a user's age,
+ * and the age is never asked). Retrieved 2026-10-04 from Chile's Biblioteca del Congreso Nacional.
+ *
+ * Child: Ley 21.430, art. 1: "se entenderá por niño o niña a todo ser humano hasta los 14 años
+ * de edad, y por adolescente a los mayores de 14 y menores de 18 años de edad."
+ * https://www.bcn.cl/leychile/navegar?idNorma=1173643
+ *
+ * Older adult: Ley 19.828, art. 1: "llámase adulto mayor a toda persona que ha cumplido
+ * sesenta años." https://www.bcn.cl/leychile/navegar?idNorma=202950
+ */
+export const PROFILE_AGE = {
+  /** "Niño o niña": under 14 (from 14 on, the law says adolescent). */
+  childUnder: 14,
+  /** "Adulto mayor": 60 or older. */
+  seniorFrom: 60,
+} as const;
+
 export const WALKING_SPEED_MPS = {
   averageHealthyAdult: mphToMetersPerSecond(4),
   mobilityImpaired: mphToMetersPerSecond(2),
