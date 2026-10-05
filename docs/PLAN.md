@@ -279,6 +279,17 @@ explicit owner approval before the next one starts.
 - Low-accuracy readings: a location less precise than 100 m (`LOW_ACCURACY_M`, an engineering
   choice) shows a warning and a shortcut to pick the place on the map. Desktop browsers often
   report ± 20 km, which made "you are outside the pilot sector" look authoritative (e2e-tested).
+- Owner priorities (2026-10-04): light, asks for no data, tsunami-first, "tells you where to go and
+  the fastest route". Done: the result is a step list with icon, place, distance, direction and
+  time in large type ("Sal del área de peligro · 170 m · 2–4 min", "Punto de encuentro PE029 ·
+  620 m, hacia el noreste · 6–12 min"); the map labels the destination "Ve aquí". Voice reads the
+  same steps (direction included). The route is the shortest walk on the street network (at the
+  same pace, also the fastest); slopes are not modeled (no elevation data).
+- Lighter: one map font weight (Regular). Offline bundle 4.13 MB stored, ≈ 1.8 MB to download.
+- Coverage check (2026-10-04, SENAPRED Amenaza por Tsunami 2024): evacuation areas exist for 13
+  coastal communes of Biobío (≈ 50 sectors). Whole region with streets ≈ 500 MB (not viable
+  offline); whole coast ≈ 30–85 MB of map, viable only as per-commune downloads. Not started:
+  pending owner decision.
 
 ## Phase 6 — Security, tests, Lighthouse
 

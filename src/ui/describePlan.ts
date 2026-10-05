@@ -1,5 +1,6 @@
 // Turns an evacuation plan into the exact sentences shown on screen and read aloud, adapted to
 // the profile. One source for both, so voice never says something the screen does not.
+import { bearingDegrees, compassPoint } from '../domain/geo.ts';
 import type { HazardId } from '../domain/hazards.ts';
 import type { ProfileConfig } from '../domain/profiles.ts';
 import type { EvacuationPlan, StraightLineReason, TimeRange } from '../domain/routing.ts';
@@ -8,11 +9,23 @@ import { formatDistance } from './format.ts';
 
 type Translate = (key: MessageKey, params?: MessageParams) => string;
 
+/** One step of a route, laid out for a glance: what to do, how far and where, how long. */
+export interface PlanItem {
+  kind: 'exit' | 'meeting-point' | 'safe-area';
+  title: string;
+  detail: string;
+  /** Null when the profile hides times (children follow an adult). */
+  time: string | null;
+}
+
 export interface PlanDescription {
   tone: 'danger' | 'safe' | 'warning';
   headline: string;
   intro: string | null;
+  /** Full sentences: read aloud, and shown when there is no route to lay out. */
   steps: string[];
+  /** The same steps as `steps`, for the on-screen route summary (empty without a route). */
+  items: PlanItem[];
   notes: string[];
   straightLine: boolean;
 }
@@ -51,7 +64,14 @@ export function describePlan(
     if (profile.time === 'slow') return t('route.time.slow', { slow: range.slowestMinutes });
     return '';
   };
-  const base = { intro: null, steps: [], notes: [], straightLine: false };
+  const shortTime = (range: TimeRange) => {
+    if (profile.time === 'range') {
+      return t('route.time.rangeShort', { fast: range.fastestMinutes, slow: range.slowestMinutes });
+    }
+    if (profile.time === 'slow') return t('route.time.slowShort', { slow: range.slowestMinutes });
+    return null;
+  };
+  const base = { intro: null, steps: [], items: [], notes: [], straightLine: false };
 
   if (plan.kind === 'outside-service-area') {
     return { ...base, tone: 'warning', headline: t('route.outside', { sector: sectorName }) };
@@ -72,6 +92,7 @@ export function describePlan(
       tone,
       headline,
       intro,
+      items: [],
       straightLine: true,
       steps: [
         t('route.straightLine.title'),
@@ -86,6 +107,7 @@ export function describePlan(
   }
 
   const steps: string[] = [];
+  const items: PlanItem[] = [];
   if (plan.metersToSafety !== null && plan.timeToSafety) {
     steps.push(
       tidy(
@@ -95,25 +117,54 @@ export function describePlan(
         }),
       ),
     );
+    items.push({
+      kind: 'exit',
+      title: t('route.item.exit'),
+      detail: t('route.item.exitDetail', { distance: distance(plan.metersToSafety) }),
+      time: shortTime(plan.timeToSafety),
+    });
   }
   if (plan.destination.kind === 'meeting-point') {
+    // General direction from where the user stands, so "where to go" makes sense without a map.
+    const start = plan.path[0] ?? plan.destination.coordinates;
+    const direction = t(
+      `compass.${compassPoint(bearingDegrees(start, plan.destination.coordinates))}`,
+    );
+    const code = shortCode(plan.destination.code);
     steps.push(
       tidy(
         t(plan.inDangerZone ? 'route.toMeetingPoint' : 'route.nearestMeetingPoint', {
-          code: shortCode(plan.destination.code),
+          code,
+          direction,
           distance: distance(plan.meters),
           time: time(plan.time),
         }),
       ),
     );
+    items.push({
+      kind: 'meeting-point',
+      title: t('route.item.meetingPoint', { code }),
+      detail: t(items.length > 0 ? 'route.item.meetingDetailTotal' : 'route.item.meetingDetail', {
+        distance: distance(plan.meters),
+        direction,
+      }),
+      time: shortTime(plan.time),
+    });
   } else {
     steps.push(t('route.toSafeArea'));
+    items.push({
+      kind: 'safe-area',
+      title: t('route.item.safeArea'),
+      detail: t('route.toSafeArea'),
+      time: null,
+    });
   }
   return {
     tone,
     headline,
     intro,
     steps,
+    items,
     notes: profile.time === 'hidden' ? [] : [t('route.timeNote')],
     straightLine: false,
   };

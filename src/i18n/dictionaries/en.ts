@@ -113,8 +113,19 @@ export const en: Dictionary = {
   'route.inDanger': 'You are inside the tsunami evacuation area.',
   'route.notInDanger': 'You are outside the tsunami evacuation area.',
   'route.toSafety': 'Leave the danger area: {distance} on foot {time}.',
-  'route.toMeetingPoint': 'Then, meeting point {code}: {distance} in total {time}.',
-  'route.nearestMeetingPoint': 'Nearest meeting point: {code}, {distance} away {time}.',
+  'route.toMeetingPoint':
+    'Then meeting point {code}, to the {direction}: {distance} in total {time}.',
+  'route.nearestMeetingPoint':
+    'Nearest meeting point: {code}, to the {direction}, {distance} away {time}.',
+  'route.goHere': 'Go here',
+  'route.item.exit': 'Leave the danger area',
+  'route.item.exitDetail': '{distance} on foot along the marked route',
+  'route.item.meetingPoint': 'Meeting point {code}',
+  'route.item.meetingDetail': '{distance} to the {direction}',
+  'route.item.meetingDetailTotal': '{distance} in total, to the {direction}',
+  'route.item.safeArea': 'Nearest safe zone',
+  'route.time.rangeShort': '{fast}–{slow} min',
+  'route.time.slowShort': 'about {slow} min',
   'route.toSafeArea':
     'Destination: the nearest safe zone. No meeting point can be reached without going back into the danger area.',
   'route.alreadySafe':

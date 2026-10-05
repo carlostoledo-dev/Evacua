@@ -66,7 +66,7 @@ export const MEETING_POINT_ICON_ID = 'evacua-meeting-point';
 
 const BASEMAP_SOURCE = 'basemap';
 const LABEL_FONT = ['Noto Sans Regular'];
-const PLACE_FONT = ['Noto Sans Medium'];
+const PLACE_FONT = LABEL_FONT;
 const NAME: ExpressionSpecification = ['coalesce', ['get', 'name:es'], ['get', 'name']];
 
 /** MapLibre source id for an official data layer. */
@@ -248,7 +248,7 @@ export const DESTINATION_SOURCE = 'destination';
 
 const EMPTY: GeoJSON.FeatureCollection = { type: 'FeatureCollection', features: [] };
 
-function userLayers(p: MapPalette, youLabel: string): LayerSpecification[] {
+function userLayers(p: MapPalette, youLabel: string, goHereLabel: string): LayerSpecification[] {
   return [
     {
       id: 'user-route-casing',
@@ -274,6 +274,21 @@ function userLayers(p: MapPalette, youLabel: string): LayerSpecification[] {
         'circle-stroke-color': p.userRoute,
         'circle-stroke-width': 5,
       },
+    },
+    {
+      // Says in words where to go, above the destination ring.
+      id: 'destination-label',
+      type: 'symbol',
+      source: DESTINATION_SOURCE,
+      layout: {
+        'text-field': goHereLabel,
+        'text-font': PLACE_FONT,
+        'text-size': 15,
+        'text-offset': [0, -1.9],
+        'text-anchor': 'bottom',
+        'text-allow-overlap': true,
+      },
+      paint: { 'text-color': p.label, 'text-halo-color': p.labelHalo, 'text-halo-width': 2.5 },
     },
     {
       id: 'user-position',
@@ -311,6 +326,8 @@ export interface StyleInput {
   origin: string;
   /** Label of the user's position marker, already translated. */
   youLabel: string;
+  /** Label above the destination ("go here"), already translated. */
+  goHereLabel: string;
 }
 
 export function buildStyle({
@@ -319,6 +336,7 @@ export function buildStyle({
   palette,
   origin,
   youLabel,
+  goHereLabel,
 }: StyleInput): StyleSpecification {
   const overlaySources = Object.fromEntries(
     layers.map((layer) => [
@@ -349,7 +367,7 @@ export function buildStyle({
     layers: [
       ...basemapLayers(palette),
       ...layers.flatMap((layer) => overlayLayers(layer, palette)),
-      ...userLayers(palette, youLabel),
+      ...userLayers(palette, youLabel, goHereLabel),
     ],
   };
 }

@@ -11,7 +11,11 @@ const route: EvacuationPlan = {
   kind: 'route',
   inDangerZone: true,
   destination: { kind: 'meeting-point', code: '08102PE029', coordinates: [-73.14, -37.01] },
-  path: [],
+  // From the south-west of the meeting point.
+  path: [
+    [-73.15, -37.02],
+    [-73.14, -37.01],
+  ],
   meters: 619,
   time: { fastestMinutes: 6, slowestMinutes: 12 },
   metersToSafety: 174,
@@ -26,9 +30,28 @@ describe('describePlan', () => {
     expect(d.tone).toBe('danger');
     expect(d.steps).toEqual([
       'Sal del área de peligro: 170 m a pie (2–4 min).',
-      'Luego, punto de encuentro PE029: 620 m en total (6–12 min).',
+      'Luego, punto de encuentro PE029, hacia el noreste: 620 m en total (6–12 min).',
     ]);
     expect(d.notes).toHaveLength(1);
+  });
+
+  it('lays out the same steps for a glance: where to go, how far, how long', () => {
+    expect(describe_(route).items).toEqual([
+      {
+        kind: 'exit',
+        title: 'Sal del área de peligro',
+        detail: '170 m a pie por la ruta marcada',
+        time: '2–4 min',
+      },
+      {
+        kind: 'meeting-point',
+        title: 'Punto de encuentro PE029',
+        detail: '620 m en total, hacia el noreste',
+        time: '6–12 min',
+      },
+    ]);
+    expect(describe_(route, PROFILES.senior).items[0]?.time).toBe('unos 4 min');
+    expect(describe_(route, PROFILES.child).items.map((item) => item.time)).toEqual([null, null]);
   });
 
   it('senior: only the gentle-pace time', () => {

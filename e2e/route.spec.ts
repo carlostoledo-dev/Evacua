@@ -26,8 +26,12 @@ test('a DEMO location shows a labeled route: out of danger first, then a meeting
   await expect(panel(page)).toContainText('Ubicación simulada: Calle Yobilo');
   const plan = panel(page).getByTestId('plan');
   await expect(plan).toContainText('Estás dentro del área a evacuar por tsunami.');
-  await expect(plan).toContainText(/Sal del área de peligro: \d+ m a pie \(\d+–\d+ min\)/);
-  await expect(plan).toContainText(/punto de encuentro PE0\d\d/);
+  await expect(plan).toContainText(
+    /Sal del área de peligro \d+ m a pie por la ruta marcada \d+–\d+ min/,
+  );
+  await expect(plan).toContainText(
+    /Punto de encuentro PE0\d\d \d+ m en total, hacia el \S+ \d+–\d+ min/,
+  );
   await expect(plan).toContainText('No esperes: evacúa de inmediato.');
 });
 
@@ -48,7 +52,7 @@ test('outside the evacuation area it says so and points to the nearest meeting p
   await simulate(page, 'nuevo-horizonte');
   const plan = panel(page).getByTestId('plan');
   await expect(plan).toContainText('Estás fuera del área a evacuar por tsunami.');
-  await expect(plan).toContainText(/Punto de encuentro más cercano: PE0\d\d/);
+  await expect(plan).toContainText(/Punto de encuentro PE0\d\d \d+ m hacia el \S+/);
   await expect(plan).not.toContainText('Sal del área de peligro');
 });
 
