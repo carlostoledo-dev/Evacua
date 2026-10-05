@@ -1669,14 +1669,21 @@ button svg.icon {
 
 .onboarding__split {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(6.5rem, 36%);
+  grid-template-columns: minmax(0, 1fr) 46%;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--space-1);
 }
 
+.onboarding__split h1 {
+  font-size: clamp(1.75rem, 8vw, 2.5rem);
+}
+
+/* The phone bleeds to the right edge of the screen, as in the owner's mockup. */
 .phone-art {
-  width: 100%;
+  width: calc(100% + 1.25rem);
+  max-width: none;
   height: auto;
+  margin-right: -1.25rem;
 }
 
 .stepper {
@@ -1790,22 +1797,10 @@ button svg.icon {
   margin-top: 0.1em;
 }
 
-.ready-badge {
+.ready-art {
   justify-self: center;
-  display: grid;
-  place-items: center;
-  width: 6rem;
-  height: 6rem;
-  margin-top: var(--space-3);
-  color: #ffffff;
-  background: #1b6e3a;
-  border-radius: 50%;
-  box-shadow: 0 0 0 10px var(--tint-green-bg);
-}
-
-.ready-badge svg {
-  width: 3.25rem;
-  height: 3.25rem;
+  width: min(100%, 19rem);
+  height: auto;
 }
 
 /* Profile cards: avatar · name + what changes · radio */
