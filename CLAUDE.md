@@ -88,8 +88,9 @@ Delivery plan, phase status, pending decisions and risks: `docs/PLAN.md`.
 - Collect no personal data. No accounts, analytics, trackers, telemetry or third-party error reporting.
 - Profile and settings are stored on-device only (localStorage/IndexedDB), every access
   wrapped in try/catch; the app must work with defaults if storage throws.
-- The "account" is a local profile (owner request 2026-10-04): optional first name + profile
-  type, never sent anywhere, removable with "Borrar mis datos" (clears every `STORAGE_KEYS` entry).
+- The "account" is a local profile (owner request 2026-10-04): profile type only, no name
+  (owner decision 2026-10-04: the name field was removed to collect no personal data at all),
+  never sent anywhere, removable with "Borrar mis datos" (clears every `STORAGE_KEYS` entry).
 - Location is used in memory only: never persisted, never sent anywhere.
 
 ### 4. Security

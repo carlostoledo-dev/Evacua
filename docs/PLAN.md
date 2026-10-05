@@ -205,19 +205,18 @@ explicit owner approval before the next one starts.
 **Phase 5 notes (2026-10-04)**
 
 - First run: welcome → install (native prompt on Android/Chrome, instructions on iPhone,
-  "already installed" in standalone) → profile (optional name + Adulto / Adulto mayor /
-  Niño-a) → ready → 5-step tutorial over the map (card never leaves the screen, e2e-checked
+  "already installed" in standalone) → profile (Adulto / Adulto mayor / Niño-a, no name)
+  → ready → 5-step tutorial over the map (card never leaves the screen, e2e-checked
   for the largest text). Returning users go straight to the map.
 - Profiles: Adulto mayor = 1.3× text, slow-pace times only, voice reads new instructions
   automatically, one primary button. Niño/a = 1.15× text, "Busca a tu adulto o profesor y sigue
   el plan", no times, drill game. Screen text and voice come from the same function.
 - Backpack checklist: SENAPRED's official 11-item kit, verbatim, plus its note on special needs.
   SENAPRED publishes no per-profile kit, so none was invented.
-- Privacy: the profile (optional first name, type, tutorial flag) and checklist ticks live only in
+- Privacy: the profile (type and tutorial flag, no personal data) and checklist ticks live only in
   localStorage; "Borrar mis datos" removes every key (e2e-checked). Location is still never stored.
-- Look: iOS-like grouped background, accessible vivid blue (#0a5bd8, 6:1), glass bars, floating
-  segmented hazard control and route sheet over the map; solid fallback for
-  `prefers-reduced-transparency` and browsers without `backdrop-filter`.
+- Look (redesigned 2026-10-04, see below): navy header with the hazard control, white route
+  sheet with large action cards, accessible vivid blue (#0a5bd8, 6:1).
 - Dev-only dependency `@axe-core/playwright` is MPL-2.0; it is never shipped in the app.
 
 **Owner additions (2026-10-04)**
@@ -228,6 +227,25 @@ explicit owner approval before the next one starts.
 - Resolved against the rules: the profile lives **only on the device** (name optional, never
   sent, "Borrar mis datos" in Settings); glass keeps AA contrast, falls back to solid with
   `prefers-reduced-transparency`; illustrations are self-made SVG (no external images needed).
+
+**Owner redesign (2026-10-04, later the same day)**
+
+- The owner shared four mockups (welcome, install, profile, map) and asked for that style, and
+  to drop the name so the profile collects no personal data.
+- Done: new wave app icon (PNG icons regenerated); welcome hero with a self-drawn SVG coastal
+  scene and three feature tiles; progress stepper, big headings and Atrás/Continuar buttons on
+  each step; phone illustration with install instructions; profile cards with self-drawn avatars
+  and a visual radio; navy header (commune · sector from the manifest, green offline pill) with
+  the hazard segmented control; white route sheet with "Buscar mi ruta de evacuación" (GPS) and
+  "Elegir en el mapa" action cards; underlined active tab; yellow disclaimer bar (a card on the
+  onboarding pages). Glass translucency was dropped: everything is solid, so no fallback needed.
+- Not copied from the mockups: "Search for a place" (Evacua has no place search; the second card
+  is "Elegir en el mapa", which exists) and the mockup's illustrations (raster, AI-generated;
+  replaced by SVG drawn for the project).
+- Name removed: onboarding and Settings no longer ask for it; a `name` stored by an earlier build
+  is dropped on the next start (unit-tested; checked in the browser).
+- Verified: `npm run check` green, 29/29 e2e (axe WCAG 2.2 AA: 0 serious/critical on every
+  screen), visual check at 375 × 812 in light and dark.
 
 ## Phase 6 — Security, tests, Lighthouse
 
