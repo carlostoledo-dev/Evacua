@@ -288,8 +288,24 @@ explicit owner approval before the next one starts.
 - Lighter: one map font weight (Regular). Offline bundle 4.13 MB stored, ≈ 1.8 MB to download.
 - Coverage check (2026-10-04, SENAPRED Amenaza por Tsunami 2024): evacuation areas exist for 13
   coastal communes of Biobío (≈ 50 sectors). Whole region with streets ≈ 500 MB (not viable
-  offline); whole coast ≈ 30–85 MB of map, viable only as per-commune downloads. Not started:
-  pending owner decision.
+  offline); whole coast ≈ 30–85 MB of map, viable only as per-commune downloads.
+
+**Owner decisions (2026-10-04, later): tsunami only; pilot area = Lagunillas, Yobilo, Coronel Centro**
+
+- Tsunami only for now: earthquake set to `available: false` (wildfire already was). With a single
+  hazard there is no selector on the map or in "Qué hacer", and the tutorial drops its "choose the
+  hazard" step (4 steps). The map gains the band's height.
+- Pilot area: one rectangle from Lagunillas through Yobilo to the centre of Coronel, located with
+  OpenStreetMap. Re-imported SENAPRED layers (2 evacuation areas, 3 safe lines, 40 routes,
+  19 meeting points), basemap (168 tiles, 1.8 MB) and walking network (26,590 nodes). New DEMO
+  points: Lagunillas (calle Los Temus), Coronel Centro (Plaza de Armas) and an outside point
+  (Ruta 160, Compañía de Lota); the real-data test checks each against its label.
+- Finding to discuss with the owner: from Lagunillas, leaving SENAPRED's evacuation area on foot
+  is ≈ 3.2 km (30–60 min at FEMA paces); the whole coastal plain is inside the official area. The
+  app shows this as is; it must not suggest anything (e.g. vertical evacuation) without an
+  official source.
+- Offline bundle after the change: ≈ 5.6 MB stored, ≈ 2.4 MB to download (tiles 1.8 MB, walking
+  network 0.9 MB raw). E2e tests that wait for the offline precache are marked slow.
 
 ## Phase 6 — Security, tests, Lighthouse
 

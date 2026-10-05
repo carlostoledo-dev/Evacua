@@ -1,8 +1,9 @@
 # Evacua
 
-Offline-first evacuation map (installable web app / PWA) for the **Yobilo** pilot sector of
-Coronel, Chile. Pick a hazard — tsunami or earthquake — and the app shows official evacuation areas,
-routes and meeting points on an offline map, even with no internet.
+Offline-first tsunami evacuation map (installable web app / PWA) for a pilot area of Coronel,
+Chile: **Lagunillas, Yobilo and Coronel Centro**. It shows SENAPRED's official evacuation areas,
+routes and meeting points on an offline map, tells you where to go and the shortest walking
+route there, even with no internet.
 
 > **Support tool only.** It does not replace the authorities (SENAPRED, SHOA, Municipality of
 > Coronel). Always follow their official instructions.
@@ -14,9 +15,9 @@ The full README (problem, audience, demo, screenshots, architecture, limits, roa
 
 ## Resumen en español
 
-Mapa de evacuación que funciona sin internet para el sector Yobilo de Coronel. Eliges la
-amenaza (tsunami o terremoto) y te muestra las áreas, vías y puntos de encuentro oficiales
-en un mapa que funciona sin internet. Es una herramienta de apoyo: no reemplaza a SENAPRED, al SHOA ni a la
+Mapa de evacuación por tsunami que funciona sin internet, para una zona piloto de Coronel:
+Lagunillas, Yobilo y Coronel Centro. Te dice hacia dónde ir (el punto de encuentro oficial) y el
+camino más corto a pie, con las áreas, vías y puntos de encuentro oficiales de SENAPRED. Es una herramienta de apoyo: no reemplaza a SENAPRED, al SHOA ni a la
 Municipalidad. Sigue siempre sus instrucciones oficiales.
 
 ## Run it locally
