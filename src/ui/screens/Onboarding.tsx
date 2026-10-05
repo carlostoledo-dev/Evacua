@@ -14,7 +14,6 @@ import {
   ShareIcon,
   ShieldCheckIcon,
 } from '../components/icons.tsx';
-import { PhoneArt } from '../components/illustrations.tsx';
 import { ProfilePicker } from '../components/ProfilePicker.tsx';
 import { useInstall, type InstallState } from '../hooks/useInstall.ts';
 
@@ -201,7 +200,13 @@ export function Onboarding({ onDone }: OnboardingProps) {
             </h1>
             <p className="onboarding__lead">{t('onboarding.install.body')}</p>
           </div>
-          <PhoneArt />
+          <img
+            className="phone-art"
+            src="/images/install-phone.webp"
+            alt=""
+            width="640"
+            height="798"
+          />
         </div>
         <div className="hint-card" data-state={install.state}>
           <span className="hint-card__icon">
@@ -269,9 +274,7 @@ export function Onboarding({ onDone }: OnboardingProps) {
       <div className="onboarding__page onboarding__page--center" data-testid="onboarding-ready">
         <Stepper index={index} />
         {progress}
-        <span className="ready-badge">
-          <CheckMark />
-        </span>
+        <img className="ready-art" src="/images/ready.webp" alt="" width="720" height="748" />
         <h1 ref={titleRef} tabIndex={-1}>
           {t('onboarding.ready.title')}
         </h1>
