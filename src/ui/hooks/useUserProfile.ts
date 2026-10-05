@@ -10,7 +10,12 @@ import {
 
 /** The on-device profile; null until onboarding finishes. Applies the text scale to the page. */
 export function useUserProfile() {
-  const [user, setUser] = useState<UserProfile | null>(() => readUserProfile(browserStore));
+  const [user, setUser] = useState<UserProfile | null>(() => {
+    const stored = readUserProfile(browserStore);
+    // Rewriting is idempotent and drops a `name` that an earlier build may have stored.
+    if (stored) writeUserProfile(browserStore, stored);
+    return stored;
+  });
   const config: ProfileConfig = PROFILES[user?.profile ?? DEFAULT_PROFILE];
 
   useEffect(() => {

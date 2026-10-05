@@ -4,19 +4,17 @@ import { z } from 'zod';
 import { PROFILE_IDS, type ProfileId } from '../domain/profiles.ts';
 import { STORAGE_KEYS, type KeyValueStore } from './storage.ts';
 
-export const NAME_MAX_LENGTH = 40;
-
 const userProfileSchema = z.object({
   version: z.literal(1),
-  /** Optional first name, only to greet the user. */
-  name: z.string().trim().max(NAME_MAX_LENGTH).default(''),
+  // No name or any other personal data (owner decision 2026-10-04). Profiles saved by earlier
+  // builds may still hold a `name`: zod strips it on read and the next write drops it.
   profile: z.enum(PROFILE_IDS),
   tourDone: z.boolean().default(false),
 });
 export type UserProfile = z.infer<typeof userProfileSchema>;
 
-export function createUserProfile(name: string, profile: ProfileId): UserProfile {
-  return { version: 1, name: name.trim().slice(0, NAME_MAX_LENGTH), profile, tourDone: false };
+export function createUserProfile(profile: ProfileId): UserProfile {
+  return { version: 1, profile, tourDone: false };
 }
 
 /** null when there is no profile yet, or when stored data is unreadable (then onboarding runs again). */

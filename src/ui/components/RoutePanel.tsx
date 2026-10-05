@@ -92,6 +92,12 @@ export function RoutePanel({
   );
   const text = description ? spokenText(description, guardian) : null;
 
+  // A new location shows a new plan: bring the sheet back to its top so the plan is in view.
+  const panelRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    panelRef.current?.scrollTo({ top: 0 });
+  }, [location.kind, plan]);
+
   // Older-adult profile: read new instructions aloud right away (the user just acted).
   const spokenRef = useRef<string | null>(null);
   const { say } = speech;
@@ -103,12 +109,14 @@ export function RoutePanel({
 
   return (
     <section
+      ref={panelRef}
       className="route-panel glass-sheet"
       aria-labelledby="route-title"
       data-testid="route-panel"
       data-tour="route"
     >
       <h2 id="route-title">{t('route.title')}</h2>
+      <p className="route-panel__subtitle">{t('route.subtitle')}</p>
 
       {guardian && (
         <p className="guardian" data-testid="guardian">

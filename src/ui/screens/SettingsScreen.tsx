@@ -35,7 +35,7 @@ export function SettingsScreen({
         {t('settings.title')}
       </h1>
       <ProfileSettings
-        key={`${user.profile}-${user.name}`}
+        key={user.profile}
         user={user}
         onSave={onSaveUser}
         onReplayTour={onReplayTour}

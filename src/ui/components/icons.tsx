@@ -199,39 +199,11 @@ export function AutoIcon(props: IconProps) {
   );
 }
 
-export function PersonIcon(props: IconProps) {
-  return (
-    <Svg {...props}>
-      <circle cx="12" cy="6" r="3" />
-      <path d="M12 9v7M8 21l4-5 4 5M7 12h10" />
-    </Svg>
-  );
-}
-
-export function SeniorIcon(props: IconProps) {
-  return (
-    <Svg {...props}>
-      <circle cx="10" cy="5" r="2.5" />
-      <path d="M10 8v6l-3 7M10 14l3 7M10 10l4 2" />
-      <path d="M17 11v10M17 11a2 2 0 0 0-2-2" />
-    </Svg>
-  );
-}
-
 export function ChildIcon(props: IconProps) {
   return (
     <Svg {...props}>
       <circle cx="12" cy="8" r="3.5" />
       <path d="M12 11.5v5M9 21l3-4.5 3 4.5M8.5 14h7" />
-    </Svg>
-  );
-}
-
-export function OfflineIcon(props: IconProps) {
-  return (
-    <Svg {...props}>
-      <path d="M12 3v12M7 10l5 5 5-5" />
-      <path d="M5 20h14" />
     </Svg>
   );
 }
@@ -268,6 +240,59 @@ export function InstallIcon(props: IconProps) {
     <Svg {...props}>
       <rect x="6" y="2" width="12" height="20" rx="3" />
       <path d="M12 7v7M9 11l3 3 3-3M10 18h4" />
+    </Svg>
+  );
+}
+
+export function ArrowRightIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M4 12h16M14 6l6 6-6 6" />
+    </Svg>
+  );
+}
+
+export function ArrowLeftIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M20 12H4M10 6l-6 6 6 6" />
+    </Svg>
+  );
+}
+
+export function ChevronRightIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="m9 5 7 7-7 7" />
+    </Svg>
+  );
+}
+
+/** iOS "Share" button: a box with an arrow leaving it. */
+export function ShareIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M12 3v12M8 7l4-4 4 4" />
+      <path d="M8 10H6a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-9a1 1 0 0 0-1-1h-2" />
+    </Svg>
+  );
+}
+
+export function WalkIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <circle cx="13" cy="4" r="2" />
+      <path d="m9 21 2.5-6 2.5 2v4M7 11l3-3.5 3.5-.5 2 3.5 2.5 1" />
+      <path d="M13.5 7 11.5 15" />
+    </Svg>
+  );
+}
+
+export function PinIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M12 22s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12Z" />
+      <circle cx="12" cy="10" r="2.5" />
     </Svg>
   );
 }

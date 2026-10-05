@@ -1,7 +1,7 @@
-import { useId, useState } from 'react';
+import { useState } from 'react';
 import type { ProfileId } from '../../domain/profiles.ts';
 import { useI18n } from '../../i18n/I18nContext.ts';
-import { NAME_MAX_LENGTH, type UserProfile } from '../../platform/userProfile.ts';
+import type { UserProfile } from '../../platform/userProfile.ts';
 import { ProfilePicker } from './ProfilePicker.tsx';
 
 interface ProfileSettingsProps {
@@ -13,31 +13,15 @@ interface ProfileSettingsProps {
 
 export function ProfileSettings({ user, onSave, onReplayTour, onDeleteAll }: ProfileSettingsProps) {
   const { t } = useI18n();
-  const [name, setName] = useState(user.name);
   const [profile, setProfile] = useState<ProfileId>(user.profile);
   const [saved, setSaved] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
-  const nameId = useId();
-  const dirty = name.trim() !== user.name || profile !== user.profile;
+  const dirty = profile !== user.profile;
 
   return (
     <section className="glass-card settings-card" aria-labelledby="profile-settings-title">
       <h2 id="profile-settings-title">{t('settings.profile')}</h2>
       <p className="muted small">{t('settings.profileHint')}</p>
-      <div className="field">
-        <label htmlFor={nameId}>{t('onboarding.profile.name')}</label>
-        <input
-          id={nameId}
-          type="text"
-          value={name}
-          maxLength={NAME_MAX_LENGTH}
-          autoComplete="given-name"
-          onChange={(event) => {
-            setName(event.target.value);
-            setSaved(false);
-          }}
-        />
-      </div>
       <ProfilePicker
         value={profile}
         onChange={(next) => {
@@ -51,7 +35,7 @@ export function ProfileSettings({ user, onSave, onReplayTour, onDeleteAll }: Pro
         className="button button--primary button--block"
         disabled={!dirty}
         onClick={() => {
-          onSave({ ...user, name: name.trim().slice(0, NAME_MAX_LENGTH), profile });
+          onSave({ ...user, profile });
           setSaved(true);
         }}
       >

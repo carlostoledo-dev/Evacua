@@ -3,6 +3,7 @@ export const esCL = {
   'app.name': 'Evacua',
   'app.tagline': 'Mapa de evacuación sin conexión',
   'app.pilotSector': 'Sector piloto: Yobilo, Coronel',
+  'app.place': '{commune} · {sector}',
 
   'nav.skipToContent': 'Saltar al contenido',
   'language.label': 'Idioma',
@@ -84,8 +85,10 @@ export const esCL = {
 
   'location.demoBadge': 'DEMO',
   'location.title': 'Tu ubicación',
-  'location.useGps': 'Usar mi ubicación (GPS)',
+  'location.findRoute': 'Buscar mi ruta de evacuación',
+  'location.useGps': 'Usa tu ubicación actual (GPS)',
   'location.pickOnMap': 'Elegir en el mapa',
+  'location.pickOnMapHint': 'Toca el lugar donde estás',
   'location.simulate': 'Simular ubicación (DEMO)',
   'location.simulatePlaceholder': 'Elige un punto de prueba…',
   'location.locating': 'Buscando tu ubicación… Al aire libre el GPS responde más rápido.',
@@ -106,6 +109,7 @@ export const esCL = {
   'location.privacy': 'Tu ubicación se usa solo en este teléfono: no se guarda ni se envía.',
 
   'route.title': 'Hacia dónde evacuar',
+  'route.subtitle': 'Encuentra tu zona segura y sigue el plan.',
   'route.inDanger': 'Estás dentro del área a evacuar por tsunami.',
   'route.notInDanger': 'Estás fuera del área a evacuar por tsunami.',
   'route.toSafety': 'Sal del área de peligro: {distance} a pie {time}.',
@@ -141,18 +145,20 @@ export const esCL = {
   'compass.NW': 'noroeste',
 
   'onboarding.step': 'Paso {current} de {total}',
-  'onboarding.welcome.title': 'Bienvenido a Evacua',
   'onboarding.welcome.body':
     'Te muestra hacia dónde evacuar en el sector Yobilo de Coronel ante un tsunami o un terremoto.',
-  'onboarding.welcome.official': 'Datos oficiales de SENAPRED',
+  'onboarding.welcome.official': 'Datos oficiales',
+  'onboarding.welcome.officialBody': 'Información de SENAPRED.',
   'onboarding.welcome.offline': 'Funciona sin internet',
-  'onboarding.welcome.private': 'Tus datos no salen de este teléfono',
+  'onboarding.welcome.offlineBody': 'Queda guardada en tu teléfono.',
+  'onboarding.welcome.private': 'Tu información es privada',
+  'onboarding.welcome.privateBody': 'No sale de tu teléfono.',
   'onboarding.start': 'Comenzar',
   'onboarding.next': 'Continuar',
   'onboarding.back': 'Atrás',
-  'onboarding.install.title': 'Instálala en tu teléfono',
+  'onboarding.install.title': 'Instala Evacua en tu teléfono',
   'onboarding.install.body':
-    'Así la abres con un toque desde tu pantalla de inicio, igual que cualquier app, aunque no tengas internet.',
+    'Ábrela desde tu pantalla de inicio como cualquier otra app, incluso sin internet.',
   'onboarding.install.button': 'Instalar Evacua',
   'onboarding.install.done': 'Evacua ya está instalada en este teléfono.',
   'onboarding.install.ios': 'En iPhone: toca el botón Compartir y luego «Agregar a inicio».',
@@ -160,12 +166,11 @@ export const esCL = {
     'Puedes instalarla desde el menú de tu navegador («Instalar app» o «Agregar a la pantalla de inicio»).',
   'onboarding.install.skip': 'Ahora no',
   'onboarding.profile.title': 'Crea tu perfil',
-  'onboarding.profile.body': 'Adaptamos el tamaño de letra, la voz y las indicaciones a ti.',
-  'onboarding.profile.name': '¿Cómo te llamas? (opcional)',
-  'onboarding.profile.nameHint': 'Solo queda guardado en este teléfono. No se envía a nadie.',
+  'onboarding.profile.body': 'Adaptamos el tamaño del texto, la voz y las indicaciones para ti.',
+  'onboarding.profile.privacy':
+    'No pedimos tu nombre ni otros datos personales. Tu elección solo se guarda en este teléfono.',
   'onboarding.profile.who': '¿Quién usará Evacua?',
   'onboarding.ready.title': '¡Todo listo!',
-  'onboarding.ready.titleNamed': '¡Todo listo, {name}!',
   'onboarding.ready.body': 'Ahora te mostramos cómo funciona el mapa en 5 pasos cortos.',
   'onboarding.ready.button': 'Ver el mapa',
 
@@ -224,7 +229,7 @@ export const esCL = {
   'settings.delete': 'Borrar mis datos',
   'settings.deleteConfirm': 'Toca otra vez para borrar tu perfil, idioma y tema de este teléfono',
   'settings.privacy':
-    'Evacua no tiene cuentas ni servidores: tu nombre, tu perfil y tus ajustes viven solo en este teléfono, y tu ubicación nunca se guarda.',
+    'Evacua no tiene cuentas ni servidores y no pide tu nombre: tu perfil y tus ajustes viven solo en este teléfono, y tu ubicación nunca se guarda.',
 
   // Verbatim from SENAPRED (https://senapred.cl/kit-de-emergencia/), retrieved 2026-10-04.
   'kit.title': 'Mochila de emergencia',

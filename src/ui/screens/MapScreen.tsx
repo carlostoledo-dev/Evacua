@@ -76,7 +76,12 @@ export function MapScreen({
       className="screen screen--map"
       aria-labelledby="view-title-map"
       hidden={!active}
-      style={{ '--sheet-h': `${String(sheetHeight)}px` } as CSSProperties}
+      style={
+        {
+          '--top-h': `${String(topHeight)}px`,
+          '--sheet-h': `${String(sheetHeight)}px`,
+        } as CSSProperties
+      }
     >
       <h1 id="view-title-map" className="visually-hidden" tabIndex={-1}>
         {t('map.title')}

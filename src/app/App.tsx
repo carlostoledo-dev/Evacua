@@ -83,8 +83,15 @@ export function App() {
 
       <header className="app-bar">
         <div className="brand">
-          <img className="brand__logo" src="/logo.svg" alt="" width="36" height="36" />
-          <p className="brand__name">{t('app.name')}</p>
+          <img className="brand__logo" src="/logo.svg" alt="" width="40" height="40" />
+          <div>
+            <p className="brand__name">{t('app.name')}</p>
+            {data && (
+              <p className="brand__place">
+                {t('app.place', { commune: data.manifest.name, sector: data.manifest.sector.name })}
+              </p>
+            )}
+          </div>
         </div>
         <ConnectionPill offline={serviceWorker.offline} online={online} />
       </header>

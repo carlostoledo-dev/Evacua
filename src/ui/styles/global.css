@@ -1,45 +1,62 @@
 /* Evacua: mobile-first app shell.
-   Light theme: high contrast for outdoor sunlight. Dark theme: pure black for OLED battery savings.
-   All text pairs meet WCAG AA (≥ 4.5:1); borders and focus rings ≥ 3:1. No animations. */
+   Light theme: high contrast for outdoor sunlight, navy header, white cards.
+   Dark theme: pure black for OLED battery savings.
+   All text pairs meet WCAG AA (≥ 4.5:1); control borders and focus rings ≥ 3:1.
+   No animations. System fonts only: nothing to download. */
 
 :root {
   color-scheme: light;
 
-  --color-bg: #f2f2f7;
+  --color-bg: #f3f5fa;
   --color-surface: #ffffff;
-  --color-text: #0b1220;
-  --color-text-muted: #3d4a5c;
+  --color-surface-2: #eef2f8;
+  --color-text: #0b1530;
+  --color-text-muted: #45526a;
   --color-primary: #0a5bd8;
   --color-primary-contrast: #ffffff;
-  --color-bar: rgba(242, 242, 247, 0.82);
-  --color-bar-text: #0b1220;
+  --color-primary-soft: #e6f0ff;
+  --color-header: #0a1a3f;
+  --color-header-text: #ffffff;
+  --color-header-muted: #b4ccf5;
+  --color-header-focus: #ffd166;
   --color-border: #6b7a8f;
+  --color-hairline: #d5dce7;
   --color-focus: #0a5bd8;
-  --color-warning-bg: #fff4ce;
-  --color-warning-text: #3d2a00;
+  --color-warning-bg: #ffe17a;
+  --color-warning-soft: #fff5de;
+  --color-warning-text: #2e2100;
   --color-warning-border: #8a6100;
+  --color-warning-icon: #b45309;
   --color-ok: #1b6e3a;
   --color-pending: #6a4a00;
   --color-error: #a4161a;
+  /* Tinted icon wells (onboarding features, hint cards). */
+  --tint-green-bg: #e2f5e8;
+  --tint-green: #1b6e3a;
+  --tint-blue-bg: #e6f0ff;
+  --tint-blue: #0a5bd8;
+  --tint-purple-bg: #efe8ff;
+  --tint-purple: #6230c9;
+  /* Welcome hero sky. */
+  --hero-top: #a8dbff;
+  --hero-bottom: #e6f5ff;
+  --hero-text: #0a1a3f;
   /* Map overlay colors: keep in sync with LIGHT_PALETTE in src/ui/map/style.ts */
   --map-area: #c8102e;
   --map-safe-line: #6a1b9a;
   --map-route: #0b6e3a;
 
-  --radius: 0.875rem;
-  --radius-lg: 1.375rem;
-  /* Glass materials (contrast-checked: text stays ≥ 4.5:1 over any map color). */
-  --glass-bg: rgba(255, 255, 255, 0.8);
-  --glass-strong: rgba(255, 255, 255, 0.92);
-  --glass-border: rgba(255, 255, 255, 0.7);
-  --glass-shadow: 0 8px 32px rgba(15, 23, 42, 0.16);
-  --glass-blur: saturate(180%) blur(20px);
+  --radius: 1rem;
+  --radius-lg: 1.5rem;
+  --radius-xl: 1.875rem;
+  --shadow-card: 0 1px 3px rgba(15, 23, 42, 0.06), 0 8px 24px rgba(15, 23, 42, 0.08);
+  --shadow-float: 0 8px 28px rgba(15, 23, 42, 0.18);
+  --shadow-primary: 0 8px 20px rgba(10, 91, 216, 0.3);
   --space-1: 0.25rem;
   --space-2: 0.5rem;
   --space-3: 1rem;
   --space-4: 1.5rem;
   --touch-target: 48px;
-  /* System fonts: nothing to download, fast on any phone. */
   --font-body: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 
@@ -48,25 +65,39 @@
   :root:not([data-theme='light']) {
     color-scheme: dark;
     --color-bg: #000000;
-    --color-surface: #0d0f12;
+    --color-surface: #0f1218;
+    --color-surface-2: #181d27;
     --color-text: #f1f4f8;
     --color-text-muted: #b8c3d1;
     --color-primary: #64a8ff;
     --color-primary-contrast: #000000;
-    --color-bar: rgba(0, 0, 0, 0.78);
-    --color-bar-text: #f1f4f8;
-    --glass-bg: rgba(22, 22, 26, 0.78);
-    --glass-strong: rgba(22, 22, 26, 0.92);
-    --glass-border: rgba(255, 255, 255, 0.12);
-    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    --color-primary-soft: #0e2240;
+    --color-header: #050c1f;
+    --color-header-text: #f1f4f8;
+    --color-header-muted: #a9c0e8;
     --color-border: #5d6878;
+    --color-hairline: #2a3140;
     --color-focus: #ffd166;
-    --color-warning-bg: #1f1800;
+    --color-warning-bg: #2a2000;
+    --color-warning-soft: #1f1800;
     --color-warning-text: #ffe7a3;
     --color-warning-border: #d9a400;
+    --color-warning-icon: #ffc94d;
     --color-ok: #7ee2a0;
     --color-pending: #ffd166;
     --color-error: #ff9a9a;
+    --tint-green-bg: #0f2a19;
+    --tint-green: #7ee2a0;
+    --tint-blue-bg: #0e2240;
+    --tint-blue: #8cc2ff;
+    --tint-purple-bg: #221a3d;
+    --tint-purple: #c9b0ff;
+    --hero-top: #0a1a3f;
+    --hero-bottom: #16346e;
+    --hero-text: #ffffff;
+    --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.5);
+    --shadow-float: 0 8px 28px rgba(0, 0, 0, 0.6);
+    --shadow-primary: none;
     /* Keep in sync with DARK_PALETTE in src/ui/map/style.ts */
     --map-area: #ff6b7f;
     --map-safe-line: #d59cff;
@@ -78,25 +109,39 @@
 :root[data-theme='dark'] {
   color-scheme: dark;
   --color-bg: #000000;
-  --color-surface: #0d0f12;
+  --color-surface: #0f1218;
+  --color-surface-2: #181d27;
   --color-text: #f1f4f8;
   --color-text-muted: #b8c3d1;
   --color-primary: #64a8ff;
   --color-primary-contrast: #000000;
-  --color-bar: rgba(0, 0, 0, 0.78);
-  --color-bar-text: #f1f4f8;
-  --glass-bg: rgba(22, 22, 26, 0.78);
-  --glass-strong: rgba(22, 22, 26, 0.92);
-  --glass-border: rgba(255, 255, 255, 0.12);
-  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  --color-primary-soft: #0e2240;
+  --color-header: #050c1f;
+  --color-header-text: #f1f4f8;
+  --color-header-muted: #a9c0e8;
   --color-border: #5d6878;
+  --color-hairline: #2a3140;
   --color-focus: #ffd166;
-  --color-warning-bg: #1f1800;
+  --color-warning-bg: #2a2000;
+  --color-warning-soft: #1f1800;
   --color-warning-text: #ffe7a3;
   --color-warning-border: #d9a400;
+  --color-warning-icon: #ffc94d;
   --color-ok: #7ee2a0;
   --color-pending: #ffd166;
   --color-error: #ff9a9a;
+  --tint-green-bg: #0f2a19;
+  --tint-green: #7ee2a0;
+  --tint-blue-bg: #0e2240;
+  --tint-blue: #8cc2ff;
+  --tint-purple-bg: #221a3d;
+  --tint-purple: #c9b0ff;
+  --hero-top: #0a1a3f;
+  --hero-bottom: #16346e;
+  --hero-text: #ffffff;
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.5);
+  --shadow-float: 0 8px 28px rgba(0, 0, 0, 0.6);
+  --shadow-primary: none;
   --map-area: #ff6b7f;
   --map-safe-line: #d59cff;
   --map-route: #5fe39a;
@@ -134,14 +179,18 @@ body {
 }
 
 h1 {
-  font-size: 1.6rem;
-  line-height: 1.2;
+  font-size: 1.75rem;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
   margin: 0 0 var(--space-2);
 }
 
 h2 {
   font-size: 1.3rem;
+  font-weight: 800;
   line-height: 1.25;
+  letter-spacing: -0.01em;
   margin: var(--space-3) 0 var(--space-2);
 }
 
@@ -200,12 +249,95 @@ a {
 }
 
 .pilot {
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-primary);
 }
 
 /* ---------------------------------------------------------------------------------------- */
-/* App shell: bar · scrollable content · disclaimer + tab bar. Fills the phone screen.       */
+/* Buttons                                                                                  */
+
+button,
+.button {
+  min-width: var(--touch-target);
+  min-height: var(--touch-target);
+  padding: var(--space-2) var(--space-3);
+  font: inherit;
+  font-weight: 700;
+  color: var(--color-primary);
+  background: var(--color-surface);
+  border: 2px solid var(--color-primary);
+  border-radius: var(--radius);
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+}
+
+.button--primary {
+  color: var(--color-primary-contrast);
+  background: var(--color-primary);
+  box-shadow: var(--shadow-primary);
+}
+
+.button--outline {
+  color: var(--color-text);
+  background: var(--color-surface);
+  border-color: var(--color-text);
+}
+
+.button--ghost {
+  border-color: transparent;
+  background: transparent;
+}
+
+.button--danger {
+  color: #ffffff;
+  background: var(--color-error);
+  border-color: var(--color-error);
+}
+
+.button--block {
+  width: 100%;
+}
+
+.button--lg {
+  min-height: 3.5rem;
+  font-size: 1.125rem;
+  font-weight: 800;
+  border-radius: 1.125rem;
+}
+
+/* Wide call to action: centered label, arrow pinned to the right edge. */
+.button--pill {
+  position: relative;
+  min-height: 3.75rem;
+  padding-inline: 3.5rem;
+  font-size: 1.25rem;
+  border-radius: 999px;
+}
+
+.button--pill > .icon:last-child {
+  position: absolute;
+  right: 1.25rem;
+}
+
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+button svg.icon {
+  vertical-align: middle;
+}
+
+/* ---------------------------------------------------------------------------------------- */
+/* App shell: navy bar · content · disclaimer + tab bar. Fills the phone screen.            */
 
 .app {
   display: flex;
@@ -230,36 +362,48 @@ a {
 }
 
 .app-bar {
+  position: relative;
+  z-index: 10;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-2);
-  padding: max(var(--space-2), env(safe-area-inset-top))
-    max(var(--space-3), env(safe-area-inset-right)) var(--space-2)
-    max(var(--space-3), env(safe-area-inset-left));
-  background: var(--color-bar);
-  color: var(--color-bar-text);
+  padding: max(0.625rem, env(safe-area-inset-top)) max(var(--space-3), env(safe-area-inset-right))
+    0.625rem max(var(--space-3), env(safe-area-inset-left));
+  background: var(--color-header);
+  color: var(--color-header-text);
 }
 
 .app-bar :focus-visible {
-  outline-color: var(--color-bar-text);
+  outline-color: var(--color-header-focus);
 }
 
 .brand {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: 0.625rem;
+  min-width: 0;
 }
 
 .brand__logo {
-  border-radius: 0.5rem;
+  flex: none;
+  border-radius: 0.625rem;
 }
 
 .brand__name {
   margin: 0;
-  font-size: 1.25rem;
+  font-size: 1.375rem;
   font-weight: 800;
-  letter-spacing: 0.01em;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.brand__place {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--color-header-muted);
 }
 
 .app-main {
@@ -275,18 +419,21 @@ a {
 }
 
 .app-footer {
+  position: relative;
+  z-index: 10;
   padding-bottom: env(safe-area-inset-bottom);
   background: var(--color-surface);
-  border-top: 1px solid var(--color-border);
+  border-top: 1px solid var(--color-hairline);
 }
 
-/* Status pill in the app bar: icon + text, never color alone. */
+/* Status pill: icon + text, never color alone. */
 .pill {
   display: inline-flex;
+  flex: none;
   align-items: center;
   gap: var(--space-1);
   margin: 0;
-  padding: var(--space-1) var(--space-2);
+  padding: var(--space-1) 0.75rem;
   min-height: 36px;
   border-radius: 999px;
   background: var(--color-surface);
@@ -315,7 +462,31 @@ a {
   border: 2px solid var(--color-warning-border);
 }
 
-/* Tab bar: big thumb targets; the current tab has a top bar, bold text and color. */
+/* On the navy bar: green "works offline" chip, light text on dark. */
+.app-bar .pill {
+  color: var(--color-header-text);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+}
+
+.app-bar .pill[data-state='ready'] {
+  color: #d7f8e2;
+  background: #0f4d2c;
+  border-color: #3fb06e;
+}
+
+.app-bar .pill[data-state='pending'] {
+  color: #ffe08a;
+}
+
+.app-bar .pill[data-state='offline'],
+.app-bar .pill[data-state='error'] {
+  color: #2e2100;
+  background: #ffe17a;
+  border-color: #ffe17a;
+}
+
+/* Tab bar: big thumb targets; the current tab is bold, colored and underlined. */
 .tab-bar {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -323,20 +494,21 @@ a {
 }
 
 .tab-bar__item {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 2px;
-  min-height: 60px;
-  padding: var(--space-1);
+  min-height: 62px;
+  padding: var(--space-1) var(--space-1) 0.625rem;
   font: inherit;
   font-size: 0.8125rem;
   font-weight: 600;
   color: var(--color-text-muted);
   background: transparent;
   border: 0;
-  border-top: 4px solid transparent;
+  border-radius: 0;
   cursor: pointer;
   touch-action: manipulation;
 }
@@ -348,23 +520,33 @@ a {
 
 .tab-bar__item[aria-current='page'] {
   color: var(--color-primary);
-  border-top-color: var(--color-primary);
   font-weight: 800;
+}
+
+.tab-bar__item[aria-current='page']::after {
+  content: '';
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  width: 2.75rem;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--color-primary);
+  transform: translateX(-50%);
 }
 
 .tab-bar__item:focus-visible {
   outline-offset: -4px;
 }
 
-/* Permanent disclaimer: compact, always visible above the tabs. */
+/* Permanent disclaimer: compact bar above the tabs, always visible. */
 .disclaimer {
   display: flex;
   gap: var(--space-2);
-  align-items: flex-start;
-  padding: var(--space-1) var(--space-3);
+  align-items: center;
+  padding: 0.375rem var(--space-3);
   color: var(--color-warning-text);
   background: var(--color-warning-bg);
-  border-top: 3px solid var(--color-warning-border);
   font-size: 0.8125rem;
   line-height: 1.4;
 }
@@ -374,8 +556,30 @@ a {
 }
 
 .disclaimer .icon {
-  width: 1.25em;
-  height: 1.25em;
+  width: 1.6em;
+  height: 1.6em;
+}
+
+/* Same notice as a card inside the onboarding pages. */
+.disclaimer--card {
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: var(--space-3);
+  background: var(--color-warning-soft);
+  border: 1px solid var(--color-warning-border);
+  border-radius: var(--radius-lg);
+  font-size: 0.9375rem;
+}
+
+.disclaimer--card strong {
+  display: block;
+  font-size: 1rem;
+}
+
+.disclaimer--card .icon {
+  width: 2rem;
+  height: 2rem;
+  color: var(--color-warning-icon);
 }
 
 /* ---------------------------------------------------------------------------------------- */
@@ -388,8 +592,12 @@ a {
 .screen--panel {
   max-width: 44rem;
   margin: 0 auto;
-  padding: var(--space-3) max(var(--space-3), env(safe-area-inset-right)) var(--space-4)
+  padding: var(--space-4) max(var(--space-3), env(safe-area-inset-right)) var(--space-4)
     max(var(--space-3), env(safe-area-inset-left));
+}
+
+.screen--panel > h1 {
+  font-size: 2rem;
 }
 
 .screen--map {
@@ -401,7 +609,7 @@ a {
 .card {
   padding: var(--space-3);
   background: var(--color-surface);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-hairline);
   border-radius: var(--radius);
 }
 
@@ -411,28 +619,18 @@ a {
   border: 0;
 }
 
-/* Buttons */
-button,
-.button {
-  min-width: var(--touch-target);
-  min-height: var(--touch-target);
-  padding: var(--space-2) var(--space-3);
-  font: inherit;
-  font-weight: 700;
-  color: var(--color-primary);
+/* Solid white cards with a soft shadow (Settings, checklist, tutorial). */
+.glass-card {
+  padding: var(--space-4) var(--space-3);
   background: var(--color-surface);
-  border: 2px solid var(--color-primary);
-  border-radius: var(--radius);
-  cursor: pointer;
-  touch-action: manipulation;
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
 }
 
-.button--primary {
-  color: var(--color-primary-contrast);
-  background: var(--color-primary);
-}
+/* ---------------------------------------------------------------------------------------- */
+/* Hazard selector: radio cards (Guide screen) or a segmented control in the navy header.   */
 
-/* Hazard selector: radio cards (full) or a segmented bar over the map (compact). */
 .hazard-selector {
   margin: var(--space-3) 0;
   padding: 0;
@@ -452,6 +650,7 @@ button,
 }
 
 .hazard-option {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -465,10 +664,6 @@ button,
   font-weight: 700;
   cursor: pointer;
   touch-action: manipulation;
-}
-
-.hazard-option {
-  position: relative;
 }
 
 /* The native radio stays for keyboard and screen readers; the selected option shows a ✓ icon
@@ -496,17 +691,58 @@ button,
 
 .hazard-selector--compact {
   margin: 0;
-  padding: var(--space-2) max(var(--space-2), env(safe-area-inset-right)) var(--space-2)
-    max(var(--space-2), env(safe-area-inset-left));
-  background: var(--color-surface);
-  border-bottom: 1px solid var(--color-border);
 }
 
-.hazard-selector--compact .hazard-option {
+/* The map screen's header band continues the navy app bar. */
+.map-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 5;
+  padding: 0.25rem max(0.75rem, env(safe-area-inset-right)) 0.75rem
+    max(0.75rem, env(safe-area-inset-left));
+  background: var(--color-header);
+  box-shadow: 0 6px 16px rgba(10, 26, 63, 0.25);
+}
+
+.map-top .hazard-selector--compact {
+  padding: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+}
+
+.map-top .hazard-selector__options {
+  gap: 4px;
+}
+
+.map-top .hazard-option {
   min-height: var(--touch-target);
+  color: var(--color-header-text);
+  background: transparent;
+  border: 0;
+  border-radius: 999px;
+  font-size: 1.0625rem;
 }
 
-/* Map */
+.map-top .hazard-option:has(input:checked) {
+  color: #0a1a3f;
+  background: #8cc8ff;
+}
+
+.map-top .hazard-option:has(input:focus-visible) {
+  outline-color: var(--color-header-focus);
+}
+
+.map-top .hazard-option .icon--large {
+  width: 1.4rem;
+  height: 1.4rem;
+}
+
+/* ---------------------------------------------------------------------------------------- */
+/* Map                                                                                      */
+
 .map-area {
   position: absolute;
   inset: 0;
@@ -553,7 +789,7 @@ button,
   border-color: var(--color-error);
 }
 
-/* MapLibre controls: 48 px targets, themed. */
+/* MapLibre controls: 48 px targets, themed, below the header band. */
 .maplibregl-ctrl-group button {
   width: var(--touch-target);
   height: var(--touch-target);
@@ -580,6 +816,24 @@ button,
   border-top-color: var(--color-border);
 }
 
+.screen--map .maplibregl-ctrl-top-left,
+.screen--map .maplibregl-ctrl-top-right {
+  top: calc(var(--top-h, 0px) + 0.25rem);
+}
+
+.screen--map .maplibregl-ctrl-group {
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-float);
+}
+
+.screen--map .maplibregl-ctrl-bottom-right {
+  bottom: var(--sheet-h, 0px);
+}
+
+.screen--map .maplibregl-ctrl-attrib {
+  border-top-left-radius: var(--radius);
+}
+
 /* MapLibre's control icons are dark SVG backgrounds; invert them on dark themes. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) .maplibregl-ctrl-icon {
@@ -594,8 +848,8 @@ button,
 /* Floating legend over the map */
 .map-legend {
   position: absolute;
-  left: var(--space-2);
-  bottom: 2.75rem;
+  top: calc(var(--top-h, 0px) + 0.75rem);
+  left: max(0.75rem, env(safe-area-inset-left));
   z-index: 2;
   max-width: calc(100% - 5.5rem);
 }
@@ -605,12 +859,13 @@ button,
   align-items: center;
   gap: var(--space-2);
   min-height: var(--touch-target);
-  padding: var(--space-1) var(--space-3);
-  font-weight: 700;
+  padding: var(--space-1) 0.875rem var(--space-1) var(--space-3);
+  font-weight: 800;
   color: var(--color-text);
   background: var(--color-surface);
-  border: 2px solid var(--color-border);
-  border-radius: 999px;
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-float);
   cursor: pointer;
   list-style: none;
 }
@@ -619,8 +874,17 @@ button,
   display: none;
 }
 
+.map-legend__chevron {
+  width: 1.1em;
+  height: 1.1em;
+}
+
 .map-legend[open] summary {
   border-color: var(--color-primary);
+}
+
+.map-legend[open] .map-legend__chevron {
+  transform: rotate(90deg);
 }
 
 .map-legend ul {
@@ -632,8 +896,9 @@ button,
   max-height: 45dvh;
   overflow-y: auto;
   background: var(--color-surface);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-hairline);
   border-radius: var(--radius);
+  box-shadow: var(--shadow-float);
 }
 
 .map-legend li {
@@ -679,11 +944,11 @@ button,
   stroke-width: 3;
 }
 
-/* DEMO label on the map whenever the position is simulated */
+/* DEMO label on the map whenever the position is simulated: under the legend button. */
 .map-demo-chip {
   position: absolute;
-  top: 3.25rem;
-  left: var(--space-2);
+  top: calc(var(--top-h, 0px) + 4.25rem);
+  left: max(0.75rem, env(safe-area-inset-left));
   z-index: 3;
   margin: 0;
   padding: var(--space-1) var(--space-3);
@@ -693,53 +958,137 @@ button,
   border-radius: 999px;
   font-weight: 800;
   letter-spacing: 0.05em;
+  box-shadow: var(--shadow-float);
 }
 
 .map-frame--picking .maplibregl-canvas {
   cursor: crosshair;
 }
 
-/* Route panel under the map */
-.route-panel {
-  max-height: 45dvh;
-  overflow-y: auto;
-  padding: var(--space-2) max(var(--space-3), env(safe-area-inset-right)) var(--space-3)
-    max(var(--space-3), env(safe-area-inset-left));
+/* ---------------------------------------------------------------------------------------- */
+/* Route sheet: white bottom sheet over the map                                              */
+
+.map-sheet {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 5;
+  /* Leave most of the screen to the map; the rest of the sheet scrolls. */
+  max-height: 46%;
+  display: flex;
+}
+
+.glass-sheet {
   background: var(--color-surface);
-  border-top: 1px solid var(--color-border);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  box-shadow: 0 -10px 32px rgba(15, 23, 42, 0.16);
+}
+
+.route-panel {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-3) max(var(--space-3), env(safe-area-inset-right)) var(--space-3)
+    max(var(--space-3), env(safe-area-inset-left));
 }
 
 .route-panel h2 {
-  margin: var(--space-1) 0 var(--space-2);
-  font-size: 1.15rem;
+  margin: 0;
+  font-size: 1.625rem;
+  letter-spacing: -0.025em;
+}
+
+.route-panel__subtitle {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+  color: var(--color-text-muted);
 }
 
 .location-chooser {
   display: grid;
   /* minmax(0, 1fr): long option labels must not widen the panel past the screen. */
   grid-template-columns: minmax(0, 1fr);
-  gap: var(--space-2);
+  gap: 0.625rem;
 }
 
-.button--block {
+/* Big tappable cards: icon · title + hint · chevron */
+.action-card {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
   width: 100%;
+  min-height: 4rem;
+  padding: 0.625rem var(--space-3);
+  text-align: left;
+  color: var(--color-text);
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-hairline);
+  border-radius: 1.125rem;
+}
+
+.action-card--primary {
+  color: var(--color-primary-contrast);
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-primary);
+}
+
+.action-card__icon {
+  width: 2rem;
+  height: 2rem;
+}
+
+.action-card__text {
+  flex: 1;
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+}
+
+.action-card__text strong {
+  font-size: 1.125rem;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.action-card__text span {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+}
+
+.action-card--primary .action-card__text span {
+  color: inherit;
+  opacity: 0.92;
+}
+
+.action-card__chevron {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+/* Simple mode (Adulto mayor, Niño/a): one big primary action */
+:root[data-profile='senior'] .location-chooser--simple > .action-card--primary,
+:root[data-profile='child'] .location-chooser--simple > .action-card--primary {
+  min-height: 5.25rem;
 }
 
 .demo-select {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: var(--space-1);
+  margin-top: var(--space-1);
 }
 
 .demo-select label {
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .demo-select select {
   width: 100%;
   min-width: 0;
   min-height: var(--touch-target);
-  padding: var(--space-2);
+  padding: var(--space-2) 0.75rem;
   font: inherit;
   color: var(--color-text);
   background: var(--color-surface);
@@ -770,7 +1119,7 @@ button,
   align-items: flex-start;
   gap: var(--space-2);
   margin: 0 0 var(--space-2);
-  padding: var(--space-2) var(--space-3);
+  padding: 0.625rem var(--space-3);
   border-radius: var(--radius);
   border: 2px solid currentColor;
 }
@@ -785,7 +1134,7 @@ button,
 
 .plan--warning {
   color: var(--color-warning-text);
-  background: var(--color-warning-bg);
+  background: var(--color-warning-soft);
   border-color: var(--color-warning-border);
 }
 
@@ -805,13 +1154,61 @@ button,
   font-weight: 600;
 }
 
-/* Official guidance */
+.guardian {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  color: var(--color-primary-contrast);
+  background: var(--color-primary);
+  border-radius: var(--radius);
+  font-size: 1.1rem;
+}
+
+.voice {
+  margin: var(--space-2) 0;
+}
+
+.more-options summary {
+  display: flex;
+  align-items: center;
+  min-height: var(--touch-target);
+  font-weight: 700;
+  color: var(--color-primary);
+  cursor: pointer;
+}
+
+.drill {
+  margin: var(--space-2) 0;
+  padding: var(--space-3);
+  border: 2px dashed var(--color-primary);
+  border-radius: var(--radius);
+}
+
+.drill h3 {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: 0;
+}
+
+.drill__clock {
+  font-size: 1.6rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+/* ---------------------------------------------------------------------------------------- */
+/* Official guidance, settings, data                                                         */
+
 .guidance {
   margin-top: var(--space-3);
   padding: var(--space-3);
   background: var(--color-surface);
   border: 2px solid var(--color-primary);
-  border-radius: var(--radius);
+  border-radius: var(--radius-lg);
 }
 
 .guidance h2 {
@@ -825,7 +1222,6 @@ button,
   gap: var(--space-2);
 }
 
-/* Settings: radio lists */
 .choice-list {
   margin: var(--space-3) 0;
   padding: 0;
@@ -836,7 +1232,7 @@ button,
 
 .choice-list legend {
   font-size: 1.3rem;
-  font-weight: 700;
+  font-weight: 800;
   margin-bottom: var(--space-2);
 }
 
@@ -847,7 +1243,7 @@ button,
   min-height: 56px;
   padding: var(--space-2) var(--space-3);
   background: var(--color-surface);
-  border: 2px solid var(--color-border);
+  border: 2px solid var(--color-hairline);
   border-radius: var(--radius);
   font-weight: 600;
   cursor: pointer;
@@ -861,8 +1257,8 @@ button,
 }
 
 .choice:has(input:checked) {
+  background: var(--color-primary-soft);
   border-color: var(--color-primary);
-  border-width: 4px;
   font-weight: 800;
 }
 
@@ -871,7 +1267,6 @@ button,
   outline-offset: 3px;
 }
 
-/* App status chips (Settings) */
 .app-status {
   display: flex;
   flex-wrap: wrap;
@@ -906,7 +1301,6 @@ button,
   color: var(--color-error);
 }
 
-/* Update banner */
 .update-prompt {
   display: flex;
   flex-wrap: wrap;
@@ -927,7 +1321,6 @@ button,
   gap: var(--space-2);
 }
 
-/* Data sources */
 .layer-list {
   list-style: none;
   margin: var(--space-3) 0;
@@ -937,10 +1330,11 @@ button,
 }
 
 .layer-item {
-  padding: var(--space-2) var(--space-3);
+  padding: 0.75rem var(--space-3);
   background: var(--color-surface);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-hairline);
   border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
 }
 
 .layer-item__head {
@@ -1023,524 +1417,6 @@ button,
   overflow-wrap: anywhere;
 }
 
-/* Wider screens: a little more room, same layout. */
-@media (min-width: 48rem) {
-  body {
-    font-size: 1.125rem;
-  }
-
-  .disclaimer {
-    font-size: 0.9375rem;
-    justify-content: center;
-  }
-
-  .tab-bar {
-    max-width: 44rem;
-    margin: 0 auto;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-}
-
-/* ========================================================================================== */
-/* Glass, Apple-like layer (phase 5). Translucent materials only where content sits behind.    */
-
-.glass-card,
-.glass-sheet,
-.app-bar,
-.app-footer,
-.map-top .hazard-selector--compact,
-.map-legend summary,
-.map-legend ul {
-  -webkit-backdrop-filter: var(--glass-blur);
-  backdrop-filter: var(--glass-blur);
-}
-
-.glass-card {
-  padding: var(--space-4) var(--space-3);
-  background: var(--glass-strong);
-  border: 1px solid var(--glass-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--glass-shadow);
-}
-
-.app-bar {
-  position: relative;
-  z-index: 10;
-  background: var(--color-bar);
-  border-bottom: 1px solid var(--glass-border);
-}
-
-.app-footer {
-  position: relative;
-  z-index: 10;
-  background: var(--glass-strong);
-}
-
-.brand__name {
-  font-size: 1.3rem;
-  letter-spacing: -0.01em;
-}
-
-/* Buttons: rounded, flat, iOS-like */
-button,
-.button {
-  border-radius: var(--radius);
-}
-
-.button--ghost {
-  border-color: transparent;
-  background: transparent;
-}
-
-.button--danger {
-  color: #ffffff;
-  background: var(--color-error);
-  border-color: var(--color-error);
-}
-
-button:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
-
-button svg.icon {
-  vertical-align: middle;
-}
-
-/* Floating segmented hazard control */
-.map-top {
-  position: absolute;
-  top: var(--space-2);
-  left: max(var(--space-2), env(safe-area-inset-left));
-  right: max(var(--space-2), env(safe-area-inset-right));
-  z-index: 5;
-}
-
-.map-top .hazard-selector--compact {
-  padding: 4px;
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  border-radius: 999px;
-  box-shadow: var(--glass-shadow);
-}
-
-.map-top .hazard-selector__options {
-  gap: 4px;
-}
-
-.map-top .hazard-option {
-  min-height: var(--touch-target);
-  border: 0;
-  border-radius: 999px;
-  background: transparent;
-  flex-wrap: nowrap;
-}
-
-.map-top .hazard-option > span {
-  flex-basis: auto;
-}
-
-.map-top .hazard-option .icon--large {
-  width: 1.4rem;
-  height: 1.4rem;
-}
-
-/* Map controls sit below the floating selector */
-.screen--map .maplibregl-ctrl-top-left,
-.screen--map .maplibregl-ctrl-top-right {
-  top: 4.5rem;
-}
-
-.screen--map .maplibregl-ctrl-group {
-  border-radius: var(--radius);
-  box-shadow: var(--glass-shadow);
-}
-
-.screen--map .maplibregl-ctrl-bottom-right {
-  bottom: var(--sheet-h, 0px);
-}
-
-.screen--map .maplibregl-ctrl-attrib {
-  border-top-left-radius: var(--radius);
-}
-
-.map-legend {
-  top: 7.25rem;
-  bottom: auto;
-}
-
-.map-legend summary,
-.map-legend ul {
-  background: var(--glass-bg);
-  border-color: var(--glass-border);
-  box-shadow: var(--glass-shadow);
-}
-
-.map-demo-chip {
-  /* Under the legend button, away from the route and the "Tú" marker. */
-  top: 10.75rem;
-  left: max(var(--space-2), env(safe-area-inset-left));
-  box-shadow: var(--glass-shadow);
-}
-
-/* Route sheet: glass bottom sheet over the map */
-.map-sheet {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 5;
-  max-height: 55%;
-  display: flex;
-}
-
-.glass-sheet {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  border-bottom: 0;
-  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-  box-shadow: var(--glass-shadow);
-}
-
-.map-sheet .route-panel {
-  flex: 1;
-  max-height: none;
-}
-
-.route-panel::before {
-  content: '';
-  display: block;
-  width: 2.5rem;
-  height: 5px;
-  margin: 0 auto var(--space-2);
-  border-radius: 999px;
-  background: var(--color-border);
-  opacity: 0.6;
-}
-
-.guardian {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  margin: 0 0 var(--space-2);
-  padding: var(--space-2) var(--space-3);
-  color: var(--color-primary-contrast);
-  background: var(--color-primary);
-  border-radius: var(--radius);
-  font-size: 1.1rem;
-}
-
-.voice {
-  margin: var(--space-2) 0;
-}
-
-.voice .button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-2);
-}
-
-.more-options summary {
-  display: flex;
-  align-items: center;
-  min-height: var(--touch-target);
-  font-weight: 700;
-  color: var(--color-primary);
-  cursor: pointer;
-}
-
-.drill {
-  margin: var(--space-2) 0;
-  padding: var(--space-3);
-  border: 2px dashed var(--color-primary);
-  border-radius: var(--radius);
-}
-
-.drill h3 {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  margin-top: 0;
-}
-
-.drill__clock {
-  font-size: 1.6rem;
-  font-weight: 800;
-  font-variant-numeric: tabular-nums;
-  text-align: center;
-}
-
-/* Simple mode (Adulto mayor, Niño/a): one big primary action */
-:root[data-profile='senior'] .location-chooser--simple > .button--primary,
-:root[data-profile='child'] .location-chooser--simple > .button--primary {
-  min-height: 64px;
-  font-size: 1.15rem;
-}
-
-/* ---------------------------------------------------------------------------------------- */
-/* Onboarding                                                                                */
-
-.onboarding {
-  display: flex;
-  flex-direction: column;
-  min-height: 100dvh;
-  background:
-    radial-gradient(circle at 15% 10%, rgba(10, 91, 216, 0.28), transparent 45%),
-    radial-gradient(circle at 85% 30%, rgba(27, 110, 58, 0.22), transparent 40%),
-    radial-gradient(circle at 50% 95%, rgba(200, 16, 46, 0.16), transparent 45%), var(--color-bg);
-}
-
-.onboarding__main {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: max(var(--space-4), env(safe-area-inset-top)) var(--space-3) var(--space-4);
-}
-
-.onboarding__card {
-  width: 100%;
-  max-width: 30rem;
-  display: grid;
-  gap: var(--space-2);
-}
-
-.onboarding__card h1 {
-  font-size: 1.9rem;
-  letter-spacing: -0.02em;
-  margin-bottom: 0;
-}
-
-.onboarding__progress,
-.tour__progress {
-  margin: 0;
-  font-size: 0.875rem;
-  font-weight: 700;
-  color: var(--color-text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-
-.onboarding__icon {
-  display: inline-flex;
-  width: 3.5rem;
-  height: 3.5rem;
-  align-items: center;
-  justify-content: center;
-  color: var(--color-primary-contrast);
-  background: var(--color-primary);
-  border-radius: 1rem;
-}
-
-.onboarding__icon .icon {
-  width: 2rem;
-  height: 2rem;
-}
-
-.onboarding__icon--ok {
-  background: var(--color-ok);
-}
-
-.onboarding__actions {
-  display: grid;
-  grid-template-columns: 1fr 2fr;
-  gap: var(--space-2);
-  margin-top: var(--space-2);
-}
-
-.welcome-art {
-  width: 100%;
-  height: auto;
-  max-height: 11rem;
-}
-
-.art-card {
-  fill: var(--color-surface);
-  stroke: var(--color-border);
-  stroke-width: 1;
-}
-
-.art-danger {
-  fill: var(--map-area);
-  fill-opacity: 0.18;
-}
-
-.art-hatch {
-  fill: var(--map-area);
-  opacity: 0.55;
-}
-
-.art-safe {
-  fill: var(--map-route);
-  fill-opacity: 0.16;
-}
-
-.art-route {
-  fill: none;
-  stroke: var(--color-primary);
-  stroke-width: 6;
-  stroke-linecap: round;
-}
-
-.art-you {
-  fill: var(--color-primary);
-  stroke: var(--color-surface);
-  stroke-width: 4;
-}
-
-.art-goal {
-  fill: var(--map-route);
-}
-
-.art-check {
-  fill: none;
-  stroke: var(--color-surface);
-  stroke-width: 3;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-.feature-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: var(--space-2);
-}
-
-.feature-list li {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-weight: 600;
-}
-
-.feature-list .icon {
-  color: var(--color-primary);
-}
-
-.install-hint {
-  padding: var(--space-2) var(--space-3);
-  background: var(--color-bg);
-  border-radius: var(--radius);
-}
-
-.field {
-  display: grid;
-  gap: var(--space-1);
-}
-
-.field label {
-  font-weight: 700;
-}
-
-.field input {
-  min-height: var(--touch-target);
-  padding: var(--space-2) var(--space-3);
-  font: inherit;
-  color: var(--color-text);
-  background: var(--color-surface);
-  border: 2px solid var(--color-border);
-  border-radius: var(--radius);
-}
-
-.field input:focus-visible {
-  border-color: var(--color-focus);
-}
-
-/* Profile cards */
-.profile-picker {
-  margin: 0;
-  padding: 0;
-  border: 0;
-  display: grid;
-  gap: var(--space-2);
-  min-width: 0;
-}
-
-.profile-picker legend {
-  font-weight: 700;
-  margin-bottom: var(--space-2);
-}
-
-.profile-card {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  min-height: 72px;
-  padding: var(--space-2) var(--space-3);
-  background: var(--color-surface);
-  border: 2px solid var(--color-border);
-  border-radius: var(--radius);
-  cursor: pointer;
-}
-
-.profile-card input {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  opacity: 0;
-  cursor: pointer;
-}
-
-.profile-card__icon {
-  display: inline-flex;
-  flex: none;
-  width: 3rem;
-  height: 3rem;
-  align-items: center;
-  justify-content: center;
-  color: var(--color-primary);
-  background: var(--color-bg);
-  border-radius: 0.875rem;
-}
-
-.profile-card__icon .icon {
-  width: 1.75rem;
-  height: 1.75rem;
-}
-
-.profile-card__text {
-  display: grid;
-  gap: 2px;
-}
-
-.profile-card__text span {
-  color: var(--color-text-muted);
-  font-size: 0.9375rem;
-}
-
-/* Selected: thick border + filled icon, never color alone */
-.profile-card:has(input:checked) {
-  border-color: var(--color-primary);
-  border-width: 4px;
-}
-
-.profile-card:has(input:checked) .profile-card__icon {
-  color: var(--color-primary-contrast);
-  background: var(--color-primary);
-}
-
-.profile-card:has(input:focus-visible) {
-  outline: 3px solid var(--color-focus);
-  outline-offset: 3px;
-}
-
-/* Settings cards */
 .settings-card {
   display: grid;
   gap: var(--space-2);
@@ -1553,82 +1429,6 @@ button svg.icon {
 
 .settings-card .choice-list {
   margin: 0;
-}
-
-/* ---------------------------------------------------------------------------------------- */
-/* Tutorial                                                                                  */
-
-.tour {
-  position: fixed;
-  inset: 0;
-  z-index: 50;
-}
-
-.tour__spotlight {
-  position: fixed;
-  border-radius: var(--radius-lg);
-  /* Dims everything except the highlighted element. */
-  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.55);
-  outline: 3px solid #ffffff;
-  pointer-events: none;
-}
-
-.tour__card {
-  position: fixed;
-  overflow-y: auto;
-  left: max(var(--space-3), env(safe-area-inset-left));
-  right: max(var(--space-3), env(safe-area-inset-right));
-  max-width: 28rem;
-  margin: 0 auto;
-  display: grid;
-  gap: var(--space-2);
-}
-
-.tour__card h2 {
-  margin: 0;
-}
-
-.tour__card p {
-  margin: 0;
-}
-
-.tour__actions {
-  display: grid;
-  gap: var(--space-1);
-}
-
-.tour__nav {
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: 1fr;
-  gap: var(--space-2);
-}
-
-/* No translucency for people who ask for it, or browsers without backdrop-filter. */
-@media (prefers-reduced-transparency: reduce) {
-  .glass-card,
-  .glass-sheet,
-  .app-bar,
-  .app-footer,
-  .map-top .hazard-selector--compact,
-  .map-legend summary,
-  .map-legend ul {
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
-    background: var(--color-surface);
-  }
-}
-
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .glass-card,
-  .glass-sheet,
-  .app-bar,
-  .app-footer,
-  .map-top .hazard-selector--compact,
-  .map-legend summary,
-  .map-legend ul {
-    background: var(--color-surface);
-  }
 }
 
 /* Emergency backpack checklist */
@@ -1680,4 +1480,505 @@ button svg.icon {
 .kit__item:has(input:focus-visible) {
   outline: 3px solid var(--color-focus);
   outline-offset: 2px;
+}
+
+/* ---------------------------------------------------------------------------------------- */
+/* Onboarding                                                                                */
+
+.onboarding {
+  min-height: 100dvh;
+  background: var(--color-surface);
+}
+
+.onboarding__main {
+  max-width: 32rem;
+  margin: 0 auto;
+}
+
+.onboarding__progress,
+.tour__progress {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 800;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* Welcome: sky hero with the logo, then a white sheet that overlaps it. */
+.welcome__hero {
+  padding: max(var(--space-4), env(safe-area-inset-top)) var(--space-3) 0;
+  text-align: center;
+  color: var(--hero-text);
+  background: linear-gradient(var(--hero-top), var(--hero-bottom));
+  overflow: hidden;
+}
+
+.welcome__logo {
+  display: block;
+  width: 6rem;
+  height: 6rem;
+  margin: 0 auto;
+  border-radius: 1.5rem;
+  box-shadow: 0 12px 28px rgba(10, 26, 63, 0.3);
+}
+
+.welcome__title {
+  margin: 0.5rem 0 0.25rem;
+  font-size: 3.25rem;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.welcome__tagline {
+  max-width: 22rem;
+  margin: 0 auto;
+  font-size: 1.125rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.coast-art {
+  display: block;
+  width: calc(100% + 2rem);
+  height: auto;
+  aspect-ratio: 400 / 230;
+  margin: var(--space-2) -1rem 0;
+}
+
+.welcome__sheet {
+  position: relative;
+  display: grid;
+  gap: 1.25rem;
+  margin-top: -1.75rem;
+  padding: var(--space-4) var(--space-3) max(var(--space-4), env(safe-area-inset-bottom));
+  background: var(--color-surface);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+}
+
+.welcome__sheet .onboarding__progress {
+  text-align: center;
+}
+
+.features {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  text-align: center;
+}
+
+.feature {
+  display: grid;
+  justify-items: center;
+  align-content: start;
+  gap: 0.25rem;
+  font-size: 0.9375rem;
+  line-height: 1.3;
+}
+
+.feature strong {
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.feature__icon {
+  display: grid;
+  place-items: center;
+  width: 4rem;
+  height: 4rem;
+  margin-bottom: var(--space-1);
+  border-radius: 50%;
+}
+
+.feature__icon .icon {
+  width: 2rem;
+  height: 2rem;
+}
+
+.feature__icon[data-tone='green'] {
+  color: var(--tint-green);
+  background: var(--tint-green-bg);
+}
+
+.feature__icon[data-tone='blue'] {
+  color: var(--tint-blue);
+  background: var(--tint-blue-bg);
+}
+
+.feature__icon[data-tone='purple'] {
+  color: var(--tint-purple);
+  background: var(--tint-purple-bg);
+}
+
+/* Very narrow phones: features as rows. */
+@media (max-width: 22rem) {
+  .features {
+    grid-template-columns: minmax(0, 1fr);
+    text-align: left;
+  }
+
+  .feature {
+    grid-template-columns: auto minmax(0, 1fr);
+    justify-items: start;
+    column-gap: 0.75rem;
+  }
+
+  .feature__icon {
+    grid-row: span 2;
+    width: 3rem;
+    height: 3rem;
+  }
+}
+
+/* Steps 2–4 */
+.onboarding__page {
+  display: grid;
+  gap: var(--space-3);
+  padding: max(var(--space-4), env(safe-area-inset-top)) 1.25rem
+    max(var(--space-4), env(safe-area-inset-bottom));
+}
+
+.onboarding__page h1 {
+  margin: 0.375rem 0 0;
+  font-size: clamp(2rem, 9vw, 2.75rem);
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  overflow-wrap: break-word;
+}
+
+.onboarding__lead {
+  margin: var(--space-2) 0 0;
+  font-size: 1.125rem;
+  color: var(--color-text-muted);
+}
+
+.onboarding__page--center {
+  text-align: center;
+}
+
+.onboarding__page--center .disclaimer {
+  text-align: left;
+}
+
+.onboarding__split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(6.5rem, 36%);
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.phone-art {
+  width: 100%;
+  height: auto;
+}
+
+.stepper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 0 var(--space-2);
+  padding: 0;
+  list-style: none;
+}
+
+.stepper__dot {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--color-primary-contrast);
+  background: var(--color-primary);
+}
+
+.stepper__dot + .stepper__dot {
+  margin-left: 2.25rem;
+}
+
+.stepper__dot + .stepper__dot::before {
+  content: '';
+  position: absolute;
+  right: 100%;
+  top: 50%;
+  width: 2.25rem;
+  height: 4px;
+  background: var(--color-primary);
+  transform: translateY(-50%);
+}
+
+.stepper__dot[data-state='current'] {
+  box-shadow: 0 0 0 5px var(--color-primary-soft);
+}
+
+.stepper__dot[data-state='todo'] {
+  width: 1.75rem;
+  height: 1.75rem;
+  background: var(--color-hairline);
+}
+
+.stepper__dot[data-state='todo']::before {
+  background: var(--color-hairline);
+}
+
+.hint-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--tint-blue-bg);
+  border-radius: var(--radius-lg);
+}
+
+.hint-card p {
+  margin: 0;
+  font-size: 1.0625rem;
+  font-weight: 600;
+}
+
+.hint-card__icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  color: var(--tint-blue);
+  background: var(--color-surface);
+  border-radius: var(--radius);
+}
+
+.hint-card__icon .icon {
+  width: 2rem;
+  height: 2rem;
+}
+
+.hint-card[data-state='installed'] {
+  background: var(--tint-green-bg);
+}
+
+.hint-card[data-state='installed'] .hint-card__icon {
+  color: var(--tint-green);
+}
+
+.onboarding__actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.privacy-note {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  margin: 0;
+  font-size: 0.9375rem;
+  color: var(--color-text-muted);
+}
+
+.privacy-note .icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-top: 0.1em;
+}
+
+.ready-badge {
+  justify-self: center;
+  display: grid;
+  place-items: center;
+  width: 6rem;
+  height: 6rem;
+  margin-top: var(--space-3);
+  color: #ffffff;
+  background: #1b6e3a;
+  border-radius: 50%;
+  box-shadow: 0 0 0 10px var(--tint-green-bg);
+}
+
+.ready-badge svg {
+  width: 3.25rem;
+  height: 3.25rem;
+}
+
+/* Profile cards: avatar · name + what changes · radio */
+.profile-picker {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: grid;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.profile-picker legend {
+  margin-bottom: 0.75rem;
+  font-size: 1.375rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.profile-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 5.5rem;
+  padding: 0.75rem var(--space-3);
+  background: var(--color-surface);
+  border: 2px solid var(--color-hairline);
+  border-radius: 1.25rem;
+  box-shadow: var(--shadow-card);
+  cursor: pointer;
+}
+
+.profile-card input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.avatar {
+  flex: none;
+  width: 4rem;
+  height: 4rem;
+}
+
+.profile-card__text {
+  flex: 1;
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.profile-card__text strong {
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.profile-card__text span {
+  color: var(--color-text-muted);
+  font-size: 0.9375rem;
+  line-height: 1.35;
+}
+
+.profile-card__radio {
+  flex: none;
+  width: 1.75rem;
+  height: 1.75rem;
+  border: 2px solid var(--color-border);
+  border-radius: 50%;
+}
+
+/* Selected: tinted card + filled radio dot (shape, not only color). */
+.profile-card:has(input:checked) {
+  background: var(--color-primary-soft);
+  border-color: var(--color-primary);
+}
+
+.profile-card:has(input:checked) .profile-card__radio {
+  border: 3px solid var(--color-primary);
+  background: radial-gradient(circle, var(--color-primary) 0 42%, transparent 46%);
+}
+
+.profile-card:has(input:focus-visible) {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+/* ---------------------------------------------------------------------------------------- */
+/* Tutorial                                                                                  */
+
+.tour {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+}
+
+.tour__spotlight {
+  position: fixed;
+  border-radius: var(--radius-lg);
+  /* Dims everything except the highlighted element. */
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.55);
+  outline: 3px solid #ffffff;
+  pointer-events: none;
+}
+
+.tour__card {
+  position: fixed;
+  overflow-y: auto;
+  left: max(var(--space-3), env(safe-area-inset-left));
+  right: max(var(--space-3), env(safe-area-inset-right));
+  max-width: 28rem;
+  margin: 0 auto;
+  display: grid;
+  gap: var(--space-2);
+}
+
+.tour__card h2 {
+  margin: 0;
+}
+
+.tour__card p {
+  margin: 0;
+}
+
+.tour__actions {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.tour__nav {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: var(--space-2);
+}
+
+/* Wider screens: a little more room, same layout. */
+@media (min-width: 48rem) {
+  body {
+    font-size: 1.125rem;
+  }
+
+  .disclaimer:not(.disclaimer--card) {
+    font-size: 0.9375rem;
+    justify-content: center;
+  }
+
+  .tab-bar {
+    max-width: 44rem;
+    margin: 0 auto;
+  }
+
+  .onboarding {
+    background: var(--color-bg);
+  }
+
+  .onboarding__main {
+    min-height: 100dvh;
+    background: var(--color-surface);
+    box-shadow: var(--shadow-card);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
