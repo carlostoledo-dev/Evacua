@@ -65,6 +65,7 @@ export const en: Dictionary = {
   'map.dataError': 'Sector data could not be loaded.',
   'map.showData': 'See details',
   'map.legend': 'Legend',
+  'map.locate': 'Use my location (GPS)',
 
   'guidance.title': 'What to do (official guidance)',
   'guidance.tsunami.1':
@@ -106,6 +107,7 @@ export const en: Dictionary = {
 
   'route.title': 'Where to evacuate',
   'route.subtitle': 'Find your safe zone and follow the plan.',
+  'route.toggle': 'Show or hide the options',
   'route.inDanger': 'You are inside the tsunami evacuation area.',
   'route.notInDanger': 'You are outside the tsunami evacuation area.',
   'route.toSafety': 'Leave the danger area: {distance} on foot {time}.',

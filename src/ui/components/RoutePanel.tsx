@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import type { DemoLocation } from '../../data/schema.ts';
 import type { HazardId } from '../../domain/hazards.ts';
 import type { ProfileConfig } from '../../domain/profiles.ts';
@@ -12,7 +12,7 @@ import type { LocationState } from '../hooks/useLocation.ts';
 import { useSpeech } from '../hooks/useSpeech.ts';
 import { DrillMode } from './DrillMode.tsx';
 import { LocationChooser } from './LocationChooser.tsx';
-import { CheckIcon, ChildIcon, SpeakerIcon, WarningIcon } from './icons.tsx';
+import { CheckIcon, ChevronRightIcon, ChildIcon, SpeakerIcon, WarningIcon } from './icons.tsx';
 
 const GPS_ERROR: Record<GeoErrorKind, MessageKey> = {
   unsupported: 'location.error.unsupported',
@@ -92,6 +92,15 @@ export function RoutePanel({
   );
   const text = description ? spokenText(description, guardian) : null;
 
+  // The sheet can be folded to its title to see more map. It unfolds by itself as soon as the
+  // location or the plan changes, so a new plan is never hidden.
+  const bodyId = useId();
+  const [foldedAt, setFoldedAt] = useState<{
+    kind: LocationState['kind'];
+    plan: EvacuationPlan | null;
+  } | null>(null);
+  const folded = foldedAt !== null && foldedAt.kind === location.kind && foldedAt.plan === plan;
+
   // A new location shows a new plan: bring the sheet back to its top so the plan is in view.
   const panelRef = useRef<HTMLElement>(null);
   useEffect(() => {
@@ -115,8 +124,24 @@ export function RoutePanel({
       data-testid="route-panel"
       data-tour="route"
     >
-      <h2 id="route-title">{t('route.title')}</h2>
-      <p className="route-panel__subtitle">{t('route.subtitle')}</p>
+      <div className="route-panel__head">
+        <div>
+          <h2 id="route-title">{t('route.title')}</h2>
+          <p className="route-panel__subtitle">{t('route.subtitle')}</p>
+        </div>
+        <button
+          type="button"
+          className="sheet-toggle"
+          aria-expanded={!folded}
+          aria-controls={bodyId}
+          aria-label={t('route.toggle')}
+          onClick={() => {
+            setFoldedAt(folded ? null : { kind: location.kind, plan });
+          }}
+        >
+          <ChevronRightIcon className="icon" />
+        </button>
+      </div>
 
       {guardian && (
         <p className="guardian" data-testid="guardian">
@@ -125,78 +150,82 @@ export function RoutePanel({
         </p>
       )}
 
-      {(location.kind === 'none' || location.kind === 'gps-error') && (
-        <>
-          {location.kind === 'gps-error' && (
-            <p className="plan plan--warning" role="alert">
-              <WarningIcon />
-              <span>{t(GPS_ERROR[location.error])}</span>
+      <div id={bodyId} className="route-panel__body" hidden={folded}>
+        {(location.kind === 'none' || location.kind === 'gps-error') && (
+          <>
+            {location.kind === 'gps-error' && (
+              <p className="plan plan--warning" role="alert">
+                <WarningIcon />
+                <span>{t(GPS_ERROR[location.error])}</span>
+              </p>
+            )}
+            <LocationChooser
+              demoLocations={demoLocations}
+              simple={profile.simpleMode}
+              onGps={onGps}
+              onPick={onPick}
+              onSimulate={onSimulate}
+            />
+          </>
+        )}
+
+        {(location.kind === 'locating' || location.kind === 'picking') && (
+          <div className="route-wait">
+            <p role="status">
+              {t(location.kind === 'locating' ? 'location.locating' : 'location.picking')}
             </p>
-          )}
-          <LocationChooser
-            demoLocations={demoLocations}
-            simple={profile.simpleMode}
-            onGps={onGps}
-            onPick={onPick}
-            onSimulate={onSimulate}
-          />
-        </>
-      )}
+            <button type="button" className="button" onClick={onClear}>
+              {t('location.cancel')}
+            </button>
+          </div>
+        )}
 
-      {(location.kind === 'locating' || location.kind === 'picking') && (
-        <div className="route-wait">
-          <p role="status">
-            {t(location.kind === 'locating' ? 'location.locating' : 'location.picking')}
-          </p>
-          <button type="button" className="button" onClick={onClear}>
-            {t('location.cancel')}
-          </button>
-        </div>
-      )}
+        {'position' in location && (
+          <>
+            <p className="location-source">
+              {location.kind === 'demo' && (
+                <span className="badge" data-status="demo">
+                  {t('location.demoBadge')}
+                </span>
+              )}{' '}
+              {location.kind === 'gps' &&
+                t('location.source.gps', {
+                  meters: formatDistance(location.accuracyMeters, locale),
+                })}
+              {location.kind === 'manual' && t('location.source.manual')}
+              {location.kind === 'demo' &&
+                t('location.source.demo', { label: demo ? demo.label[locale] : location.demoId })}
+            </p>
+            <div aria-live="polite">{description && <PlanView description={description} />}</div>
+            {text && (
+              <div className="voice">
+                {speech.supported ? (
+                  <button
+                    type="button"
+                    className="button button--block"
+                    aria-pressed={speech.speaking}
+                    onClick={() => {
+                      if (speech.speaking) speech.stop();
+                      else speech.say(text);
+                    }}
+                  >
+                    <SpeakerIcon />
+                    <span>{speech.speaking ? t('voice.stop') : t('voice.listen')}</span>
+                  </button>
+                ) : (
+                  <p className="muted small">{t('voice.unsupported')}</p>
+                )}
+              </div>
+            )}
+            {profile.drill && plan?.kind === 'route' && <DrillMode />}
+            <button type="button" className="button button--block" onClick={onClear}>
+              {t('location.change')}
+            </button>
+          </>
+        )}
 
-      {'position' in location && (
-        <>
-          <p className="location-source">
-            {location.kind === 'demo' && (
-              <span className="badge" data-status="demo">
-                {t('location.demoBadge')}
-              </span>
-            )}{' '}
-            {location.kind === 'gps' &&
-              t('location.source.gps', { meters: formatDistance(location.accuracyMeters, locale) })}
-            {location.kind === 'manual' && t('location.source.manual')}
-            {location.kind === 'demo' &&
-              t('location.source.demo', { label: demo ? demo.label[locale] : location.demoId })}
-          </p>
-          <div aria-live="polite">{description && <PlanView description={description} />}</div>
-          {text && (
-            <div className="voice">
-              {speech.supported ? (
-                <button
-                  type="button"
-                  className="button button--block"
-                  aria-pressed={speech.speaking}
-                  onClick={() => {
-                    if (speech.speaking) speech.stop();
-                    else speech.say(text);
-                  }}
-                >
-                  <SpeakerIcon />
-                  <span>{speech.speaking ? t('voice.stop') : t('voice.listen')}</span>
-                </button>
-              ) : (
-                <p className="muted small">{t('voice.unsupported')}</p>
-              )}
-            </div>
-          )}
-          {profile.drill && plan?.kind === 'route' && <DrillMode />}
-          <button type="button" className="button button--block" onClick={onClear}>
-            {t('location.change')}
-          </button>
-        </>
-      )}
-
-      <p className="muted small">{t('location.privacy')}</p>
+        <p className="muted small">{t('location.privacy')}</p>
+      </div>
     </section>
   );
 }

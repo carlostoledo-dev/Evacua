@@ -42,6 +42,7 @@
   --map-area: #c8102e;
   --map-safe-line: #6a1b9a;
   --map-route: #0b6e3a;
+  --map-meeting: #0b6e3a;
 
   --radius: 1rem;
   --radius-lg: 1.5rem;
@@ -97,6 +98,7 @@
     --map-area: #ff6b7f;
     --map-safe-line: #d59cff;
     --map-route: #5fe39a;
+    --map-meeting: #1f9d57;
   }
 }
 
@@ -138,6 +140,7 @@
   --map-area: #ff6b7f;
   --map-safe-line: #d59cff;
   --map-route: #5fe39a;
+  --map-meeting: #1f9d57;
 }
 
 *,
@@ -809,16 +812,41 @@ button svg.icon {
   border-top-color: var(--color-border);
 }
 
-.screen--map .maplibregl-ctrl-top-left,
+/* Right column under the legend: round zoom and "find me" buttons. */
 .screen--map .maplibregl-ctrl-top-right {
-  top: calc(var(--top-h, 0px) + 0.25rem);
+  top: calc(var(--top-h, 0px) + 3.75rem);
+  right: max(0px, env(safe-area-inset-right));
 }
 
-.screen--map .maplibregl-ctrl-group {
-  border-radius: var(--radius);
+.screen--map .maplibregl-ctrl-top-right .maplibregl-ctrl-group {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0.5rem 0.75rem 0 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.screen--map .maplibregl-ctrl-top-right .maplibregl-ctrl-group button {
+  width: 3rem;
+  height: 3rem;
+  color: var(--color-text);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-hairline);
+  border-radius: 50%;
   box-shadow: var(--shadow-float);
 }
 
+.screen--map .maplibregl-ctrl-top-right .maplibregl-ctrl-group button + button {
+  border-top: 1px solid var(--color-hairline);
+}
+
+.map-locate svg {
+  width: 1.5rem;
+  height: 1.5rem;
+  fill: currentColor;
+}
+
+.screen--map .maplibregl-ctrl-bottom-left,
 .screen--map .maplibregl-ctrl-bottom-right {
   bottom: var(--sheet-h, 0px);
 }
@@ -842,9 +870,11 @@ button svg.icon {
 .map-legend {
   position: absolute;
   top: calc(var(--top-h, 0px) + 0.75rem);
-  left: max(0.75rem, env(safe-area-inset-left));
-  z-index: 2;
-  max-width: calc(100% - 5.5rem);
+  right: max(0.75rem, env(safe-area-inset-right));
+  z-index: 4;
+  display: grid;
+  justify-items: end;
+  max-width: calc(100% - 1.5rem);
 }
 
 .map-legend summary {
@@ -932,15 +962,15 @@ button svg.icon {
 }
 
 .swatch-point {
-  fill: var(--map-route);
-  stroke: var(--color-surface);
+  fill: var(--map-meeting);
+  stroke: #ffffff;
   stroke-width: 3;
 }
 
 /* DEMO label on the map whenever the position is simulated: under the legend button. */
 .map-demo-chip {
   position: absolute;
-  top: calc(var(--top-h, 0px) + 4.25rem);
+  top: calc(var(--top-h, 0px) + 0.75rem);
   left: max(0.75rem, env(safe-area-inset-left));
   z-index: 3;
   margin: 0;
@@ -985,10 +1015,54 @@ button svg.icon {
     max(var(--space-3), env(safe-area-inset-left));
 }
 
+/* Decorative grab handle, as on native bottom sheets. */
+.route-panel::before {
+  content: '';
+  display: block;
+  width: 2.75rem;
+  height: 5px;
+  margin: -0.25rem auto 0.5rem;
+  border-radius: 999px;
+  background: var(--color-hairline);
+}
+
+.route-panel__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
 .route-panel h2 {
   margin: 0;
   font-size: 1.625rem;
   letter-spacing: -0.025em;
+}
+
+.sheet-toggle {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: var(--touch-target);
+  height: var(--touch-target);
+  padding: 0;
+  color: var(--color-text);
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-hairline);
+  border-radius: 50%;
+}
+
+/* Down = fold the sheet; up = unfold it. */
+.sheet-toggle .icon {
+  transform: rotate(90deg);
+}
+
+.sheet-toggle[aria-expanded='false'] .icon {
+  transform: rotate(-90deg);
+}
+
+.route-panel__body[hidden] {
+  display: none;
 }
 
 .route-panel__subtitle {
@@ -1026,9 +1100,24 @@ button svg.icon {
   box-shadow: var(--shadow-primary);
 }
 
+.action-card__badge {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  background: var(--color-surface);
+  border-radius: 50%;
+}
+
+.action-card--primary .action-card__badge {
+  color: var(--color-primary);
+  background: var(--color-primary-contrast);
+}
+
 .action-card__icon {
-  width: 2rem;
-  height: 2rem;
+  width: 1.75rem;
+  height: 1.75rem;
 }
 
 .action-card__text {
@@ -1069,8 +1158,10 @@ button svg.icon {
 .demo-select {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: var(--space-1);
-  margin-top: var(--space-1);
+  gap: var(--space-2);
+  padding: 0.75rem var(--space-3);
+  border: 1px solid var(--color-hairline);
+  border-radius: 1.125rem;
 }
 
 .demo-select label {

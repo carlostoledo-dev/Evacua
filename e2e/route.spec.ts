@@ -123,3 +123,21 @@ test('the location is never stored on the device', async ({ page }) => {
     panel(page).getByRole('button', { name: /Buscar mi ruta de evacuación/ }),
   ).toBeVisible();
 });
+
+test.describe('with GPS, from a folded sheet', () => {
+  test.use({ geolocation: YOBILO, permissions: ['geolocation'] });
+
+  test('the sheet folds to show more map and unfolds for a new plan', async ({ page }) => {
+    await page.goto('/');
+    await waitForMap(page);
+    const toggle = panel(page).getByRole('button', { name: 'Mostrar u ocultar las opciones' });
+    await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+    await toggle.click();
+    await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    await expect(panel(page).getByRole('combobox')).toBeHidden();
+    // The map's own "find me" button: the new plan unfolds the sheet.
+    await page.getByTestId('map').getByRole('button', { name: 'Usar mi ubicación (GPS)' }).click();
+    await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+    await expect(panel(page).getByTestId('plan')).toContainText('Estás dentro del área a evacuar');
+  });
+});
