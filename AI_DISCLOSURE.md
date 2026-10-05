@@ -73,3 +73,7 @@ visibly labeled DEMO. See `DATA_SOURCES.md`.
   profile presets, voice, drill game, SENAPRED backpack checklist, glass styling and tests.
 - AI adapted the "account" idea to the project's privacy rules (local-only profile, optional name,
   delete button) and drew the SVG illustrations; no generated images were used.
+- Redesign from owner mockups (2026-10-04): the owner supplied four mockup images; AI
+  reimplemented that style in code, drew a new wave app icon and new SVG illustrations (coastal
+  scene, phone, profile avatars) by hand in SVG, and removed the name field from the profile at
+  the owner's request. No image from the mockups is included in the app.
