@@ -133,34 +133,33 @@ export function Onboarding({ onDone }: OnboardingProps) {
     if (index > 0) titleRef.current?.focus();
   }, [index]);
 
+  // The stepper shows progress visually; screen readers get it as text.
   const progress = (
-    <p className="onboarding__progress">
+    <p className="visually-hidden">
       {t('onboarding.step', { current: index + 1, total: STEPS.length })}
     </p>
   );
 
+  // Every step is one screen: a flexible illustration absorbs the leftover height, and the
+  // actions plus the disclaimer stay at the bottom, so nothing needs scrolling on a phone.
   let content: ReactNode;
   if (step === 'welcome') {
     content = (
       <div className="welcome" data-testid="onboarding-welcome">
         <div className="welcome__hero">
           <div className="welcome__intro">
+            {progress}
             <img className="welcome__logo" src="/logo.png" alt="" width="512" height="512" />
             <h1 ref={titleRef} tabIndex={-1} className="welcome__title">
               {t('app.name')}
             </h1>
             <p className="welcome__tagline">{t('onboarding.welcome.body')}</p>
           </div>
-          <img
-            className="welcome__art"
-            src="/images/welcome-hero.webp"
-            alt=""
-            width="900"
-            height="1125"
-          />
+          <div className="welcome__art">
+            <img src="/images/welcome-hero.webp" alt="" width="900" height="1125" />
+          </div>
         </div>
         <div className="welcome__sheet">
-          {progress}
           <ul className="features">
             {FEATURES.map(({ icon: Icon, tone, title, body }) => (
               <li key={title} className="feature">
@@ -168,7 +167,7 @@ export function Onboarding({ onDone }: OnboardingProps) {
                   <Icon className="icon" />
                 </span>
                 <strong>{t(title)}</strong>
-                <span className="muted">{t(body)}</span>
+                <span className="feature__body muted">{t(body)}</span>
               </li>
             ))}
           </ul>
@@ -192,21 +191,13 @@ export function Onboarding({ onDone }: OnboardingProps) {
     content = (
       <div className="onboarding__page" data-testid="onboarding-install">
         <Stepper index={index} />
-        <div className="onboarding__split">
-          <div>
-            {progress}
-            <h1 ref={titleRef} tabIndex={-1}>
-              {t('onboarding.install.title')}
-            </h1>
-            <p className="onboarding__lead">{t('onboarding.install.body')}</p>
-          </div>
-          <img
-            className="phone-art"
-            src="/images/install-phone.webp"
-            alt=""
-            width="640"
-            height="798"
-          />
+        {progress}
+        <h1 ref={titleRef} tabIndex={-1}>
+          {t('onboarding.install.title')}
+        </h1>
+        <p className="onboarding__lead">{t('onboarding.install.body')}</p>
+        <div className="onboarding__art">
+          <img src="/images/install-phone.webp" alt="" width="640" height="798" />
         </div>
         <div className="hint-card" data-state={install.state}>
           <span className="hint-card__icon">
@@ -228,18 +219,20 @@ export function Onboarding({ onDone }: OnboardingProps) {
             </button>
           )}
         </div>
-        <StepNav
-          onBack={() => {
-            setStep('welcome');
-          }}
-          onNext={() => {
-            setStep('profile');
-          }}
-          nextLabel={
-            install.state === 'prompt' ? t('onboarding.install.skip') : t('onboarding.next')
-          }
-        />
-        <Disclaimer card />
+        <div className="onboarding__footer">
+          <StepNav
+            onBack={() => {
+              setStep('welcome');
+            }}
+            onNext={() => {
+              setStep('profile');
+            }}
+            nextLabel={
+              install.state === 'prompt' ? t('onboarding.install.skip') : t('onboarding.next')
+            }
+          />
+          <Disclaimer card />
+        </div>
       </div>
     );
   } else if (step === 'profile') {
@@ -250,23 +243,24 @@ export function Onboarding({ onDone }: OnboardingProps) {
         <h1 ref={titleRef} tabIndex={-1}>
           {t('onboarding.profile.title')}
         </h1>
-        <p className="onboarding__lead">{t('onboarding.profile.body')}</p>
         <ProfilePicker value={profile} onChange={setProfile} legend={t('onboarding.profile.who')} />
         <p className="privacy-note">
           <LockIcon />
           <span>{t('onboarding.profile.privacy')}</span>
         </p>
-        <StepNav
-          onBack={() => {
-            setStep('install');
-          }}
-          onNext={() => {
-            setStep('ready');
-          }}
-          nextLabel={t('onboarding.next')}
-          nextDisabled={profile === null}
-        />
-        <Disclaimer card />
+        <div className="onboarding__footer">
+          <StepNav
+            onBack={() => {
+              setStep('install');
+            }}
+            onNext={() => {
+              setStep('ready');
+            }}
+            nextLabel={t('onboarding.next')}
+            nextDisabled={profile === null}
+          />
+          <Disclaimer card />
+        </div>
       </div>
     );
   } else {
@@ -274,22 +268,26 @@ export function Onboarding({ onDone }: OnboardingProps) {
       <div className="onboarding__page onboarding__page--center" data-testid="onboarding-ready">
         <Stepper index={index} />
         {progress}
-        <img className="ready-art" src="/images/ready.webp" alt="" width="720" height="748" />
+        <div className="onboarding__art">
+          <img src="/images/ready.webp" alt="" width="720" height="748" />
+        </div>
         <h1 ref={titleRef} tabIndex={-1}>
           {t('onboarding.ready.title')}
         </h1>
         <p className="onboarding__lead">{t('onboarding.ready.body')}</p>
-        <button
-          type="button"
-          className="button button--primary button--lg button--block button--pill"
-          onClick={() => {
-            onDone(createUserProfile(profile ?? 'adult'));
-          }}
-        >
-          <span>{t('onboarding.ready.button')}</span>
-          <ArrowRightIcon />
-        </button>
-        <Disclaimer card />
+        <div className="onboarding__footer">
+          <button
+            type="button"
+            className="button button--primary button--lg button--block button--pill"
+            onClick={() => {
+              onDone(createUserProfile(profile ?? 'adult'));
+            }}
+          >
+            <span>{t('onboarding.ready.button')}</span>
+            <ArrowRightIcon />
+          </button>
+          <Disclaimer card />
+        </div>
       </div>
     );
   }

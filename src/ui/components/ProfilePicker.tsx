@@ -61,7 +61,7 @@ export function ProfilePicker({ value, onChange, legend }: ProfilePickerProps) {
           <img className="avatar" src={AVATAR[profile]} alt="" width="192" height="192" />
           <span className="profile-card__text">
             <strong>{t(LABEL[profile])}</strong>
-            <span>{t(DESCRIPTION[profile])}</span>
+            <span className="profile-card__desc">{t(DESCRIPTION[profile])}</span>
             <span className="profile-card__age">{t(AGE[profile].key, AGE[profile].params)}</span>
           </span>
           {/* Visual radio: ring, plus a filled dot when selected (shape, not only color). */}

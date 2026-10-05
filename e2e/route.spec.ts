@@ -78,6 +78,24 @@ test.describe('with GPS permission', () => {
   });
 });
 
+test.describe('with an imprecise network location', () => {
+  test.use({ geolocation: { ...YOBILO, accuracy: 20_000 }, permissions: ['geolocation'] });
+
+  test('warns that the position may be wrong and offers to pick it on the map', async ({
+    page,
+  }) => {
+    await page.goto('/');
+    await waitForMap(page);
+    await panel(page)
+      .getByRole('button', { name: /Buscar mi ruta de evacuación/ })
+      .click();
+    const warning = panel(page).getByTestId('low-accuracy');
+    await expect(warning).toContainText('Precisión baja (± 20 km)');
+    await warning.getByRole('button', { name: 'Elegir en el mapa' }).click();
+    await expect(panel(page)).toContainText('Toca el mapa en el lugar donde estás.');
+  });
+});
+
 test.describe('without GPS permission', () => {
   test.use({ permissions: [] });
 

@@ -30,7 +30,7 @@ export const esCL = {
 
   'disclaimer.title': 'Importante',
   'disclaimer.body':
-    'Esta app es una herramienta de apoyo. No reemplaza a las autoridades (SENAPRED, SHOA, Municipalidad de Coronel). Sigue siempre sus instrucciones oficiales.',
+    'Herramienta de apoyo: no reemplaza a SENAPRED, SHOA ni a la Municipalidad de Coronel. Sigue siempre sus instrucciones oficiales.',
 
   'status.label': 'Estado de la app',
   'status.offline.ready': 'Lista para usar sin conexión',
@@ -40,7 +40,7 @@ export const esCL = {
   'status.network.online': 'Con conexión',
   'status.network.offline': 'Sin conexión: usando datos guardados',
 
-  'update.available': 'Hay una nueva versión disponible.',
+  'update.available': 'Hay una versión nueva.',
   'update.apply': 'Actualizar',
   'update.dismiss': 'Más tarde',
 
@@ -89,13 +89,13 @@ export const esCL = {
   'location.findRoute': 'Buscar mi ruta de evacuación',
   'location.useGps': 'Usa tu ubicación actual (GPS)',
   'location.pickOnMap': 'Elegir en el mapa',
-  'location.pickOnMapHint': 'Toca el lugar donde estás',
   'location.simulate': 'Simular ubicación (DEMO)',
-  'location.simulatePlaceholder': 'Elige un punto de prueba…',
+  'location.simulatePlaceholder': 'Simular (DEMO)',
   'location.locating': 'Buscando tu ubicación… Al aire libre el GPS responde más rápido.',
   'location.picking': 'Toca el mapa en el lugar donde estás.',
   'location.cancel': 'Cancelar',
   'location.change': 'Cambiar ubicación',
+  'location.changeShort': 'Cambiar',
   'location.error.unsupported':
     'Este navegador no puede usar el GPS. Elige tu ubicación en el mapa.',
   'location.error.denied':
@@ -107,7 +107,9 @@ export const esCL = {
   'location.source.gps': 'Ubicación del GPS (precisión ± {meters})',
   'location.source.manual': 'Ubicación elegida en el mapa',
   'location.source.demo': 'Ubicación simulada: {label}',
-  'location.privacy': 'Tu ubicación se usa solo en este teléfono: no se guarda ni se envía.',
+  'location.privacy': 'Tu ubicación no se guarda ni se envía.',
+  'location.lowAccuracy':
+    'Precisión baja (± {meters}): tu posición podría estar equivocada. Para un resultado confiable, elige tu ubicación en el mapa.',
 
   'route.title': 'Hacia dónde evacuar',
   'route.subtitle': 'Encuentra tu zona segura y sigue el plan.',
@@ -150,11 +152,11 @@ export const esCL = {
   'onboarding.welcome.body':
     'Te muestra hacia dónde evacuar en el sector Yobilo de Coronel ante un tsunami o un terremoto.',
   'onboarding.welcome.official': 'Datos oficiales',
-  'onboarding.welcome.officialBody': 'Información de SENAPRED.',
-  'onboarding.welcome.offline': 'Funciona sin internet',
-  'onboarding.welcome.offlineBody': 'Queda guardada en tu teléfono.',
-  'onboarding.welcome.private': 'Tu información es privada',
-  'onboarding.welcome.privateBody': 'No sale de tu teléfono.',
+  'onboarding.welcome.officialBody': 'De SENAPRED.',
+  'onboarding.welcome.offline': 'Sin internet',
+  'onboarding.welcome.offlineBody': 'Funciona igual.',
+  'onboarding.welcome.private': 'Privada',
+  'onboarding.welcome.privateBody': 'Nada sale de tu teléfono.',
   'onboarding.start': 'Comenzar',
   'onboarding.next': 'Continuar',
   'onboarding.back': 'Atrás',
@@ -165,23 +167,21 @@ export const esCL = {
   'onboarding.install.done': 'Evacua ya está instalada en este teléfono.',
   'onboarding.install.ios': 'En iPhone: toca el botón Compartir y luego «Agregar a inicio».',
   'onboarding.install.other':
-    'Puedes instalarla desde el menú de tu navegador («Instalar app» o «Agregar a la pantalla de inicio»).',
+    'Desde el menú del navegador: «Instalar app» o «Agregar a la pantalla de inicio».',
   'onboarding.install.skip': 'Ahora no',
   'onboarding.profile.title': 'Crea tu perfil',
-  'onboarding.profile.body': 'Adaptamos el tamaño del texto, la voz y las indicaciones para ti.',
-  'onboarding.profile.privacy':
-    'No pedimos tu nombre ni otros datos personales. Tu elección solo se guarda en este teléfono.',
+  'onboarding.profile.privacy': 'Sin datos personales; queda en tu teléfono.',
   'onboarding.profile.who': '¿Quién usará Evacua?',
   'onboarding.ready.title': '¡Todo listo!',
   'onboarding.ready.body': 'Ahora te mostramos cómo funciona el mapa en 5 pasos cortos.',
   'onboarding.ready.button': 'Ver el mapa',
 
   'profile.adult': 'Adulto',
-  'profile.adult.description': 'Ruta, distancias y tiempo estimado.',
+  'profile.adult.description': 'Ruta, distancias y tiempo.',
   'profile.senior': 'Adulto mayor',
-  'profile.senior.description': 'Letra grande, pasos simples y voz que lee las indicaciones.',
+  'profile.senior.description': 'Letra grande, voz y pasos simples.',
   'profile.child': 'Niño o niña',
-  'profile.child.description': 'Íconos, frases cortas y un simulacro tipo juego.',
+  'profile.child.description': 'Íconos, frases cortas y simulacro.',
   'profile.child.age': 'Menos de {age} años',
   'profile.adult.age': '{from} a {to} años',
   'profile.senior.age': '{age} años o más',

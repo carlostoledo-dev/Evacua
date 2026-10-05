@@ -6,27 +6,33 @@ import { ChevronRightIcon, PinIcon, WalkIcon } from './icons.tsx';
 interface ActionCardProps {
   icon: ComponentType<{ className?: string }>;
   title: string;
-  hint: string;
+  hint?: string;
   primary?: boolean;
+  /** Half-width variant: icon and title only. */
+  compact?: boolean;
   onClick: () => void;
 }
 
 /** A big tappable card: icon, title, one-line hint and a chevron. */
-function ActionCard({ icon: Icon, title, hint, primary = false, onClick }: ActionCardProps) {
+function ActionCard({
+  icon: Icon,
+  title,
+  hint,
+  primary = false,
+  compact = false,
+  onClick,
+}: ActionCardProps) {
+  const variant = primary ? ' action-card--primary' : compact ? ' action-card--compact' : '';
   return (
-    <button
-      type="button"
-      className={primary ? 'action-card action-card--primary' : 'action-card'}
-      onClick={onClick}
-    >
+    <button type="button" className={'action-card' + variant} onClick={onClick}>
       <span className="action-card__badge">
         <Icon className="icon action-card__icon" />
       </span>
       <span className="action-card__text">
         <strong>{title}</strong>
-        <span>{hint}</span>
+        {hint && <span>{hint}</span>}
       </span>
-      <ChevronRightIcon className="icon action-card__chevron" />
+      {!compact && <ChevronRightIcon className="icon action-card__chevron" />}
     </button>
   );
 }
@@ -51,20 +57,13 @@ export function LocationChooser({
   const { t, locale } = useI18n();
   const selectId = useId();
 
+  // Pick on the map and the DEMO points share one row to keep the sheet short.
   const others = (
-    <>
-      <ActionCard
-        icon={PinIcon}
-        title={t('location.pickOnMap')}
-        hint={t('location.pickOnMapHint')}
-        onClick={onPick}
-      />
+    <div className="location-chooser__row">
+      <ActionCard icon={PinIcon} title={t('location.pickOnMap')} compact onClick={onPick} />
       {demoLocations.length > 0 && (
-        <div className="demo-select">
-          <label htmlFor={selectId}>
-            <span className="badge" data-status="demo">
-              {t('location.demoBadge')}
-            </span>{' '}
+        <div className="demo-pick">
+          <label htmlFor={selectId} className="visually-hidden">
             {t('location.simulate')}
           </label>
           <select
@@ -86,7 +85,7 @@ export function LocationChooser({
           </select>
         </div>
       )}
-    </>
+    </div>
   );
 
   return (
@@ -101,7 +100,7 @@ export function LocationChooser({
       {simple ? (
         <details className="more-options">
           <summary>{t('route.moreOptions')}</summary>
-          <div className="location-chooser">{others}</div>
+          {others}
         </details>
       ) : (
         others

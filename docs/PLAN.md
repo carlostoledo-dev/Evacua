@@ -265,6 +265,20 @@ explicit owner approval before the next one starts.
   title for more map and unfolds by itself when the location or plan changes (e2e-tested).
   Not taken from the mockup: satellite imagery (no offline-licensable source; the basemap stays
   OpenStreetMap vector tiles) and pill-shaped place labels.
+- Fit to the screen (owner request 2026-10-04: "que todo calce en la pantalla"): every onboarding
+  step fills exactly one screen with no scrolling; the illustration takes the leftover height and
+  the actions plus the disclaimer sit at the bottom. E2e-checked on Pixel 7 (412 × 839) and on a
+  small 360 × 640 screen; also checked by hand at 375 × 667, 390 × 844 and the desktop column.
+  Main app: slimmer header, hazard band and tab bar; one-row "new version" bar (≈ 57 px instead of
+  ≈ 100 px); the route sheet keeps its title row pinned while its content scrolls; "Elegir en el
+  mapa" and the DEMO points share one row; "Cambiar" sits next to the location line; credits and
+  scale moved to the bottom left so they never collide with the map buttons.
+- Disclaimer wording shortened to fit the bar in three lines; it keeps all three required
+  points (support tool only, does not replace SENAPRED, SHOA or the Municipalidad de Coronel,
+  always follow their instructions).
+- Low-accuracy readings: a location less precise than 100 m (`LOW_ACCURACY_M`, an engineering
+  choice) shows a warning and a shortcut to pick the place on the map. Desktop browsers often
+  report ± 20 km, which made "you are outside the pilot sector" look authoritative (e2e-tested).
 
 ## Phase 6 — Security, tests, Lighthouse
 

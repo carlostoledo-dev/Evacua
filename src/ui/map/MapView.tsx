@@ -221,9 +221,10 @@ export default function MapView({
       }),
       'top-right',
     );
+    // Bottom-left, lifted above the route sheet by CSS (--sheet-h), clear of the right-hand
+    // buttons. Bottom controls stack upwards: the scale sits on top of the credits.
+    map.addControl(new AttributionControl({ compact: false }), 'bottom-left');
     map.addControl(new ScaleControl({ unit: 'metric' }), 'bottom-left');
-    // Bottom-right, lifted above the route sheet by CSS (--sheet-h).
-    map.addControl(new AttributionControl({ compact: false }), 'bottom-right');
     map.setMissingStyleImageResolver((id) => {
       if (id === HATCH_IMAGE_ID && !map.hasImage(id)) {
         map.addImage(id, diagonalHatch(palette.evacuationArea));

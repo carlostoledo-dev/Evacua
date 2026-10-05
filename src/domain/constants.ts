@@ -28,6 +28,15 @@ export function mphToMetersPerSecond(mph: number): number {
 export const MAX_SNAP_DISTANCE_M = 250;
 
 /**
+ * A location reading less precise than this (its reported accuracy radius, in meters) gets a
+ * visible warning and a shortcut to pick the place on the map.
+ * Engineering choice, not a safety standard: with a wider radius the reading can fall on the
+ * wrong street or on the wrong side of the evacuation area's edge. Computers and phones without
+ * a GPS fix often report network positions accurate only to kilometers.
+ */
+export const LOW_ACCURACY_M = 100;
+
+/**
  * Age bands printed on the profile cards (labels only: nothing is computed from a user's age,
  * and the age is never asked). Retrieved 2026-10-04 from Chile's Biblioteca del Congreso Nacional.
  *
