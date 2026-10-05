@@ -256,8 +256,9 @@ explicit owner approval before the next one starts.
 - Profile cards show legal age bands (sources in `src/domain/constants.ts`): Niño o niña "Menos
   de 14 años" (Ley 21.430, art. 1), Adulto "14 a 59 años", Adulto mayor "60 años o más"
   (Ley 19.828, art. 1). Cards are now ordered by age. The age is never asked or stored.
-- Pending: install-step phone image (the supplied one shows Apple's app icons, which are
-  trademarks; needs generic icons) and the "¡Todo listo!" image (file not received yet).
+- Install-step phone and "¡Todo listo!" images added (backgrounds removed so they also work on
+  the dark theme). The first phone image showed Apple's App Store, Safari and Music icons
+  (trademarks) and was replaced by the owner. No hand-drawn SVG illustrations remain.
 
 ## Phase 6 — Security, tests, Lighthouse
 
