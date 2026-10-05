@@ -46,7 +46,7 @@ export default defineConfig({
       },
       workbox: {
         // Everything the app needs offline: shell, data, basemap tiles and label glyphs.
-        globPatterns: ['**/*.{js,css,html,svg,png,ico,webmanifest,json,geojson,mvt,pbf}'],
+        globPatterns: ['**/*.{js,css,html,svg,png,webp,ico,webmanifest,json,geojson,mvt,pbf}'],
         globIgnores: ['**/node_modules/**', 'fonts/OFL.txt'],
         navigateFallback: 'index.html',
         cleanupOutdatedCaches: true,
