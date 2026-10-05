@@ -20,14 +20,14 @@ These rules are enforced in code, not just documented:
 - In the browser the same validation runs again. If anything fails, the app shows an explicit
   error and draws nothing.
 
-## Layers shipped today: Coronel, Yobilo pilot sector
+## Layers shipped today: Coronel pilot area (Lagunillas, Yobilo, Coronel Centro)
 
 | Layer (app id)              | What it is                                              | Features | Source                | Status   | Retrieved  |
 | --------------------------- | ------------------------------------------------------- | -------: | --------------------- | -------- | ---------- |
-| `tsunami-evacuation-area`   | Tsunami evacuation area ("Área a Evacuar")              |        1 | SENAPRED, 2024 layers | Verified | 2026-10-01 |
-| `tsunami-safe-line`         | Limit of the evacuation area ("Línea Segura")           |        2 | SENAPRED, 2024 layers | Verified | 2026-10-01 |
-| `tsunami-evacuation-routes` | Official evacuation routes ("Vías de Evacuación")       |       18 | SENAPRED, 2024 layers | Verified | 2026-10-01 |
-| `tsunami-meeting-points`    | Official tsunami meeting points ("Puntos de Encuentro") |       10 | SENAPRED, 2024 layers | Verified | 2026-10-01 |
+| `tsunami-evacuation-area`   | Tsunami evacuation area ("Área a Evacuar")              |        2 | SENAPRED, 2024 layers | Verified | 2026-10-04 |
+| `tsunami-safe-line`         | Limit of the evacuation area ("Línea Segura")           |        3 | SENAPRED, 2024 layers | Verified | 2026-10-04 |
+| `tsunami-evacuation-routes` | Official evacuation routes ("Vías de Evacuación")       |       40 | SENAPRED, 2024 layers | Verified | 2026-10-04 |
+| `tsunami-meeting-points`    | Official tsunami meeting points ("Puntos de Encuentro") |       19 | SENAPRED, 2024 layers | Verified | 2026-10-04 |
 
 Files: [`public/data/communes/coronel/`](public/data/communes/coronel/).
 
@@ -63,17 +63,21 @@ Files: [`public/data/communes/coronel/`](public/data/communes/coronel/).
 
 ### Pilot service area
 
-The Yobilo service area (`sector.serviceArea` in the manifest) was **defined by the Evacua
-project** around the Yobilo road (Villa Mora to Calabozo). It is not an official administrative
-boundary. The data bounds extend beyond it so routes can reach nearby safe zones.
+The pilot service area (`sector.serviceArea` in the manifest, `[-73.185, -37.04, -73.125,
+-36.966]`) was **defined by the Evacua project** at the owner's request (2026-10-04): one rectangle
+from Lagunillas (north) through Yobilo to the centre of Coronel (south), located with
+OpenStreetMap (Lagunillas quarter ≈ -36.981, -73.158; Plaza de Armas ≈ -37.029, -73.145). It is
+not an official administrative boundary, and neighbouring areas inside the rectangle (such as
+Schwager) are covered too. The data bounds (`[-73.195, -37.056, -73.112, -36.956]`) extend
+beyond it so routes can reach nearby safe zones and meeting points.
 
 ## Basemap and map assets
 
-| Asset                                                             | Source                                                                                                                                                                                                | License                                                       | Retrieved  |
-| ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- | ---------- |
-| Vector tiles `public/tiles/coronel/` (52 tiles, z12–15, ≈ 946 KB) | OpenStreetMap data via the Protomaps basemap daily build (`build.protomaps.com`), extracted by [`scripts/build-tiles.ts`](scripts/build-tiles.ts); build id recorded in the manifest `basemap.source` | **ODbL-1.0**, "© OpenStreetMap contributors" shown on the map | 2026-10-02 |
-| Label glyphs `public/fonts/` (Noto Sans Regular, Latin ranges)    | [protomaps/basemaps-assets](https://github.com/protomaps/basemaps-assets), fetched by [`scripts/fetch-glyphs.ts`](scripts/fetch-glyphs.ts)                                                            | SIL Open Font License 1.1 (`public/fonts/OFL.txt`)            | 2026-10-02 |
-| Map style                                                         | Written for Evacua ([`src/ui/map/style.ts`](src/ui/map/style.ts)) for the Protomaps v4 tile schema                                                                                                    | Project license                                               | n/a        |
+| Asset                                                              | Source                                                                                                                                                                                                | License                                                       | Retrieved        |
+| ------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- | ---------------- |
+| Vector tiles `public/tiles/coronel/` (168 tiles, z12–15, ≈ 1.8 MB) | OpenStreetMap data via the Protomaps basemap daily build (`build.protomaps.com`), extracted by [`scripts/build-tiles.ts`](scripts/build-tiles.ts); build id recorded in the manifest `basemap.source` | **ODbL-1.0**, "© OpenStreetMap contributors" shown on the map | 2026-10-05 (UTC) |
+| Label glyphs `public/fonts/` (Noto Sans Regular, Latin ranges)     | [protomaps/basemaps-assets](https://github.com/protomaps/basemaps-assets), fetched by [`scripts/fetch-glyphs.ts`](scripts/fetch-glyphs.ts)                                                            | SIL Open Font License 1.1 (`public/fonts/OFL.txt`)            | 2026-10-02       |
+| Map style                                                          | Written for Evacua ([`src/ui/map/style.ts`](src/ui/map/style.ts)) for the Protomaps v4 tile schema                                                                                                    | Project license                                               | n/a              |
 
 ```bash
 npm run data:tiles    # re-extract tiles from the latest Protomaps build and update the manifest
@@ -82,9 +86,9 @@ npm run data:glyphs   # re-download the label glyphs
 
 ## Pedestrian network and routing
 
-| Asset                                                                                              | Source                                                                                                                                                                                                                                                      | License                                     | Retrieved  |
-| -------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- | ---------- |
-| `public/data/communes/coronel/graph.json` (12,540 nodes, 14,197 street segments, ≈ 115 KB gzipped) | OpenStreetMap walkable ways (footways, paths, residential and other streets; motorways excluded; `access=private` / `foot=no` excluded) via the Overpass API, built by [`scripts/build-graph.ts`](scripts/build-graph.ts); largest connected component kept | **ODbL-1.0** (© OpenStreetMap contributors) | 2026-10-02 |
+| Asset                                                                                              | Source                                                                                                                                                                                                                                                      | License                                     | Retrieved        |
+| -------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- | ---------------- |
+| `public/data/communes/coronel/graph.json` (26,590 nodes, 29,322 street segments, ≈ 235 KB gzipped) | OpenStreetMap walkable ways (footways, paths, residential and other streets; motorways excluded; `access=private` / `foot=no` excluded) via the Overpass API, built by [`scripts/build-graph.ts`](scripts/build-graph.ts); largest connected component kept | **ODbL-1.0** (© OpenStreetMap contributors) | 2026-10-05 (UTC) |
 
 ```bash
 npm run data:graph   # rebuild the walking network from OpenStreetMap and update the manifest
@@ -108,7 +112,7 @@ mobility-impaired pace (2 mph), never as a promise.
 
 `demoLocations` in the manifest are test positions for "Simular ubicación (DEMO)", chosen by the
 Evacua team to demonstrate each case. Their labels only repeat what the official data says about
-them (inside / outside the evacuation area, outside the pilot sector); a test checks each one
+them (inside / outside the evacuation area, outside the pilot area); a test checks each one
 behaves as labeled. Whenever one is in use, the app shows a **DEMO** label on the map and in the
 route panel.
 

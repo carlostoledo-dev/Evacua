@@ -1,6 +1,6 @@
 # CLAUDE.md — Evacua
 
-Offline-first evacuation map (installable PWA) for ONE pilot sector of Coronel, Chile.
+Offline-first tsunami evacuation map (installable PWA) for ONE pilot area of Coronel, Chile.
 Built during the WarriorHacks 2.0 hackathon. Public repo, judged on Impact, Feasibility,
 User Experience and Technical Craft. Deliverables: repo, live demo, 2–3 min video, images.
 
@@ -22,14 +22,18 @@ Delivery plan, phase status, pending decisions and risks: `docs/PLAN.md`.
 
 ## Product
 
-- Installable map that works with no internet. With GPS it shows where to evacuate for the
-  selected hazard: tsunami, wildfire (incendio forestal) or earthquake (terremoto).
-- The correct direction depends on the hazard (high ground is good for tsunami, may be
-  dangerous in a wildfire). Owner decision 2026-10-02 (D2 = C): wildfire is out of the pilot for
-  now; the hazards offered are tsunami and earthquake. Wildfire can return later as option A.
+- Installable map that works with no internet. With GPS it shows where to evacuate from a
+  tsunami: where to go (the official meeting point) and the shortest walking route there.
+- Owner decision 2026-10-04: **tsunami only for now** (light, simple, no hazard selector).
+  Earthquake and wildfire stay configured in `src/domain/hazards.ts` (`available: false`) and can
+  return without code changes; the direction is hazard-specific (high ground is good for tsunami,
+  may be dangerous in a wildfire), so each needs its own data before it comes back.
 - Three profiles — Persona, Adulto mayor, Niño/a — are typed configuration presets
   (speed, text size, simple mode, voice, backpack checklist, messages), not separate apps.
-- Scope: ONE pilot sector of Coronel: **Yobilo** (bbox to be fixed in Phase 2). Everything else is roadmap.
+- Scope (owner decision 2026-10-04): ONE pilot area of Coronel covering **Lagunillas, Yobilo and
+  Coronel Centro** (one rectangle, `sector.serviceArea` in the manifest). Everything else is
+  roadmap; the rest of the coast would come as per-commune downloads (official SENAPRED data
+  exists for the 13 coastal communes of Biobío).
 - Fully static: no backend, no external APIs at runtime, no database.
 - Team: the owner alone + Claude Code. Official deadline (Devpost): **2026-10-13 23:45 CDT**
   (≈ 01:45 on 2026-10-14 in Chile). Submission: public GitHub repo, 2–3 min demo video,
