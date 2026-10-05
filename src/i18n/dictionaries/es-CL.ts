@@ -64,6 +64,7 @@ export const esCL = {
   'map.dataError': 'No se pudieron cargar los datos del sector.',
   'map.showData': 'Ver detalles',
   'map.legend': 'Leyenda',
+  'map.locate': 'Usar mi ubicación (GPS)',
 
   // Verbatim from SENAPRED (https://www.senapred.cl/tsunami/ and /sismos/), retrieved 2026-10-02.
   'guidance.title': 'Qué hacer (indicaciones oficiales)',
@@ -110,6 +111,7 @@ export const esCL = {
 
   'route.title': 'Hacia dónde evacuar',
   'route.subtitle': 'Encuentra tu zona segura y sigue el plan.',
+  'route.toggle': 'Mostrar u ocultar las opciones',
   'route.inDanger': 'Estás dentro del área a evacuar por tsunami.',
   'route.notInDanger': 'Estás fuera del área a evacuar por tsunami.',
   'route.toSafety': 'Sal del área de peligro: {distance} a pie {time}.',

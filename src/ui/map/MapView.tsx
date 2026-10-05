@@ -7,6 +7,7 @@ import {
   ScaleControl,
   setWorkerUrl,
   type GeoJSONSource,
+  type IControl,
   type LngLatBoundsLike,
 } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
@@ -18,12 +19,14 @@ import { layersForHazard, type HazardId } from '../../domain/hazards.ts';
 import { useI18n } from '../../i18n/I18nContext.ts';
 import type { Theme } from '../theme.ts';
 import { diagonalHatch } from './hatch.ts';
+import { meetingPointIcon } from './meetingPointIcon.ts';
 import {
   buildStyle,
   DARK_PALETTE,
   DESTINATION_SOURCE,
   HATCH_IMAGE_ID,
   LIGHT_PALETTE,
+  MEETING_POINT_ICON_ID,
   overlayLayerIds,
   USER_POSITION_SOURCE,
   USER_ROUTE_SOURCE,
@@ -70,6 +73,47 @@ function lineCollection(path: [number, number][] | null): GeoJSON.FeatureCollect
   };
 }
 
+const SVG_NS = 'http://www.w3.org/2000/svg';
+
+/** "Find me" button under the zoom buttons: asks for one GPS reading (same as the sheet's card). */
+class LocateControl implements IControl {
+  private container: HTMLDivElement | null = null;
+  private readonly label: string;
+  private readonly onClick: () => void;
+
+  constructor(label: string, onClick: () => void) {
+    this.label = label;
+    this.onClick = onClick;
+  }
+
+  onAdd(): HTMLElement {
+    const container = document.createElement('div');
+    container.className = 'maplibregl-ctrl maplibregl-ctrl-group';
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'map-locate';
+    button.title = this.label;
+    button.setAttribute('aria-label', this.label);
+    const svg = document.createElementNS(SVG_NS, 'svg');
+    svg.setAttribute('viewBox', '0 0 24 24');
+    svg.setAttribute('aria-hidden', 'true');
+    svg.setAttribute('focusable', 'false');
+    const arrow = document.createElementNS(SVG_NS, 'path');
+    arrow.setAttribute('d', 'M20 4 4 11l7 2 2 7 7-16Z');
+    svg.append(arrow);
+    button.append(svg);
+    button.addEventListener('click', this.onClick);
+    container.append(button);
+    this.container = container;
+    return container;
+  }
+
+  onRemove(): void {
+    this.container?.remove();
+    this.container = null;
+  }
+}
+
 interface MapViewProps {
   commune: CommuneData;
   hazard: HazardId;
@@ -82,6 +126,8 @@ interface MapViewProps {
   demo: boolean;
   /** Heights (px) covered by floating glass panels, kept clear when framing the route. */
   insets: { top: number; bottom: number };
+  /** The map's "find me" button: one GPS reading. */
+  onLocate: () => void;
 }
 
 /** Highest device pixel ratio we render at: 3× screens cost ~2× the GPU work for little gain. */
@@ -105,6 +151,7 @@ export default function MapView({
   onPick,
   demo,
   insets,
+  onLocate,
 }: MapViewProps) {
   const { t } = useI18n();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -115,9 +162,11 @@ export default function MapView({
   const [mapVersion, setMapVersion] = useState(0);
   const pickingRef = useRef(picking);
   const onPickRef = useRef(onPick);
+  const onLocateRef = useRef(onLocate);
   useEffect(() => {
     pickingRef.current = picking;
     onPickRef.current = onPick;
+    onLocateRef.current = onLocate;
   });
 
   // (Re)create the map per commune, language (labels) and theme (palette).
@@ -166,12 +215,22 @@ export default function MapView({
     }
     mapRef.current = map;
     map.addControl(new NavigationControl({ showCompass: false }), 'top-right');
-    map.addControl(new ScaleControl({ unit: 'metric' }), 'top-left');
+    map.addControl(
+      new LocateControl(t('map.locate'), () => {
+        onLocateRef.current();
+      }),
+      'top-right',
+    );
+    map.addControl(new ScaleControl({ unit: 'metric' }), 'bottom-left');
     // Bottom-right, lifted above the route sheet by CSS (--sheet-h).
     map.addControl(new AttributionControl({ compact: false }), 'bottom-right');
     map.setMissingStyleImageResolver((id) => {
       if (id === HATCH_IMAGE_ID && !map.hasImage(id)) {
         map.addImage(id, diagonalHatch(palette.evacuationArea));
+      }
+      if (id === MEETING_POINT_ICON_ID && !map.hasImage(id)) {
+        const icon = meetingPointIcon(palette.meetingPoint, palette.meetingPointStroke);
+        if (icon) map.addImage(id, icon.image, { pixelRatio: icon.pixelRatio });
       }
     });
     map.on('load', () => {

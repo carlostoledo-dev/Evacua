@@ -53,14 +53,16 @@ export const DARK_PALETTE: MapPalette = {
   evacuationArea: '#ff6b7f',
   safeLine: '#d59cff',
   route: '#5fe39a',
-  meetingPoint: '#5fe39a',
-  meetingPointStroke: '#000000',
+  meetingPoint: '#1f9d57',
+  meetingPointStroke: '#ffffff',
   userRoute: '#64a8ff',
   userRouteCasing: '#000000',
 };
 
 /** Image id of the diagonal hatch used so the evacuation area is not shown by color alone. */
 export const HATCH_IMAGE_ID = 'evacua-hatch';
+/** Meeting point marker (green disc with a walking person), drawn at runtime by MapView. */
+export const MEETING_POINT_ICON_ID = 'evacua-meeting-point';
 
 const BASEMAP_SOURCE = 'basemap';
 const LABEL_FONT = ['Noto Sans Regular'];
@@ -207,14 +209,13 @@ function overlayLayers(layer: LoadedLayer, p: MapPalette): LayerSpecification[] 
     case 'meeting-point':
       return [
         {
-          id: `${id}-circle`,
-          type: 'circle',
+          id: `${id}-icon`,
+          type: 'symbol',
           source,
-          paint: {
-            'circle-radius': 9,
-            'circle-color': p.meetingPoint,
-            'circle-stroke-color': p.meetingPointStroke,
-            'circle-stroke-width': 3,
+          layout: {
+            'icon-image': MEETING_POINT_ICON_ID,
+            'icon-allow-overlap': true,
+            'icon-ignore-placement': true,
           },
         },
         {
@@ -226,7 +227,7 @@ function overlayLayers(layer: LoadedLayer, p: MapPalette): LayerSpecification[] 
             'text-field': ['slice', ['get', 'code'], 5],
             'text-font': PLACE_FONT,
             'text-size': 14,
-            'text-offset': [0, 1.4],
+            'text-offset': [0, 1.6],
             'text-anchor': 'top',
           },
           paint: { 'text-color': p.label, 'text-halo-color': p.labelHalo, 'text-halo-width': 2 },

@@ -259,6 +259,12 @@ explicit owner approval before the next one starts.
 - Install-step phone and "¡Todo listo!" images added (backgrounds removed so they also work on
   the dark theme). The first phone image showed Apple's App Store, Safari and Music icons
   (trademarks) and was replaced by the owner. No hand-drawn SVG illustrations remain.
+- Map screen restructured from the owner's mockup: legend at the top right, round zoom and
+  "find me" (GPS) buttons under it, scale at the bottom left, meeting points drawn as a green disc
+  with a walking person (shape + pictogram, not color alone), and a route sheet that folds to its
+  title for more map and unfolds by itself when the location or plan changes (e2e-tested).
+  Not taken from the mockup: satellite imagery (no offline-licensable source; the basemap stays
+  OpenStreetMap vector tiles) and pill-shaped place labels.
 
 ## Phase 6 — Security, tests, Lighthouse
 

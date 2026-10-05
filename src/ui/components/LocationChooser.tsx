@@ -19,7 +19,9 @@ function ActionCard({ icon: Icon, title, hint, primary = false, onClick }: Actio
       className={primary ? 'action-card action-card--primary' : 'action-card'}
       onClick={onClick}
     >
-      <Icon className="icon action-card__icon" />
+      <span className="action-card__badge">
+        <Icon className="icon action-card__icon" />
+      </span>
       <span className="action-card__text">
         <strong>{title}</strong>
         <span>{hint}</span>

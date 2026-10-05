@@ -105,6 +105,7 @@ export function MapScreen({
                 onPick={locationActions.pick}
                 demo={location.kind === 'demo'}
                 insets={{ top: topHeight, bottom: sheetHeight }}
+                onLocate={locationActions.locateWithGps}
               />
             </Suspense>
             <MapLegend layers={visibleLayers} />

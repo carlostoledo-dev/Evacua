@@ -40,7 +40,7 @@ test('draws the offline map with credits, legend and badges, without CSP errors'
 test('map controls are at least 48 px for touch', async ({ page }) => {
   await page.goto('/');
   await waitForMap(page);
-  for (const name of ['Acercar', 'Alejar']) {
+  for (const name of ['Acercar', 'Alejar', 'Usar mi ubicación (GPS)']) {
     const box = await page.getByRole('button', { name }).boundingBox();
     expect(box?.width ?? 0).toBeGreaterThanOrEqual(48);
     expect(box?.height ?? 0).toBeGreaterThanOrEqual(48);
