@@ -72,7 +72,7 @@ describe('describePlan', () => {
 
   it('describes outside-sector and straight-line plans without inventing a route', () => {
     expect(describe_({ kind: 'outside-service-area' }).headline).toContain(
-      'fuera del sector piloto (Yobilo)',
+      'fuera de la zona piloto (Yobilo)',
     );
     const line = describe_({
       kind: 'straight-line',

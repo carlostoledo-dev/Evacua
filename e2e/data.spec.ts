@@ -14,7 +14,9 @@ function dataPanel(page: Page) {
 
 async function expectOfficialLayers(page: Page) {
   const panel = dataPanel(page);
-  await expect(panel.getByText('Sector Yobilo, Coronel (Biobío)')).toBeVisible();
+  await expect(
+    panel.getByText('Zona piloto: Lagunillas, Yobilo y Coronel Centro. Coronel, Biobío.'),
+  ).toBeVisible();
   for (const id of LAYER_IDS) {
     const item = panel.getByTestId(`layer-${id}`);
     await expect(item).toContainText('Fuente oficial verificada');
@@ -34,6 +36,7 @@ test('lists every tsunami layer as an official SENAPRED source', async ({ page }
 });
 
 test('keeps the sector data available offline after the first visit', async ({ page, context }) => {
+  test.slow(); // waits for the offline precache
   await page.goto('/');
   await waitForOfflineReady(page);
   await context.setOffline(true);

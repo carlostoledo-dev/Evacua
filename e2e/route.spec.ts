@@ -38,8 +38,10 @@ test('a DEMO location shows a labeled route: out of danger first, then a meeting
 test('outside the pilot sector there is no route, only a clear message', async ({ page }) => {
   await page.goto('/');
   await waitForMap(page);
-  await simulate(page, 'lo-rojas-outside');
-  await expect(panel(page).getByTestId('plan')).toContainText('fuera del sector piloto (Yobilo)');
+  await simulate(page, 'outside-pilot');
+  await expect(panel(page).getByTestId('plan')).toContainText(
+    'fuera de la zona piloto (Lagunillas, Yobilo y Coronel Centro)',
+  );
   await expect(panel(page)).not.toContainText('punto de encuentro');
   await expect(page.getByTestId('map')).toHaveAttribute('data-route', 'none');
 });
@@ -56,14 +58,17 @@ test('outside the evacuation area it says so and points to the nearest meeting p
   await expect(plan).not.toContainText('Sal del área de peligro');
 });
 
-test('earthquake mode adds the protect-first instruction to the same route', async ({ page }) => {
+test('the new pilot sectors get a route too: Lagunillas and Coronel Centro', async ({ page }) => {
   await page.goto('/');
   await waitForMap(page);
-  await page.getByRole('radio', { name: 'Terremoto' }).check();
-  await simulate(page, 'yobilo-villa-mora');
-  await expect(panel(page).getByTestId('plan')).toContainText(
-    'Primero protégete durante el sismo.',
-  );
+  for (const demo of ['lagunillas', 'coronel-centro']) {
+    await simulate(page, demo);
+    const plan = panel(page).getByTestId('plan');
+    await expect(plan).toContainText('Estás dentro del área a evacuar por tsunami.');
+    await expect(plan).toContainText(/Punto de encuentro PE0\d\d/);
+    await expect(page.getByTestId('map')).toHaveAttribute('data-route', 'shown');
+    await panel(page).getByRole('button', { name: 'Cambiar ubicación' }).click();
+  }
 });
 
 test.describe('with GPS permission', () => {

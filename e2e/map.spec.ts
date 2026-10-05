@@ -47,26 +47,27 @@ test('map controls are at least 48 px for touch', async ({ page }) => {
   }
 });
 
-test('switching hazard shows the matching official guidance', async ({ page }) => {
+test('tsunami only: no hazard to choose, official tsunami guidance and layers', async ({
+  page,
+}) => {
   await page.goto('/');
-  await openTab(page, 'Qué hacer');
-  const guidance = page.getByTestId('guidance');
-  await expect(page.getByRole('radio', { name: 'Tsunami' })).toBeChecked();
-  await expect(guidance).toContainText('Área de Evacuación por tsunami');
-
-  await page.getByRole('radio', { name: 'Terremoto' }).check();
-  await expect(guidance).toContainText('Lugar de Protección Sísmica');
-  await expect(guidance).toContainText('evacúa inmediatamente hacia un punto de encuentro');
-  await expect(page.getByRole('radio', { name: /Incendio/ })).toHaveCount(0);
-
-  // The choice is shared with the map screen, where the tsunami layers still apply.
-  await openTab(page, 'Mapa');
-  await expect(page.getByRole('radio', { name: 'Terremoto' })).toBeChecked();
+  await waitForMap(page);
+  // Owner decision 2026-10-04: a single hazard, so no selector anywhere.
+  await expect(page.getByRole('radio', { name: /Tsunami|Terremoto|Incendio/ })).toHaveCount(0);
   await page.getByTestId('map-legend').getByText('Leyenda').click();
   await expect(page.getByTestId('map-legend').getByRole('listitem')).toHaveCount(4);
+
+  await openTab(page, 'Qué hacer');
+  const guidance = page.getByTestId('guidance');
+  await expect(guidance).toContainText('Área de Evacuación por tsunami');
+  await expect(guidance).not.toContainText('Lugar de Protección Sísmica');
+  await expect(
+    page.getByText('Zona piloto: Lagunillas, Yobilo y Coronel Centro (Coronel)'),
+  ).toBeVisible();
 });
 
 test('the map works offline after the first visit', async ({ page, context }) => {
+  test.slow(); // waits for the offline precache
   await page.goto('/');
   await waitForMap(page);
   await waitForOfflineReady(page);

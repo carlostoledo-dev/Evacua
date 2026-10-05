@@ -3,8 +3,8 @@ import type { Dictionary } from '../translate.ts';
 export const en: Dictionary = {
   'app.name': 'Evacua',
   'app.tagline': 'Offline evacuation map',
-  'app.pilotSector': 'Pilot sector: Yobilo, Coronel (Chile)',
-  'app.place': '{commune} · {sector}',
+  'app.pilotSector': 'Pilot area: {sector} ({commune})',
+  'app.place': '{commune} · pilot area',
 
   'nav.skipToContent': 'Skip to content',
   'language.label': 'Language',
@@ -47,7 +47,7 @@ export const en: Dictionary = {
 
   'home.title': 'Where should I evacuate?',
   'home.intro':
-    'Evacua shows you where to evacuate in a tsunami or an earthquake, using official data, even without internet.',
+    'Evacua shows you where to evacuate during a tsunami, with official data and even without internet.',
 
   'hazard.tsunami': 'Tsunami',
   'hazard.wildfire': 'Wildfire',
@@ -131,7 +131,7 @@ export const en: Dictionary = {
   'route.alreadySafe':
     'You are outside the evacuation area according to SENAPRED. Stay alert to the authorities.',
   'route.outside':
-    'You are outside the pilot sector ({sector}). Evacua only has data for that sector: follow the authorities.',
+    'You are outside the pilot area ({sector}). Evacua only has data for that area: follow the authorities.',
   'route.straightLine.title': 'No route computed: this is a straight line, not a path.',
   'route.straightLine.body':
     'Meeting point {code} is {distance} away in a straight line, to the {direction}.',
@@ -157,7 +157,7 @@ export const en: Dictionary = {
 
   'onboarding.step': 'Step {current} of {total}',
   'onboarding.welcome.body':
-    'It shows you where to evacuate in the Yobilo sector of Coronel during a tsunami or an earthquake.',
+    'It shows you where to evacuate during a tsunami in Coronel: Lagunillas, Yobilo and the centre.',
   'onboarding.welcome.official': 'Official data',
   'onboarding.welcome.officialBody': 'From SENAPRED.',
   'onboarding.welcome.offline': 'Offline',
@@ -261,7 +261,7 @@ export const en: Dictionary = {
   'kit.item.11': 'Copies of identity documents, passport, birth certificate',
 
   'data.title': 'Sector data',
-  'data.sector': '{sector} sector, {commune} ({region})',
+  'data.sector': 'Pilot area: {sector}. {commune}, {region}.',
   'data.serviceAreaExplainer':
     'Evacua defined the pilot area for this sector; it is not an official administrative boundary.',
   'data.loading': 'Loading sector data…',

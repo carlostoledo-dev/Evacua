@@ -1,7 +1,7 @@
 import { lazy, Suspense, type CSSProperties } from 'react';
 import type { LoadedLayer } from '../../data/loader.ts';
 import type { DemoLocation } from '../../data/schema.ts';
-import type { HazardId } from '../../domain/hazards.ts';
+import { HAZARD_CHOICE, type HazardId } from '../../domain/hazards.ts';
 import type { ProfileConfig } from '../../domain/profiles.ts';
 import type { EvacuationPlan } from '../../domain/routing.ts';
 import { useI18n } from '../../i18n/I18nContext.ts';
@@ -125,9 +125,11 @@ export function MapScreen({
           </div>
         )}
       </div>
-      <div className="map-top" ref={topRef} data-tour="hazard">
-        <HazardSelector value={hazard} onChange={onHazardChange} compact />
-      </div>
+      {HAZARD_CHOICE && (
+        <div className="map-top" ref={topRef} data-tour="hazard">
+          <HazardSelector value={hazard} onChange={onHazardChange} compact />
+        </div>
+      )}
       {commune.status === 'ready' && (
         <div className="map-sheet" ref={sheetRef}>
           <RoutePanel

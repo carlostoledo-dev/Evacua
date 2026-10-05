@@ -1,15 +1,19 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { HAZARD_CHOICE } from '../../domain/hazards.ts';
 import { useI18n } from '../../i18n/I18nContext.ts';
 import type { MessageKey } from '../../i18n/translate.ts';
 
 /** Each step highlights the element marked with data-tour="<target>". */
-const STEPS: readonly { target: string; title: MessageKey; body: MessageKey }[] = [
+const ALL_STEPS: readonly { target: string; title: MessageKey; body: MessageKey }[] = [
   { target: 'hazard', title: 'tour.hazard.title', body: 'tour.hazard.body' },
   { target: 'map', title: 'tour.map.title', body: 'tour.map.body' },
   { target: 'route', title: 'tour.route.title', body: 'tour.route.body' },
   { target: 'tabs', title: 'tour.tabs.title', body: 'tour.tabs.body' },
   { target: 'disclaimer', title: 'tour.disclaimer.title', body: 'tour.disclaimer.body' },
 ];
+
+// The hazard step only exists when there is a hazard to choose.
+const STEPS = ALL_STEPS.filter((step) => step.target !== 'hazard' || HAZARD_CHOICE);
 
 interface Rect {
   top: number;

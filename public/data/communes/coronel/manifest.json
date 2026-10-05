@@ -5,21 +5,78 @@
   "region": "Biobío",
   "country": "CL",
   "sector": {
-    "id": "yobilo",
-    "name": "Yobilo",
-    "serviceArea": [-73.166, -37.018, -73.132, -36.996],
-    "note": "Pilot service area defined by the Evacua project around the Yobilo road (Villa Mora to Calabozo). It is not an official administrative boundary."
+    "id": "piloto-coronel",
+    "name": "Lagunillas, Yobilo y Coronel Centro",
+    "serviceArea": [-73.185, -37.04, -73.125, -36.966],
+    "note": "Pilot service area defined by the Evacua project (owner decision 2026-10-04): one rectangle from Lagunillas (north) through Yobilo to the centre of Coronel (south). It is not an official administrative boundary; neighbouring areas inside the rectangle, such as Schwager, are covered too."
   },
-  "bounds": [-73.178, -37.026, -73.122, -36.99],
+  "bounds": [-73.195, -37.056, -73.112, -36.956],
   "basemap": {
     "tiles": "/tiles/coronel/{z}/{x}/{y}.mvt",
     "minzoom": 12,
     "maxzoom": 15,
     "attribution": "© OpenStreetMap contributors",
-    "source": "Protomaps basemap daily build 20261002 (https://build.protomaps.com/20261002.pmtiles)",
+    "source": "Protomaps basemap daily build 20261004 (https://build.protomaps.com/20261004.pmtiles)",
     "license": "ODbL-1.0 (OpenStreetMap data)",
-    "retrievedAt": "2026-10-02"
+    "retrievedAt": "2026-10-05"
   },
+  "graph": {
+    "file": "graph.json",
+    "source": "OpenStreetMap walkable ways via the Overpass API",
+    "sourceUrl": "https://www.openstreetmap.org/copyright",
+    "license": "ODbL-1.0 (© OpenStreetMap contributors)",
+    "retrievedAt": "2026-10-05"
+  },
+  "demoLocations": [
+    {
+      "id": "yobilo-villa-mora",
+      "label": {
+        "es-CL": "Calle Yobilo, Villa Mora (dentro del área a evacuar)",
+        "en": "Yobilo road, Villa Mora (inside the evacuation area)"
+      },
+      "coordinates": [-73.152, -37.01]
+    },
+    {
+      "id": "villa-la-pena",
+      "label": {
+        "es-CL": "Villa La Peña (dentro del área a evacuar)",
+        "en": "Villa La Peña (inside the evacuation area)"
+      },
+      "coordinates": [-73.148, -37]
+    },
+    {
+      "id": "nuevo-horizonte",
+      "label": {
+        "es-CL": "Villa Nuevo Horizonte (fuera del área a evacuar)",
+        "en": "Villa Nuevo Horizonte (outside the evacuation area)"
+      },
+      "coordinates": [-73.143, -37.007]
+    },
+    {
+      "id": "lagunillas",
+      "label": {
+        "es-CL": "Calle Los Temus, Lagunillas (dentro del área a evacuar)",
+        "en": "Los Temus street, Lagunillas (inside the evacuation area)"
+      },
+      "coordinates": [-73.1584, -36.9813]
+    },
+    {
+      "id": "coronel-centro",
+      "label": {
+        "es-CL": "Plaza de Armas, Coronel Centro (dentro del área a evacuar)",
+        "en": "Main square, Coronel centre (inside the evacuation area)"
+      },
+      "coordinates": [-73.1453, -37.0293]
+    },
+    {
+      "id": "outside-pilot",
+      "label": {
+        "es-CL": "Ruta 160, Compañía de Lota (fuera de la zona piloto)",
+        "en": "Route 160, Compañía de Lota (outside the pilot area)"
+      },
+      "coordinates": [-73.14, -37.05]
+    }
+  ],
   "layers": [
     {
       "id": "tsunami-evacuation-area",
@@ -59,50 +116,9 @@
       "url": "https://services5.arcgis.com/i7S5PSnIJAUcWvSE/ArcGIS/rest/services/Amenaza_por_Tsunami_2024/FeatureServer",
       "catalogUrl": "https://geoportal.cl/geoportal/catalog/35413/Amenaza%20por%20Tsunami",
       "license": "No explicit license published; used citing SENAPRED as the providing institution, as IDE Chile requests",
-      "retrievedAt": "2026-10-01",
+      "retrievedAt": "2026-10-04",
       "verified": true,
       "notes": "Compiled by SENAPRED from municipal tsunami evacuation plans. The safe line declares SHOA's tsunami inundation chart (CITSU) as its basis (attribute fuente = CITSU)."
-    }
-  ],
-  "graph": {
-    "file": "graph.json",
-    "source": "OpenStreetMap walkable ways via the Overpass API",
-    "sourceUrl": "https://www.openstreetmap.org/copyright",
-    "license": "ODbL-1.0 (© OpenStreetMap contributors)",
-    "retrievedAt": "2026-10-02"
-  },
-  "demoLocations": [
-    {
-      "id": "yobilo-villa-mora",
-      "label": {
-        "es-CL": "Calle Yobilo, Villa Mora (dentro del área a evacuar)",
-        "en": "Yobilo road, Villa Mora (inside the evacuation area)"
-      },
-      "coordinates": [-73.152, -37.01]
-    },
-    {
-      "id": "villa-la-pena",
-      "label": {
-        "es-CL": "Villa La Peña (dentro del área a evacuar)",
-        "en": "Villa La Peña (inside the evacuation area)"
-      },
-      "coordinates": [-73.148, -37.0]
-    },
-    {
-      "id": "nuevo-horizonte",
-      "label": {
-        "es-CL": "Villa Nuevo Horizonte (fuera del área a evacuar)",
-        "en": "Villa Nuevo Horizonte (outside the evacuation area)"
-      },
-      "coordinates": [-73.143, -37.007]
-    },
-    {
-      "id": "lo-rojas-outside",
-      "label": {
-        "es-CL": "Lo Rojas (fuera del sector piloto)",
-        "en": "Lo Rojas (outside the pilot sector)"
-      },
-      "coordinates": [-73.163, -37.023]
     }
   ]
 }

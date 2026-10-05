@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { AVAILABLE_HAZARDS, DEFAULT_HAZARD, HAZARDS, layersForHazard } from './hazards.ts';
+import {
+  AVAILABLE_HAZARDS,
+  DEFAULT_HAZARD,
+  HAZARD_CHOICE,
+  HAZARDS,
+  layersForHazard,
+} from './hazards.ts';
 
 const layers = [
   { id: 'tsunami-area', hazards: ['tsunami'] as const },
@@ -8,9 +14,11 @@ const layers = [
 ];
 
 describe('hazards', () => {
-  it('offers tsunami and earthquake, not wildfire (owner decision D2 = C)', () => {
-    expect(AVAILABLE_HAZARDS).toEqual(['tsunami', 'earthquake']);
+  it('offers tsunami only, so there is no hazard selector (owner decision 2026-10-04)', () => {
+    expect(AVAILABLE_HAZARDS).toEqual(['tsunami']);
+    expect(HAZARDS.earthquake.available).toBe(false);
     expect(HAZARDS.wildfire.available).toBe(false);
+    expect(HAZARD_CHOICE).toBe(false);
   });
 
   it('defaults to an available hazard', () => {

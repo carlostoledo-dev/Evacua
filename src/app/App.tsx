@@ -87,9 +87,7 @@ export function App() {
           <div>
             <p className="brand__name">{t('app.name')}</p>
             {data && (
-              <p className="brand__place">
-                {t('app.place', { commune: data.manifest.name, sector: data.manifest.sector.name })}
-              </p>
+              <p className="brand__place">{t('app.place', { commune: data.manifest.name })}</p>
             )}
           </div>
         </div>
@@ -116,7 +114,13 @@ export function App() {
           plan={plan}
           profile={profile.config}
         />
-        {view === 'guide' && <GuideScreen hazard={hazard} onHazardChange={setHazard} />}
+        {view === 'guide' && (
+          <GuideScreen
+            hazard={hazard}
+            onHazardChange={setHazard}
+            pilot={data ? { sector: data.manifest.sector.name, commune: data.manifest.name } : null}
+          />
+        )}
         {view === 'data' && <DataScreen state={commune.state} onRetry={commune.retry} />}
         {view === 'settings' && (
           <SettingsScreen

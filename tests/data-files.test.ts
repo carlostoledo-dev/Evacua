@@ -25,9 +25,9 @@ describe('shipped data', () => {
     }
   });
 
-  it('Coronel / Yobilo: every tsunami layer comes from the verified SENAPRED source', async () => {
+  it('Coronel pilot area: every tsunami layer comes from the verified SENAPRED source', async () => {
     const { manifest, layers } = await loadShipped('coronel');
-    expect(manifest.sector.id).toBe('yobilo');
+    expect(manifest.sector.id).toBe('piloto-coronel');
     expect(layers.map((l) => l.entry.role).sort()).toEqual([
       'evacuation-area',
       'evacuation-route',
@@ -43,7 +43,7 @@ describe('shipped data', () => {
     }
   });
 
-  it('Coronel / Yobilo: meeting points lie inside the data bounds', async () => {
+  it('Coronel pilot area: meeting points lie inside the data bounds', async () => {
     const { manifest, layers } = await loadShipped('coronel');
     const [west, south, east, north] = manifest.bounds;
     const points = layers.find((l) => l.entry.role === 'meeting-point');
@@ -58,7 +58,7 @@ describe('shipped data', () => {
     }
   });
 
-  it('Coronel / Yobilo: each DEMO location behaves as its label says', async () => {
+  it('Coronel pilot area: each DEMO location behaves as its label says', async () => {
     const { manifest, layers, graph } = await loadShipped('coronel');
     expect(graph).not.toBeNull();
     const { evacuationAreas, meetingPoints } = routingInputs(layers);
@@ -76,10 +76,21 @@ describe('shipped data', () => {
       ]),
     );
 
-    expect(plans['yobilo-villa-mora']).toMatchObject({ kind: 'route', inDangerZone: true });
-    expect(plans['villa-la-pena']).toMatchObject({ kind: 'route', inDangerZone: true });
-    expect(plans['nuevo-horizonte']).toMatchObject({ kind: 'route', inDangerZone: false });
-    expect(plans['lo-rojas-outside']).toEqual({ kind: 'outside-service-area' });
+    // Print a compact summary when a label and the data disagree.
+    const summary = Object.fromEntries(
+      Object.entries(plans).map(([id, plan]) => [
+        id,
+        plan.kind === 'route' ? `route inDanger=${String(plan.inDangerZone)}` : plan.kind,
+      ]),
+    );
+    expect(summary).toEqual({
+      'yobilo-villa-mora': 'route inDanger=true',
+      'villa-la-pena': 'route inDanger=true',
+      'nuevo-horizonte': 'route inDanger=false',
+      lagunillas: 'route inDanger=true',
+      'coronel-centro': 'route inDanger=true',
+      'outside-pilot': 'outside-service-area',
+    });
     const yobilo = plans['yobilo-villa-mora'];
     if (yobilo?.kind === 'route') {
       expect(yobilo.metersToSafety).toBeGreaterThan(0);
