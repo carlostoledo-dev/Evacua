@@ -29,8 +29,8 @@ export default defineConfig({
         scope: '/',
         display: 'standalone',
         orientation: 'portrait',
-        background_color: '#0b4f8a', // splash screen when launched from the home screen
-        theme_color: '#0b4f8a',
+        background_color: '#0a1a3f', // splash screen when launched from the home screen
+        theme_color: '#0a1a3f',
         categories: ['navigation', 'utilities'],
         icons: [
           { src: 'pwa-64x64.png', sizes: '64x64', type: 'image/png' },

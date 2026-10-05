@@ -1,7 +1,7 @@
 // Generates the PWA icon set from public/logo.svg (run `npm run icons`, then commit the PNGs).
 import { defineConfig, minimal2023Preset } from '@vite-pwa/assets-generator/config';
 
-const BRAND_BACKGROUND = '#0b4f8a';
+const BRAND_BACKGROUND = '#0a1a3f';
 
 export default defineConfig({
   headLinkOptions: { preset: '2023' },
