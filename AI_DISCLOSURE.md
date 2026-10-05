@@ -77,3 +77,6 @@ visibly labeled DEMO. See `DATA_SOURCES.md`.
   reimplemented that style in code, drew a new wave app icon and new SVG illustrations (coastal
   scene, phone, profile avatars) by hand in SVG, and removed the name field from the profile at
   the owner's request. No image from the mockups is included in the app.
+- Owner-supplied images (2026-10-04): the welcome hero, the app icon and the three profile
+  avatars were made by the owner (TODO: name the image tool used). AI only cropped, masked,
+  resized and converted them, and wired them into the app.

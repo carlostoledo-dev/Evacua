@@ -247,6 +247,18 @@ explicit owner approval before the next one starts.
 - Verified: `npm run check` green, 29/29 e2e (axe WCAG 2.2 AA: 0 serious/critical on every
   screen), visual check at 375 × 812 in light and dark.
 
+**Owner images and desktop layout (2026-10-04)**
+
+- On a computer the app keeps the phone layout in a centered 430 px column.
+- The owner supplies the illustrations as images, step by step (no hand-drawn SVG). Added: welcome
+  hero, app icon (PWA icons regenerated from `public/logo.png`), three profile avatars, all
+  cropped, masked and converted to WebP (hero 114 KB, avatars ≈ 10 KB each; `.webp` precached).
+- Profile cards show legal age bands (sources in `src/domain/constants.ts`): Niño o niña "Menos
+  de 14 años" (Ley 21.430, art. 1), Adulto "14 a 59 años", Adulto mayor "60 años o más"
+  (Ley 19.828, art. 1). Cards are now ordered by age. The age is never asked or stored.
+- Pending: install-step phone image (the supplied one shows Apple's app icons, which are
+  trademarks; needs generic icons) and the "¡Todo listo!" image (file not received yet).
+
 ## Phase 6 — Security, tests, Lighthouse
 
 **Build**
