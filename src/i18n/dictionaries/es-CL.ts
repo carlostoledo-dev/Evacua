@@ -117,8 +117,19 @@ export const esCL = {
   'route.inDanger': 'Estás dentro del área a evacuar por tsunami.',
   'route.notInDanger': 'Estás fuera del área a evacuar por tsunami.',
   'route.toSafety': 'Sal del área de peligro: {distance} a pie {time}.',
-  'route.toMeetingPoint': 'Luego, punto de encuentro {code}: {distance} en total {time}.',
-  'route.nearestMeetingPoint': 'Punto de encuentro más cercano: {code}, a {distance} {time}.',
+  'route.toMeetingPoint':
+    'Luego, punto de encuentro {code}, hacia el {direction}: {distance} en total {time}.',
+  'route.nearestMeetingPoint':
+    'Punto de encuentro más cercano: {code}, hacia el {direction}, a {distance} {time}.',
+  'route.goHere': 'Ve aquí',
+  'route.item.exit': 'Sal del área de peligro',
+  'route.item.exitDetail': '{distance} a pie por la ruta marcada',
+  'route.item.meetingPoint': 'Punto de encuentro {code}',
+  'route.item.meetingDetail': '{distance} hacia el {direction}',
+  'route.item.meetingDetailTotal': '{distance} en total, hacia el {direction}',
+  'route.item.safeArea': 'Zona segura más cercana',
+  'route.time.rangeShort': '{fast}–{slow} min',
+  'route.time.slowShort': 'unos {slow} min',
   'route.toSafeArea':
     'Destino: la zona segura más cercana. Ningún punto de encuentro se alcanza sin volver al área de peligro.',
   'route.alreadySafe':

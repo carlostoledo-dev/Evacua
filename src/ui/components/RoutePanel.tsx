@@ -1,4 +1,4 @@
-import { useEffect, useId, useMemo, useRef, useState } from 'react';
+import { useEffect, useId, useMemo, useRef, useState, type ComponentType } from 'react';
 import type { DemoLocation } from '../../data/schema.ts';
 import type { HazardId } from '../../domain/hazards.ts';
 import type { ProfileConfig } from '../../domain/profiles.ts';
@@ -6,7 +6,7 @@ import type { EvacuationPlan } from '../../domain/routing.ts';
 import { useI18n } from '../../i18n/I18nContext.ts';
 import type { MessageKey } from '../../i18n/translate.ts';
 import type { GeoErrorKind } from '../../platform/geolocation.ts';
-import { describePlan, spokenText, type PlanDescription } from '../describePlan.ts';
+import { describePlan, spokenText, type PlanDescription, type PlanItem } from '../describePlan.ts';
 import { formatDistance } from '../format.ts';
 import type { LocationState } from '../hooks/useLocation.ts';
 import { useSpeech } from '../hooks/useSpeech.ts';
@@ -18,9 +18,18 @@ import {
   ChevronRightIcon,
   ChildIcon,
   LockIcon,
+  PinIcon,
+  ShieldCheckIcon,
   SpeakerIcon,
+  WalkIcon,
   WarningIcon,
 } from './icons.tsx';
+
+const ITEM_ICON: Record<PlanItem['kind'], ComponentType<{ className?: string }>> = {
+  exit: WalkIcon,
+  'meeting-point': PinIcon,
+  'safe-area': ShieldCheckIcon,
+};
 
 const GPS_ERROR: Record<GeoErrorKind, MessageKey> = {
   unsupported: 'location.error.unsupported',
@@ -45,14 +54,34 @@ function PlanView({ description }: { description: PlanDescription }) {
           <strong>{description.steps[0]}</strong>
         </p>
       )}
-      {description.steps.length > 0 && (
-        <ol className="plan-steps">
-          {(description.straightLine ? description.steps.slice(1) : description.steps).map(
-            (step) => (
-              <li key={step}>{step}</li>
-            ),
-          )}
+      {description.items.length > 0 ? (
+        // Route summary for a glance: each step with its icon, where to, how far and how long.
+        <ol className="route-steps">
+          {description.items.map((item) => {
+            const ItemIcon = ITEM_ICON[item.kind];
+            return (
+              <li key={item.kind} className="route-step" data-kind={item.kind}>
+                <span className="route-step__icon">
+                  <ItemIcon className="icon" />
+                </span>
+                <span className="route-step__text">
+                  <strong>{item.title}</strong> <span>{item.detail}</span>
+                </span>
+                {item.time && <span className="route-step__time"> {item.time}</span>}
+              </li>
+            );
+          })}
         </ol>
+      ) : (
+        description.steps.length > 0 && (
+          <ol className="plan-steps">
+            {(description.straightLine ? description.steps.slice(1) : description.steps).map(
+              (step) => (
+                <li key={step}>{step}</li>
+              ),
+            )}
+          </ol>
+        )
       )}
       {description.notes.map((note) => (
         <p key={note} className="muted small">
@@ -206,7 +235,13 @@ export function RoutePanel({
                   })}
                 {location.kind === 'manual' && t('location.source.manual')}
                 {location.kind === 'demo' &&
-                  t('location.source.demo', { label: demo ? demo.label[locale] : location.demoId })}
+                  t('location.source.demo', {
+                    // The label's "(inside the evacuation area)" note only helps when choosing a
+                    // test point; here the plan below already says it.
+                    label: demo
+                      ? demo.label[locale].replace(/\s*\([^)]*\)\s*$/, '')
+                      : location.demoId,
+                  })}
               </p>
               <button
                 type="button"

@@ -6,7 +6,8 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
 const ASSETS = 'https://raw.githubusercontent.com/protomaps/basemaps-assets/main/fonts';
-const FONTS = ['Noto Sans Regular', 'Noto Sans Medium'];
+// One weight only: every label uses Regular, which keeps the offline bundle small.
+const FONTS = ['Noto Sans Regular'];
 const RANGES = ['0-255', '256-511', '8192-8447']; // Basic Latin + Latin-1, Latin Extended-A, punctuation
 
 async function download(url: string): Promise<Buffer> {

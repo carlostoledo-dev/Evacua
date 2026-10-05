@@ -185,6 +185,7 @@ export default function MapView({
           palette,
           origin: window.location.origin,
           youLabel: t('route.you'),
+          goHereLabel: t('route.goHere'),
         }),
         bounds: padBounds(manifest.sector.serviceArea, 0.05),
         // Never show beyond the data bounds: the clipped edge of the evacuation area there is
