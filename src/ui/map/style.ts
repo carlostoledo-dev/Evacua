@@ -2,7 +2,7 @@
 // Basemap: Protomaps v4 vector tile schema (OpenStreetMap data). Overlays: official layers.
 import type { ExpressionSpecification, LayerSpecification, StyleSpecification } from 'maplibre-gl';
 import type { LoadedLayer } from '../../data/loader.ts';
-import type { Basemap, Bounds } from '../../data/schema.ts';
+import type { Basemap, Bounds, Terrain } from '../../data/schema.ts';
 import { APPROX_BUILDING_HEIGHT_M } from '../../domain/constants.ts';
 
 export interface MapPalette {
@@ -12,6 +12,12 @@ export interface MapPalette {
   building: string;
   /** Walls and roofs in the 3D view: a bit lighter than the flat footprint. */
   building3d: string;
+  /** Relief shading in the 3D view (slopes facing away from / towards the light). */
+  hillShadow: string;
+  hillHighlight: string;
+  /** Sky and horizon seen when the 3D view tilts the map (instead of a blank edge). */
+  sky: string;
+  horizon: string;
   road: string;
   roadCasing: string;
   label: string;
@@ -31,6 +37,10 @@ export const LIGHT_PALETTE: MapPalette = {
   park: '#d3e6c7',
   building: '#dcd7cc',
   building3d: '#d2ccbf',
+  hillShadow: '#7a6648',
+  hillHighlight: '#fffaf0',
+  sky: '#8ec1f0',
+  horizon: '#e6eef7',
   road: '#ffffff',
   roadCasing: '#8a8478',
   label: '#1f1f1f',
@@ -51,6 +61,10 @@ export const DARK_PALETTE: MapPalette = {
   park: '#0c1d10',
   building: '#1a1c20',
   building3d: '#3a414e',
+  hillShadow: '#000000',
+  hillHighlight: '#4a5263',
+  sky: '#050c1f',
+  horizon: '#1b2740',
   road: '#3b4049',
   roadCasing: '#000000',
   label: '#e8eef5',
@@ -75,6 +89,9 @@ const BASEMAP_SOURCE = 'basemap';
 /** Flat building footprints, and their extruded twin for the 3D view. */
 export const BUILDINGS_LAYER_ID = 'buildings';
 export const BUILDINGS_3D_LAYER_ID = 'buildings-3d';
+/** Offline elevation (3D relief) and its shading, both only used by the 3D view. */
+export const TERRAIN_SOURCE = 'terrain';
+export const HILLSHADE_LAYER_ID = 'hillshade';
 const LABEL_FONT = ['Noto Sans Regular'];
 const PLACE_FONT = LABEL_FONT;
 const NAME: ExpressionSpecification = ['coalesce', ['get', 'name:es'], ['get', 'name']];
@@ -371,6 +388,8 @@ export interface StyleInput {
    * outside it, e.g. towards the horizon of the tilted 3D view, where none were extracted.
    */
   tileBounds?: Bounds;
+  /** Offline elevation tiles; without them the 3D view stays on flat ground. */
+  terrain?: Terrain | undefined;
 }
 
 export function buildStyle({
@@ -381,6 +400,7 @@ export function buildStyle({
   youLabel,
   goHereLabel,
   tileBounds,
+  terrain,
 }: StyleInput): StyleSpecification {
   const overlaySources = Object.fromEntries(
     layers.map((layer) => [
@@ -392,9 +412,38 @@ export function buildStyle({
       },
     ]),
   );
+  const bounds = tileBounds ? { bounds: [...tileBounds] as [number, number, number, number] } : {};
+  const base = basemapLayers(palette);
+  if (terrain) {
+    // Shading right above water: under roads, buildings, labels and the official layers.
+    const afterWater = base.findIndex((l) => l.id === 'water') + 1;
+    base.splice(afterWater, 0, {
+      id: HILLSHADE_LAYER_ID,
+      type: 'hillshade',
+      source: TERRAIN_SOURCE,
+      layout: { visibility: 'none' },
+      paint: {
+        // Earth tones only: a bluish shadow could be mistaken for water.
+        'hillshade-shadow-color': palette.hillShadow,
+        'hillshade-accent-color': palette.hillShadow,
+        'hillshade-highlight-color': palette.hillHighlight,
+        'hillshade-exaggeration': 0.3,
+      },
+    });
+  }
   return {
     version: 8,
     glyphs: `${origin}/fonts/{fontstack}/{range}.pbf`,
+    // Only visible when the 3D view tilts the camera far enough to see the horizon.
+    sky: {
+      'sky-color': palette.sky,
+      'horizon-color': palette.horizon,
+      'fog-color': palette.land,
+      'sky-horizon-blend': 0.6,
+      'horizon-fog-blend': 0.6,
+      'fog-ground-blend': 0.85,
+      'atmosphere-blend': 0,
+    },
     sources: {
       [BASEMAP_SOURCE]: {
         type: 'vector',
@@ -402,15 +451,29 @@ export function buildStyle({
         minzoom: basemap.minzoom,
         maxzoom: basemap.maxzoom,
         attribution: basemap.attribution,
-        ...(tileBounds ? { bounds: [...tileBounds] } : {}),
+        ...bounds,
       },
+      ...(terrain
+        ? {
+            [TERRAIN_SOURCE]: {
+              type: 'raster-dem' as const,
+              tiles: [`${origin}${terrain.tiles}`],
+              encoding: terrain.encoding,
+              tileSize: terrain.tileSize,
+              minzoom: terrain.minzoom,
+              maxzoom: terrain.maxzoom,
+              attribution: terrain.attribution,
+              ...bounds,
+            },
+          }
+        : {}),
       ...overlaySources,
       [USER_ROUTE_SOURCE]: { type: 'geojson', data: EMPTY },
       [DESTINATION_SOURCE]: { type: 'geojson', data: EMPTY },
       [USER_POSITION_SOURCE]: { type: 'geojson', data: EMPTY },
     },
     layers: [
-      ...basemapLayers(palette),
+      ...base,
       ...layers.flatMap((layer) => overlayLayers(layer, palette)),
       ...userLayers(palette, youLabel, goHereLabel),
     ],

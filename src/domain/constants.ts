@@ -95,3 +95,9 @@ export const MAP_3D_PITCH_DEG = 60;
 
 /** 3D map view: zoom it moves to if farther out, so the buildings (drawn from z14) show. */
 export const MAP_3D_MIN_ZOOM = 15.5;
+
+/**
+ * 3D map view: vertical scale of the relief. 1 = true scale (no exaggeration), so the hills
+ * look as high as the elevation data says (SRTM ≈ 30 m cells; display only, not safety data).
+ */
+export const MAP_3D_TERRAIN_EXAGGERATION = 1;

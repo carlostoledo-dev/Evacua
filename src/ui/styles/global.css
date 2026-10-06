@@ -928,6 +928,11 @@ button svg.icon {
   border-top-right-radius: 0.5rem;
 }
 
+/* The compass only matters when the map can turn: in the 3D view. */
+.map-frame:not(.map-frame--3d) .maplibregl-ctrl-group:has(.maplibregl-ctrl-compass) {
+  display: none;
+}
+
 /* Touch screens zoom with two fingers: hide the +/- buttons (and the scale) to clear the map. */
 @media (hover: none) and (pointer: coarse) {
   .screen--map .maplibregl-ctrl-group:has(.maplibregl-ctrl-zoom-in),
