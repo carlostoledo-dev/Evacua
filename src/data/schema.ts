@@ -162,6 +162,10 @@ export const graphFileSchema = z
     schemaVersion: z.literal(1),
     nodes: z.array(z.number()).min(2),
     edges: z.array(z.number()),
+    /** Street names (OSM `name`), referenced by `edgeNames`. Optional: older files have none. */
+    names: z.array(z.string().min(1)).optional(),
+    /** One entry per edge: index into `names`, or -1 for an unnamed way. */
+    edgeNames: z.array(z.number().int()).optional(),
   })
   .superRefine((graph, ctx) => {
     if (graph.nodes.length % 2 !== 0) {
@@ -193,6 +197,16 @@ export const graphFileSchema = z
       if (!validIndex(from) || !validIndex(to) || !(meters >= 0)) {
         ctx.addIssue({ code: 'custom', path: ['edges', i], message: 'invalid edge' });
         return;
+      }
+    }
+    if (graph.edgeNames) {
+      const nameCount = graph.names?.length ?? 0;
+      if (graph.edgeNames.length !== graph.edges.length / 3) {
+        ctx.addIssue({ code: 'custom', path: ['edgeNames'], message: 'one entry per edge' });
+        return;
+      }
+      if (graph.edgeNames.some((n) => n < -1 || n >= nameCount)) {
+        ctx.addIssue({ code: 'custom', path: ['edgeNames'], message: 'name index out of range' });
       }
     }
   });

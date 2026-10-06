@@ -113,6 +113,7 @@ test('profile can be changed and all local data deleted from Settings', async ({
 });
 
 test('no serious accessibility violations on the onboarding and main screens', async ({ page }) => {
+  test.slow(); // axe runs on eight screens
   const check = async (label: string) => {
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])

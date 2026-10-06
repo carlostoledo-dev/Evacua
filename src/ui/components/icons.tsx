@@ -304,3 +304,19 @@ export function CloseIcon(props: IconProps) {
     </Svg>
   );
 }
+
+export function ArrowUpIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M12 20V5M5 12l7-7 7 7" />
+    </Svg>
+  );
+}
+
+export function StopIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <rect x="6" y="6" width="12" height="12" rx="2" />
+    </Svg>
+  );
+}

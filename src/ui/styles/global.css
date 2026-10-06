@@ -2330,3 +2330,110 @@ button svg.icon {
     scroll-behavior: auto !important;
   }
 }
+
+/* ---------------------------------------------------------------------------------------- */
+/* Turn-by-turn navigation                                                                   */
+
+/* Next direction on top of the map, in the navy band (like a car navigator). */
+.nav-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0.25rem 0.25rem;
+  color: var(--color-header-text);
+}
+
+.nav-banner__arrow {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  color: #0a1a3f;
+  background: #8cc8ff;
+  border-radius: var(--radius);
+}
+
+.nav-banner__arrow .icon {
+  width: 2.25rem;
+  height: 2.25rem;
+  stroke-width: 2.6;
+}
+
+/* The arrow turns with the maneuver; the words below say the same. */
+.nav-banner__arrow[data-kind='slight-right'] .icon {
+  transform: rotate(45deg);
+}
+
+.nav-banner__arrow[data-kind='right'] .icon {
+  transform: rotate(90deg);
+}
+
+.nav-banner__arrow[data-kind='sharp-right'] .icon {
+  transform: rotate(135deg);
+}
+
+.nav-banner__arrow[data-kind='slight-left'] .icon {
+  transform: rotate(-45deg);
+}
+
+.nav-banner__arrow[data-kind='left'] .icon {
+  transform: rotate(-90deg);
+}
+
+.nav-banner__arrow[data-kind='sharp-left'] .icon {
+  transform: rotate(-135deg);
+}
+
+.nav-banner__text {
+  display: grid;
+  margin: 0;
+  min-width: 0;
+  line-height: 1.2;
+}
+
+.nav-banner__text strong {
+  font-size: 1.625rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+
+.nav-banner__text span {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: var(--color-header-muted);
+}
+
+.nav-banner__text span::first-letter {
+  text-transform: uppercase;
+}
+
+.nav-start {
+  gap: 0.5rem;
+}
+
+.nav-panel {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.nav-demo {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+.nav-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  gap: 0.5rem;
+}
+
+.nav-actions .button[aria-pressed='true'] {
+  color: var(--color-primary-contrast);
+  background: var(--color-primary);
+}
+
+.nav-actions .button:only-child {
+  grid-column: 1 / -1;
+}
