@@ -65,6 +65,8 @@ export const esCL = {
   'map.dataError': 'No se pudieron cargar los datos del sector.',
   'map.showData': 'Ver detalles',
   'map.legend': 'Leyenda',
+  'map.view3d': 'Vista 3D',
+  'map.buildingsApprox': '3D · alturas de edificios aproximadas',
   'map.locate': 'Usar mi ubicación (GPS)',
 
   // Verbatim from SENAPRED (https://www.senapred.cl/tsunami/ and /sismos/), retrieved 2026-10-02.
@@ -239,10 +241,10 @@ export const esCL = {
     'Llegaste al punto de encuentro {code}. Sigue las instrucciones de las autoridades.',
   'nav.arrivedSafe': 'Llegaste a la zona segura. Sigue las instrucciones de las autoridades.',
   'nav.waiting': 'Buscando tu posición… Al aire libre el GPS responde más rápido.',
-  'voice.listen': 'Escuchar indicaciones',
-  'voice.stop': 'Detener voz',
+  'voice.listen': 'Escuchar',
+  'voice.stop': 'Detener',
   'voice.unsupported':
-    'Este teléfono no tiene voz disponible; las indicaciones están escritas arriba.',
+    'Este teléfono no tiene voz disponible; las indicaciones están escritas en pantalla.',
 
   'route.time.range': '({fast}–{slow} min)',
   'route.time.slow': '(unos {slow} min a paso tranquilo)',
@@ -315,6 +317,8 @@ export const esCL = {
   'layer.sourceLink': 'Ver ficha oficial de la fuente',
   'layer.badge.verified': 'Fuente oficial verificada',
   'layer.badge.demo': 'DEMO / sin verificar',
+  'layer.badge.verifiedShort': 'Oficial',
+  'layer.badge.demoShort': 'DEMO',
 
   'footer.version': 'Versión {version}',
 } as const;

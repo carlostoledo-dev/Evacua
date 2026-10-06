@@ -55,6 +55,12 @@
   --space-3: 1rem;
   --space-4: 1.5rem;
   --touch-target: 48px;
+  /* Translucent materials (iOS style): bars and sheets float over the map. */
+  --glass-blur: saturate(180%) blur(20px);
+  --glass-bar: rgba(10, 26, 63, 0.84);
+  --glass-surface: rgba(255, 255, 255, 0.88);
+  --radius-sheet: 1.5rem;
+  --radius-control: 0.875rem;
   --font-body: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 
@@ -65,6 +71,8 @@
     --color-bg: #000000;
     --color-desktop: #10151f;
     --color-surface: #0f1218;
+    --glass-bar: rgba(5, 12, 31, 0.84);
+    --glass-surface: rgba(15, 18, 24, 0.88);
     --color-surface-2: #181d27;
     --color-text: #f1f4f8;
     --color-text-muted: #b8c3d1;
@@ -108,6 +116,8 @@
   --color-bg: #000000;
   --color-desktop: #10151f;
   --color-surface: #0f1218;
+  --glass-bar: rgba(5, 12, 31, 0.84);
+  --glass-surface: rgba(15, 18, 24, 0.88);
   --color-surface-2: #181d27;
   --color-text: #f1f4f8;
   --color-text-muted: #b8c3d1;
@@ -336,6 +346,7 @@ button svg.icon {
 /* App shell: navy bar · content · disclaimer + tab bar. Fills the phone screen.            */
 
 .app {
+  position: relative;
   display: flex;
   flex-direction: column;
   height: 100dvh;
@@ -358,14 +369,19 @@ button svg.icon {
 }
 
 .app-bar {
-  position: relative;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
   z-index: 10;
   display: grid;
   gap: 0.3125rem;
   padding: max(0.375rem, env(safe-area-inset-top)) max(var(--space-3), env(safe-area-inset-right))
-    0.4375rem max(var(--space-3), env(safe-area-inset-left));
-  background: var(--color-header);
+    0.5rem max(var(--space-3), env(safe-area-inset-left));
   color: var(--color-header-text);
+  background: var(--glass-bar);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
 }
 
 .app-bar__row {
@@ -429,10 +445,15 @@ button svg.icon {
 }
 
 .app-footer {
-  position: relative;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
   z-index: 10;
   padding-bottom: env(safe-area-inset-bottom);
-  background: var(--color-surface);
+  background: var(--glass-surface);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
   border-top: 1px solid var(--color-hairline);
 }
 
@@ -527,11 +548,11 @@ button svg.icon {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 1px;
+  gap: 2px;
   min-height: 3.25rem;
-  padding: 0.25rem 0.25rem 0.4375rem;
+  padding: 0.375rem 0.25rem;
   font: inherit;
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   font-weight: 600;
   color: var(--color-text-muted);
   background: transparent;
@@ -542,8 +563,11 @@ button svg.icon {
 }
 
 .tab-bar__icon {
+  box-sizing: content-box;
   width: 1.5rem;
   height: 1.5rem;
+  padding: 0.125rem 0.875rem;
+  border-radius: 999px;
 }
 
 .tab-bar__item[aria-current='page'] {
@@ -551,16 +575,8 @@ button svg.icon {
   font-weight: 800;
 }
 
-.tab-bar__item[aria-current='page']::after {
-  content: '';
-  position: absolute;
-  bottom: 2px;
-  left: 50%;
-  width: 2.5rem;
-  height: 4px;
-  border-radius: 999px;
-  background: var(--color-primary);
-  transform: translateX(-50%);
+.tab-bar__item[aria-current='page'] .tab-bar__icon {
+  background: color-mix(in srgb, var(--color-primary) 16%, transparent);
 }
 
 .tab-bar__item:focus-visible {
@@ -622,7 +638,8 @@ button svg.icon {
 .screen--panel {
   max-width: 44rem;
   margin: 0 auto;
-  padding: var(--space-3) max(var(--space-3), env(safe-area-inset-right)) var(--space-3)
+  padding: calc(var(--chrome-top, 0px) + var(--space-3))
+    max(var(--space-3), env(safe-area-inset-right)) calc(var(--chrome-bottom, 0px) + var(--space-3))
     max(var(--space-3), env(safe-area-inset-left));
 }
 
@@ -726,7 +743,7 @@ button svg.icon {
 /* The map screen's header band continues the navy app bar. */
 .map-top {
   position: absolute;
-  top: 0;
+  top: var(--chrome-top, 0px);
   left: 0;
   right: 0;
   z-index: 5;
@@ -854,24 +871,39 @@ button svg.icon {
 
 .screen--map .maplibregl-ctrl-top-right .maplibregl-ctrl-group {
   display: grid;
-  gap: 0.375rem;
-  margin: 0.375rem 0.75rem 0 0;
-  background: transparent;
-  box-shadow: none;
+  margin: 0.5rem 0.75rem 0 0;
+  overflow: hidden;
+  background: var(--glass-surface);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-control);
+  box-shadow: var(--shadow-float);
 }
 
 .screen--map .maplibregl-ctrl-top-right .maplibregl-ctrl-group button {
   width: 3rem;
   height: 3rem;
   color: var(--color-text);
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-hairline);
-  border-radius: 50%;
-  box-shadow: var(--shadow-float);
+  background-color: transparent;
+  border: 0;
+  border-radius: 0;
 }
 
 .screen--map .maplibregl-ctrl-top-right .maplibregl-ctrl-group button + button {
   border-top: 1px solid var(--color-hairline);
+}
+
+.map-3d {
+  font: inherit;
+  font-size: 0.9375rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.screen--map .maplibregl-ctrl-group button.map-3d[aria-pressed='true'] {
+  color: var(--color-primary-contrast);
+  background-color: var(--color-primary);
 }
 
 .map-locate svg {
@@ -887,13 +919,18 @@ button svg.icon {
 
 .screen--map .maplibregl-ctrl-attrib {
   margin: 0;
-  border-top-right-radius: var(--radius);
+  padding: 0 0.375rem;
+  font-size: 0.625rem;
+  line-height: 1.5;
+  background: var(--glass-surface);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border-top-right-radius: 0.5rem;
 }
 
 /* Touch screens zoom with two fingers: hide the +/- buttons (and the scale) to clear the map. */
 @media (hover: none) and (pointer: coarse) {
-  .screen--map .maplibregl-ctrl-zoom-in,
-  .screen--map .maplibregl-ctrl-zoom-out,
+  .screen--map .maplibregl-ctrl-group:has(.maplibregl-ctrl-zoom-in),
   .screen--map .maplibregl-ctrl-scale {
     display: none;
   }
@@ -916,9 +953,6 @@ button svg.icon {
   top: calc(var(--top-h, 0px) + 0.75rem);
   right: max(0.75rem, env(safe-area-inset-right));
   z-index: 4;
-  display: grid;
-  justify-items: end;
-  max-width: calc(100% - 1.5rem);
 }
 
 .map-legend summary {
@@ -927,9 +961,11 @@ button svg.icon {
   width: 3rem;
   height: 3rem;
   color: var(--color-text);
-  background: var(--color-surface);
+  background: var(--glass-surface);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
   border: 1px solid var(--color-hairline);
-  border-radius: 50%;
+  border-radius: var(--radius-control);
   box-shadow: var(--shadow-float);
   cursor: pointer;
   list-style: none;
@@ -952,27 +988,51 @@ button svg.icon {
 
 .map-legend ul {
   list-style: none;
-  margin: var(--space-2) 0 0;
-  padding: var(--space-2) var(--space-3);
-  display: grid;
-  gap: var(--space-2);
-  max-height: 45dvh;
-  overflow-y: auto;
-  background: var(--color-surface);
-  border: 1px solid var(--color-hairline);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-float);
+  margin: 0;
+  padding: 0;
 }
 
 .map-legend li {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr) auto;
   align-items: center;
-  gap: var(--space-1) var(--space-2);
+  gap: 0.5rem;
+  padding: 0.4375rem 0;
+}
+
+.map-legend li + li {
+  border-top: 1px solid var(--color-hairline);
+}
+
+.map-legend__panel {
+  position: absolute;
+  top: 0;
+  right: 3.5rem;
+  width: min(17rem, calc(100vw - 5.5rem));
+  max-height: calc(100dvh - var(--top-h, 0px) - var(--sheet-h, 0px) - 1.5rem);
+  overflow-y: auto;
+  padding: 0.5rem 0.875rem 0.375rem;
+  background: var(--glass-surface);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--color-hairline);
+  border-radius: 1.125rem;
+  box-shadow: var(--shadow-float);
+}
+
+.map-legend__title {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
 }
 
 .map-legend__name {
+  font-size: 0.875rem;
   font-weight: 600;
+  line-height: 1.25;
 }
 
 .map-legend .badge {
@@ -1008,21 +1068,40 @@ button svg.icon {
 }
 
 /* DEMO label on the map whenever the position is simulated: under the legend button. */
-.map-demo-chip {
+.map-chips {
   position: absolute;
   top: calc(var(--top-h, 0px) + 0.75rem);
   left: max(0.75rem, env(safe-area-inset-left));
   z-index: 3;
+  display: grid;
+  justify-items: start;
+  gap: 0.375rem;
+  max-width: calc(100% - 5.5rem);
+  pointer-events: none;
+}
+
+.map-chip {
   margin: 0;
-  padding: 0.125rem 0.625rem;
-  color: var(--color-warning-text);
-  background: var(--color-warning-bg);
-  border: 2px solid var(--color-warning-border);
+  padding: 0.1875rem 0.625rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--color-text);
+  background: var(--glass-surface);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--color-hairline);
   border-radius: 999px;
+  box-shadow: var(--shadow-float);
+}
+
+.map-chip--demo {
   font-size: 0.8125rem;
   font-weight: 800;
   letter-spacing: 0.05em;
-  box-shadow: var(--shadow-float);
+  color: var(--color-warning-text);
+  background: var(--color-warning-bg);
+  border: 2px solid var(--color-warning-border);
 }
 
 .map-frame--picking .maplibregl-canvas {
@@ -1034,24 +1113,27 @@ button svg.icon {
 
 .map-sheet {
   position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  left: max(0.5rem, env(safe-area-inset-left));
+  right: max(0.5rem, env(safe-area-inset-right));
+  bottom: calc(var(--chrome-bottom, 0px) + 0.5rem);
   z-index: 5;
-  /* Leave most of the screen to the map; the rest of the sheet scrolls under its header. */
-  max-height: 50%;
+  /* Leave most of the visible map to the map; the rest of the sheet scrolls. */
+  max-height: calc((100% - var(--chrome-top, 0px) - var(--chrome-bottom, 0px)) * 0.55);
   display: flex;
 }
 
 /* Choosing a location: the sheet is short, so show all of it (the main button is never cut). */
 .map-sheet:has(.location-chooser) {
-  max-height: 80%;
+  max-height: calc((100% - var(--chrome-top, 0px) - var(--chrome-bottom, 0px)) * 0.85);
 }
 
 .glass-sheet {
-  background: var(--color-surface);
-  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
-  box-shadow: 0 -10px 32px rgba(15, 23, 42, 0.16);
+  background: var(--glass-surface);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-sheet);
+  box-shadow: 0 12px 40px rgba(15, 23, 42, 0.22);
 }
 
 .route-panel {
@@ -1070,8 +1152,8 @@ button svg.icon {
   align-items: center;
   justify-content: space-between;
   gap: var(--space-2);
-  padding: 0.875rem 0 0.25rem;
-  background: var(--color-surface);
+  padding: 0.875rem 0 0.375rem;
+  background: transparent;
 }
 
 /* Decorative grab handle, as on native bottom sheets. */
@@ -1335,10 +1417,10 @@ button svg.icon {
   display: flex;
   align-items: flex-start;
   gap: var(--space-2);
-  margin: 0 0 var(--space-2);
-  padding: 0.5rem 0.75rem;
-  border-radius: var(--radius);
-  border: 2px solid currentColor;
+  margin: 0;
+  padding: 0.625rem 0.75rem;
+  border-radius: var(--radius-control);
+  background: color-mix(in srgb, currentColor 11%, transparent);
   font-size: 0.9375rem;
   line-height: 1.35;
 }
@@ -1354,7 +1436,7 @@ button svg.icon {
 .plan--warning {
   color: var(--color-warning-text);
   background: var(--color-warning-soft);
-  border-color: var(--color-warning-border);
+  box-shadow: inset 0 0 0 1px var(--color-warning-border);
 }
 
 .plan--safe {
@@ -1376,27 +1458,27 @@ button svg.icon {
 /* Route summary: one row per step — icon, where to and how far, and the time in big type. */
 .route-steps {
   list-style: none;
-  margin: 0 0 var(--space-2);
+  margin: 0;
   padding: 0;
   display: grid;
-  gap: 0.375rem;
+  overflow: hidden;
+  background: var(--color-surface-2);
+  border-radius: var(--radius-control);
 }
 
 .route-step {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.5rem 0.75rem;
-  background: var(--color-surface-2);
-  border-radius: var(--radius);
+  padding: 0.5625rem 0.75rem;
 }
 
 .route-step__icon {
   flex: none;
   display: grid;
   place-items: center;
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 2.25rem;
+  height: 2.25rem;
   color: var(--color-primary-contrast);
   background: var(--color-primary);
   border-radius: 50%;
@@ -1406,6 +1488,56 @@ button svg.icon {
 .route-step[data-kind='meeting-point'] .route-step__icon {
   color: #ffffff;
   background: var(--map-meeting);
+}
+
+.route-step + .route-step {
+  border-top: 1px solid var(--color-hairline);
+}
+
+.plan-view,
+.plan-view__lead,
+.plan-view__details,
+.plan-actions {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.plan-view__lead:empty,
+.plan-view__details:empty {
+  display: none;
+}
+
+.plan-actions__row {
+  display: grid;
+  grid-auto-columns: minmax(0, 1fr);
+  grid-auto-flow: column;
+  gap: 0.5rem;
+}
+
+/* Secondary actions: tinted, borderless (iOS "tinted" buttons). */
+.button--tinted {
+  font-size: 0.9375rem;
+  color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  border-color: transparent;
+  border-radius: var(--radius-control);
+}
+
+.button--tinted[aria-pressed='true'] {
+  color: var(--color-primary-contrast);
+  background: var(--color-primary);
+}
+
+.location-source .badge {
+  padding: 0 0.375rem;
+  font-size: 0.75rem;
+}
+
+.badge--compact {
+  gap: 0.1875rem;
+  padding: 1px 0.4375rem;
+  border-width: 1.5px;
+  white-space: nowrap;
 }
 
 .route-step__icon .icon {
@@ -2488,4 +2620,13 @@ button svg.icon {
 
 .nav-actions .button:only-child {
   grid-column: 1 / -1;
+}
+
+/* People who ask for less transparency get solid bars, sheets and controls. */
+@media (prefers-reduced-transparency: reduce) {
+  :root,
+  :root:not([data-theme='none']) {
+    --glass-bar: var(--color-header);
+    --glass-surface: var(--color-surface);
+  }
 }

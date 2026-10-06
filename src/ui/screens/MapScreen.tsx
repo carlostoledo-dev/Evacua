@@ -42,9 +42,13 @@ interface MapScreenProps {
   locationActions: LocationActions;
   plan: EvacuationPlan | null;
   profile: ProfileConfig;
+  /** Heights (px) of the translucent app bar and tab bar floating over the map. */
+  chrome: { top: number; bottom: number };
 }
 
 const NO_DEMO_LOCATIONS: readonly DemoLocation[] = [];
+/** The route sheet floats this far above the tab bar (`.map-sheet` bottom offset: 0.5rem). */
+const SHEET_GAP_PX = 8;
 
 /**
  * Stays mounted while other screens are shown (hidden), so the map is not rebuilt on every
@@ -62,6 +66,7 @@ export function MapScreen({
   locationActions,
   plan,
   profile,
+  chrome,
 }: MapScreenProps) {
   const { t, locale } = useI18n();
   const [topRef, topHeight] = useElementHeight();
@@ -83,6 +88,11 @@ export function MapScreen({
       route?.destination.coordinates ??
       (plan?.kind === 'straight-line' ? plan.destination.coordinates : null),
   };
+  // The map runs under the translucent bars; these are the parts of it that stay uncovered.
+  const insets = {
+    top: chrome.top + topHeight,
+    bottom: chrome.bottom + (sheetHeight > 0 ? sheetHeight + SHEET_GAP_PX : 0),
+  };
   const demoLocations =
     commune.status === 'ready' ? commune.data.manifest.demoLocations : NO_DEMO_LOCATIONS;
 
@@ -93,8 +103,8 @@ export function MapScreen({
       hidden={!active}
       style={
         {
-          '--top-h': `${String(topHeight)}px`,
-          '--sheet-h': `${String(sheetHeight)}px`,
+          '--top-h': `${String(insets.top)}px`,
+          '--sheet-h': `${String(insets.bottom)}px`,
         } as CSSProperties
       }
     >
@@ -119,7 +129,7 @@ export function MapScreen({
                 picking={location.kind === 'picking'}
                 onPick={locationActions.pick}
                 demo={location.kind === 'demo'}
-                insets={{ top: topHeight, bottom: sheetHeight }}
+                insets={insets}
                 onLocate={locationActions.locateWithGps}
                 follow={navigation.active}
               />

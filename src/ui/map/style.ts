@@ -2,13 +2,16 @@
 // Basemap: Protomaps v4 vector tile schema (OpenStreetMap data). Overlays: official layers.
 import type { ExpressionSpecification, LayerSpecification, StyleSpecification } from 'maplibre-gl';
 import type { LoadedLayer } from '../../data/loader.ts';
-import type { Basemap } from '../../data/schema.ts';
+import type { Basemap, Bounds } from '../../data/schema.ts';
+import { APPROX_BUILDING_HEIGHT_M } from '../../domain/constants.ts';
 
 export interface MapPalette {
   water: string;
   land: string;
   park: string;
   building: string;
+  /** Walls and roofs in the 3D view: a bit lighter than the flat footprint. */
+  building3d: string;
   road: string;
   roadCasing: string;
   label: string;
@@ -27,6 +30,7 @@ export const LIGHT_PALETTE: MapPalette = {
   land: '#f4f1ea',
   park: '#d3e6c7',
   building: '#dcd7cc',
+  building3d: '#d2ccbf',
   road: '#ffffff',
   roadCasing: '#8a8478',
   label: '#1f1f1f',
@@ -46,6 +50,7 @@ export const DARK_PALETTE: MapPalette = {
   land: '#000000',
   park: '#0c1d10',
   building: '#1a1c20',
+  building3d: '#3a414e',
   road: '#3b4049',
   roadCasing: '#000000',
   label: '#e8eef5',
@@ -67,6 +72,9 @@ export const MEETING_POINT_ICON_ID = 'evacua-meeting-point';
 export const NAV_ARROW_ICON_ID = 'evacua-nav-arrow';
 
 const BASEMAP_SOURCE = 'basemap';
+/** Flat building footprints, and their extruded twin for the 3D view. */
+export const BUILDINGS_LAYER_ID = 'buildings';
+export const BUILDINGS_3D_LAYER_ID = 'buildings-3d';
 const LABEL_FONT = ['Noto Sans Regular'];
 const PLACE_FONT = LABEL_FONT;
 const NAME: ExpressionSpecification = ['coalesce', ['get', 'name:es'], ['get', 'name']];
@@ -110,7 +118,7 @@ function basemapLayers(p: MapPalette): LayerSpecification[] {
       paint: { 'fill-color': p.water },
     },
     {
-      id: 'buildings',
+      id: BUILDINGS_LAYER_ID,
       type: 'fill',
       ...src,
       'source-layer': 'buildings',
@@ -142,6 +150,20 @@ function basemapLayers(p: MapPalette): LayerSpecification[] {
       'source-layer': 'roads',
       filter: ['==', ['get', 'kind'], 'path'],
       paint: { 'line-color': p.roadCasing, 'line-width': 1, 'line-dasharray': [2, 2] },
+    },
+    // Hidden until the user turns on the 3D view (MapView switches it with `buildings`).
+    {
+      id: BUILDINGS_3D_LAYER_ID,
+      type: 'fill-extrusion',
+      ...src,
+      'source-layer': 'buildings',
+      minzoom: 14,
+      layout: { visibility: 'none' },
+      paint: {
+        'fill-extrusion-color': p.building3d,
+        'fill-extrusion-height': ['coalesce', ['get', 'height'], APPROX_BUILDING_HEIGHT_M],
+        'fill-extrusion-opacity': 0.85,
+      },
     },
     {
       id: 'road-labels',
@@ -344,6 +366,11 @@ export interface StyleInput {
   youLabel: string;
   /** Label above the destination ("go here"), already translated. */
   goHereLabel: string;
+  /**
+   * Area the offline tiles cover (the manifest's data bounds). MapLibre never asks for tiles
+   * outside it, e.g. towards the horizon of the tilted 3D view, where none were extracted.
+   */
+  tileBounds?: Bounds;
 }
 
 export function buildStyle({
@@ -353,6 +380,7 @@ export function buildStyle({
   origin,
   youLabel,
   goHereLabel,
+  tileBounds,
 }: StyleInput): StyleSpecification {
   const overlaySources = Object.fromEntries(
     layers.map((layer) => [
@@ -374,6 +402,7 @@ export function buildStyle({
         minzoom: basemap.minzoom,
         maxzoom: basemap.maxzoom,
         attribution: basemap.attribution,
+        ...(tileBounds ? { bounds: [...tileBounds] } : {}),
       },
       ...overlaySources,
       [USER_ROUTE_SOURCE]: { type: 'geojson', data: EMPTY },

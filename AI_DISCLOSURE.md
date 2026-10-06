@@ -98,3 +98,10 @@ visibly labeled DEMO. See `DATA_SOURCES.md`.
   for screen readers, and as a card in "Qué hacer"), made the offline status icon-only on narrow
   screens, shortened the location buttons' copy, made the bottom sheet never cut its main button,
   and made the map's route framing scale with the visible map so it works on short screens.
+- Apple-style redesign and 3D view (2026-10-06, owner request with iPhone screenshots): AI made
+  the app bar and tab bar translucent bars floating over a full-screen map, grouped the map
+  buttons in glass capsules, turned the legend into a compact card with short source badges,
+  made the route sheet a floating card ordered by priority (danger status, Navigate, Listen /
+  Change, steps), and added a "3D" button (tilted camera, OSM buildings extruded with their
+  height or a labeled approximate one). It also bounded tile requests to the extracted area and
+  stopped a missing tile from being reported as a broken map.
