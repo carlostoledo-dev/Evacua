@@ -20,6 +20,17 @@
     "license": "ODbL-1.0 (OpenStreetMap data)",
     "retrievedAt": "2026-10-05"
   },
+  "terrain": {
+    "tiles": "/terrain/coronel/{z}/{x}/{y}.png",
+    "encoding": "terrarium",
+    "tileSize": 256,
+    "minzoom": 10,
+    "maxzoom": 13,
+    "attribution": "Relieve: USGS, NOAA",
+    "source": "Terrain Tiles (Tilezen/Mapzen) on AWS Open Data, s3://elevation-tiles-prod/terrarium (https://registry.opendata.aws/terrain-tiles/). For Chile: SRTM data courtesy of the U.S. Geological Survey; GMTED2010 data courtesy of the U.S. Geological Survey; ETOPO1: DOC/NOAA/NESDIS/NCEI > National Centers for Environmental Information, NESDIS, NOAA, U.S. Department of Commerce",
+    "license": "Public domain (U.S. Government works), attribution requested; see https://github.com/tilezen/joerd/blob/master/docs/attribution.md",
+    "retrievedAt": "2026-10-06"
+  },
   "graph": {
     "file": "graph.json",
     "source": "OpenStreetMap walkable ways via the Overpass API",

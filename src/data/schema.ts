@@ -143,6 +143,26 @@ export const basemapSchema = z.object({
 });
 export type Basemap = z.infer<typeof basemapSchema>;
 
+/** Offline elevation tiles (Terrarium PNG) for the 3D view's relief (see scripts/build-terrain.ts). */
+export const terrainSchema = z.object({
+  // Same-origin static tiles only.
+  tiles: z
+    .string()
+    .regex(
+      /^\/terrain\/[a-z0-9-]+\/\{z\}\/\{x\}\/\{y\}\.png$/,
+      'must be /terrain/<id>/{z}/{x}/{y}.png',
+    ),
+  encoding: z.literal('terrarium'),
+  tileSize: z.number().int().positive(),
+  minzoom: z.number().int().min(0).max(22),
+  maxzoom: z.number().int().min(0).max(22),
+  attribution: z.string().min(1),
+  source: z.string().min(1),
+  license: z.string().min(1),
+  retrievedAt: isoDate,
+});
+export type Terrain = z.infer<typeof terrainSchema>;
+
 /** Pedestrian network extracted from OpenStreetMap (see scripts/build-graph.ts). */
 export const graphEntrySchema = z.object({
   file: z.string().regex(/^[a-z0-9-]+\.json$/, 'must be a relative .json file name'),
@@ -241,6 +261,8 @@ export const manifestSchema = z
     }),
     bounds: boundsSchema,
     basemap: basemapSchema,
+    // Optional: without it the 3D view still tilts and raises buildings, on flat ground.
+    terrain: terrainSchema.optional(),
     // Optional: without a graph the app falls back to a labeled straight line.
     graph: graphEntrySchema.optional(),
     demoLocations: z.array(demoLocationSchema).default([]),

@@ -23,6 +23,7 @@
     "data:validate": "node scripts/validate-data.ts",
     "data:tiles": "node scripts/build-tiles.ts && prettier --write public/data/communes",
     "data:glyphs": "node scripts/fetch-glyphs.ts",
+    "data:terrain": "node scripts/build-terrain.ts && prettier --write public/data/communes/*/manifest.json",
     "data:graph": "node scripts/build-graph.ts && prettier --write public/data/communes/*/manifest.json"
   },
   "dependencies": {
