@@ -21,7 +21,20 @@ export default defineConfig({
     // Software WebGL so MapLibre can draw in headless CI browsers.
     launchOptions: { args: ['--enable-unsafe-swiftshader', '--use-angle=swiftshader'] },
   },
-  projects: [{ name: 'mobile-chromium', use: { ...devices['Pixel 7'], locale: 'es-CL' } }],
+  projects: [
+    {
+      name: 'mobile-chromium',
+      testIgnore: /map-3d\.spec\.ts/,
+      use: { ...devices['Pixel 7'], locale: 'es-CL' },
+    },
+    // The 3D view is GPU-heavy on software WebGL: run it alone, after the rest.
+    {
+      name: 'mobile-chromium-3d',
+      testMatch: /map-3d\.spec\.ts/,
+      dependencies: ['mobile-chromium'],
+      use: { ...devices['Pixel 7'], locale: 'es-CL' },
+    },
+  ],
   webServer: {
     command: `npm run build && npm run preview -- --port ${String(PORT)} --strictPort`,
     url: `http://localhost:${String(PORT)}`,

@@ -10,9 +10,11 @@ import {
   BUILDINGS_LAYER_ID,
   DARK_PALETTE,
   HATCH_IMAGE_ID,
+  HILLSHADE_LAYER_ID,
   LIGHT_PALETTE,
   overlayLayerIds,
   overlaySourceId,
+  TERRAIN_SOURCE,
 } from './style.ts';
 
 const parsedManifest = manifestSchema.parse(manifest('alpha'));
@@ -69,6 +71,46 @@ describe('buildStyle', () => {
     });
     expect(bounded.sources.basemap).toMatchObject({ bounds: [...parsedManifest.bounds] });
     expect(style.sources.basemap).not.toHaveProperty('bounds');
+  });
+
+  it('adds the offline relief (same origin, bounded, credited) only when the commune has it', () => {
+    const terrain = {
+      tiles: '/terrain/alpha/{z}/{x}/{y}.png',
+      encoding: 'terrarium' as const,
+      tileSize: 256,
+      minzoom: 10,
+      maxzoom: 13,
+      attribution: 'Relieve: USGS, NOAA',
+      source: 'test',
+      license: 'test',
+      retrievedAt: '2026-10-06',
+    };
+    const withRelief = buildStyle({
+      basemap: parsedManifest.basemap,
+      layers: [layer],
+      palette: LIGHT_PALETTE,
+      origin: 'https://evacua.test',
+      youLabel: 'Tú',
+      goHereLabel: 'Ve aquí',
+      tileBounds: parsedManifest.bounds,
+      terrain,
+    });
+    expect(withRelief.sources[TERRAIN_SOURCE]).toMatchObject({
+      type: 'raster-dem',
+      tiles: ['https://evacua.test/terrain/alpha/{z}/{x}/{y}.png'],
+      encoding: 'terrarium',
+      attribution: 'Relieve: USGS, NOAA',
+      bounds: [...parsedManifest.bounds],
+    });
+    // Shading stays hidden until the 3D view, and sits under the official layers.
+    const ids = withRelief.layers.map((l) => l.id);
+    const shade = withRelief.layers.find((l) => l.id === HILLSHADE_LAYER_ID);
+    expect(shade?.layout).toMatchObject({ visibility: 'none' });
+    expect(ids.indexOf(HILLSHADE_LAYER_ID)).toBeLessThan(
+      ids.indexOf(overlayLayerIds(layer)[0] ?? ''),
+    );
+    expect(style.sources).not.toHaveProperty(TERRAIN_SOURCE);
+    expect(style.layers.map((l) => l.id)).not.toContain(HILLSHADE_LAYER_ID);
   });
 
   it('adds each official layer as a GeoJSON source credited to its publisher', () => {

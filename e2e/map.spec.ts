@@ -57,22 +57,6 @@ test('map controls are at least 48 px for touch', async ({ page, hasTouch }) => 
   }
 });
 
-test('3D view tilts the map and says the building heights are approximate', async ({ page }) => {
-  await page.goto('/');
-  await waitForMap(page);
-  const toggle = page.getByRole('button', { name: 'Vista 3D' });
-  await expect(toggle).toHaveAttribute('aria-pressed', 'false');
-  await toggle.click();
-  await expect(toggle).toHaveAttribute('aria-pressed', 'true');
-  await expect(page.getByTestId('map-3d-note')).toContainText('alturas de edificios aproximadas');
-  // Tiles towards the horizon are outside the offline area: the map must not break.
-  await page.waitForTimeout(1500);
-  await expect(page.getByTestId('map')).toHaveAttribute('data-state', 'ready');
-  await toggle.click();
-  await expect(toggle).toHaveAttribute('aria-pressed', 'false');
-  await expect(page.getByTestId('map-3d-note')).toHaveCount(0);
-});
-
 test('tsunami only: no hazard to choose, official tsunami guidance and layers', async ({
   page,
 }) => {

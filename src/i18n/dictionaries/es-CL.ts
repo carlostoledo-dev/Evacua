@@ -66,7 +66,8 @@ export const esCL = {
   'map.showData': 'Ver detalles',
   'map.legend': 'Leyenda',
   'map.view3d': 'Vista 3D',
-  'map.buildingsApprox': '3D · alturas de edificios aproximadas',
+  'map.buildingsApprox': '3D · relieve y edificios aproximados',
+  'map.resetNorth': 'Apuntar al norte',
   'map.locate': 'Usar mi ubicación (GPS)',
 
   // Verbatim from SENAPRED (https://www.senapred.cl/tsunami/ and /sismos/), retrieved 2026-10-02.

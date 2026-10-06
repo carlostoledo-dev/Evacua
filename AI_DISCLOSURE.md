@@ -105,3 +105,7 @@ visibly labeled DEMO. See `DATA_SOURCES.md`.
   Change, steps), and added a "3D" button (tilted camera, OSM buildings extruded with their
   height or a labeled approximate one). It also bounded tile requests to the extracted area and
   stopped a missing tile from being reported as a broken map.
+- 3D relief and 3D polish (2026-10-06, owner request): AI researched and verified the elevation
+  source and its attribution terms (Terrain Tiles on AWS Open Data: SRTM, GMTED2010, ETOPO1),
+  wrote the reproducible `data:terrain` script, and added the relief, hill shading, sky, two-finger
+  rotation with a compass, and course-up navigation to the 3D view. Elevation is display only.

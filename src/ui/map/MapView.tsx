@@ -15,7 +15,11 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
 import { useEffect, useRef, useState } from 'react';
 import type { CommuneData } from '../../data/loader.ts';
-import { MAP_3D_MIN_ZOOM, MAP_3D_PITCH_DEG } from '../../domain/constants.ts';
+import {
+  MAP_3D_MIN_ZOOM,
+  MAP_3D_PITCH_DEG,
+  MAP_3D_TERRAIN_EXAGGERATION,
+} from '../../domain/constants.ts';
 import { layersForHazard, type HazardId } from '../../domain/hazards.ts';
 import { useI18n } from '../../i18n/I18nContext.ts';
 import type { Theme } from '../theme.ts';
@@ -28,10 +32,12 @@ import {
   DARK_PALETTE,
   DESTINATION_SOURCE,
   HATCH_IMAGE_ID,
+  HILLSHADE_LAYER_ID,
   LIGHT_PALETTE,
   MEETING_POINT_ICON_ID,
   NAV_ARROW_ICON_ID,
   overlayLayerIds,
+  TERRAIN_SOURCE,
   USER_POSITION_SOURCE,
   USER_ROUTE_SOURCE,
   type MapPalette,
@@ -242,6 +248,7 @@ export default function MapView({
           youLabel: t('route.you'),
           goHereLabel: t('route.goHere'),
           tileBounds: manifest.bounds,
+          terrain: manifest.terrain,
         }),
         bounds: padBounds(manifest.sector.serviceArea, 0.05),
         // Never show beyond the data bounds: the clipped edge of the evacuation area there is
@@ -260,6 +267,7 @@ export default function MapView({
           'Map.Title': t('map.title'),
           'NavigationControl.ZoomIn': t('map.zoomIn'),
           'NavigationControl.ZoomOut': t('map.zoomOut'),
+          'NavigationControl.ResetBearing': t('map.resetNorth'),
           'AttributionControl.ToggleAttribution': t('map.attribution'),
         },
       });
@@ -277,6 +285,14 @@ export default function MapView({
     });
     threeDControlRef.current = threeDControl;
     map.addControl(threeDControl, 'top-right');
+    // Compass: only shown in 3D (CSS), where the map can be turned; a tap points it north.
+    map.addControl(
+      new NavigationControl({ showZoom: false, showCompass: true, visualizePitch: false }),
+      'top-right',
+    );
+    // Flat map: north always up (fewer ways to get lost). The 3D view allows turning.
+    map.touchZoomRotate.disableRotation();
+    map.keyboard.disableRotation();
     map.addControl(
       new LocateControl(t('map.locate'), () => {
         onLocateRef.current();
@@ -343,9 +359,9 @@ export default function MapView({
   }, [hazard, commune, mapVersion]);
 
   // Read by the 3D toggle without re-running it on every position update.
-  const viewRef = useRef({ position: overlay.position, insets });
+  const viewRef = useRef({ position: overlay.position, insets, threeD });
   useEffect(() => {
-    viewRef.current = { position: overlay.position, insets };
+    viewRef.current = { position: overlay.position, insets, threeD };
   });
 
   // 3D view on/off: swap flat and extruded buildings and tilt the camera, without animation.
@@ -360,8 +376,23 @@ export default function MapView({
     if (map.getLayer(BUILDINGS_LAYER_ID)) {
       map.setLayoutProperty(BUILDINGS_LAYER_ID, 'visibility', threeD ? 'none' : 'visible');
     }
-    if (!threeD) {
-      map.jumpTo({ pitch: 0 });
+    if (map.getLayer(HILLSHADE_LAYER_ID)) {
+      map.setLayoutProperty(HILLSHADE_LAYER_ID, 'visibility', threeD ? 'visible' : 'none');
+    }
+    if (map.getSource(TERRAIN_SOURCE)) {
+      map.setTerrain(
+        threeD ? { source: TERRAIN_SOURCE, exaggeration: MAP_3D_TERRAIN_EXAGGERATION } : null,
+      );
+    }
+    if (threeD) {
+      map.dragRotate.enable();
+      map.touchZoomRotate.enableRotation();
+      map.keyboard.enableRotation();
+    } else {
+      map.dragRotate.disable();
+      map.touchZoomRotate.disableRotation();
+      map.keyboard.disableRotation();
+      map.jumpTo({ pitch: 0, bearing: 0 });
       return;
     }
     const { position, insets: clear } = viewRef.current;
@@ -385,13 +416,16 @@ export default function MapView({
       .getSource<GeoJSONSource>(USER_POSITION_SOURCE)
       ?.setData(pointCollection(position, heading === null ? {} : { bearing: heading }));
     void map.getSource<GeoJSONSource>(DESTINATION_SOURCE)?.setData(pointCollection(destination));
-    // Navigating: follow the walker at street level, north up, without animation (battery).
+    // Navigating: follow the walker at street level, without animation (battery). Flat map:
+    // north up. 3D view: the map turns with the walker, like a car navigator.
     if (follow && position) {
+      const courseUp = viewRef.current.threeD && heading !== null;
       // Padding keeps the walker in the visible part of the map, above the route sheet.
       map.jumpTo({
         center: position,
         zoom: Math.max(map.getZoom(), 17),
         padding: { top: insets.top, bottom: insets.bottom, left: 0, right: 0 },
+        ...(courseUp ? { bearing: heading } : {}),
       });
       return;
     }
@@ -422,7 +456,9 @@ export default function MapView({
 
   return (
     <div
-      className={picking ? 'map-frame map-frame--picking' : 'map-frame'}
+      className={['map-frame', picking && 'map-frame--picking', threeD && 'map-frame--3d']
+        .filter(Boolean)
+        .join(' ')}
       data-testid="map"
       data-state={state}
       data-route={path && path.length > 1 ? 'shown' : 'none'}
