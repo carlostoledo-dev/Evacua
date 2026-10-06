@@ -33,7 +33,13 @@ export function ConnectionPill({ offline, online }: ConnectionPillProps) {
     icon = <CrossIcon />;
   }
   return (
-    <p className="pill" data-state={state} role="status" data-testid="connection-pill">
+    <p
+      className="pill"
+      data-state={state}
+      role="status"
+      title={t(key)}
+      data-testid="connection-pill"
+    >
       {icon}
       <span>{t(key)}</span>
     </p>

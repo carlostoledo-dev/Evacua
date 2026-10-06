@@ -31,8 +31,7 @@ export const esCL = {
   'disclaimer.title': 'Importante',
   'disclaimer.body':
     'Herramienta de apoyo: no reemplaza a SENAPRED, SHOA ni a la Municipalidad de Coronel. Sigue siempre sus instrucciones oficiales.',
-  'disclaimer.short': 'Solo apoyo. Sigue siempre a SENAPRED y SHOA.',
-  'disclaimer.more': 'Ver aviso completo',
+  'disclaimer.short': 'Solo apoyo · Sigue siempre a SENAPRED y SHOA',
 
   'status.label': 'Estado de la app',
   'status.offline.ready': 'Lista para usar sin conexión',
@@ -88,11 +87,11 @@ export const esCL = {
 
   'location.demoBadge': 'DEMO',
   'location.title': 'Tu ubicación',
-  'location.findRoute': 'Buscar mi ruta de evacuación',
-  'location.useGps': 'Usa tu ubicación actual (GPS)',
+  'location.findRoute': 'Buscar mi ruta',
+  'location.useGps': 'Con tu ubicación (GPS)',
   'location.pickOnMap': 'Elegir en el mapa',
   'location.simulate': 'Simular ubicación (DEMO)',
-  'location.simulatePlaceholder': 'Simular (DEMO)',
+  'location.simulatePlaceholder': 'Probar DEMO',
   'location.locating': 'Buscando tu ubicación… Al aire libre el GPS responde más rápido.',
   'location.picking': 'Toca el mapa en el lugar donde estás.',
   'location.cancel': 'Cancelar',
@@ -108,13 +107,12 @@ export const esCL = {
     'El GPS tardó demasiado. Inténtalo de nuevo o elige tu ubicación en el mapa.',
   'location.source.gps': 'Ubicación del GPS (precisión ± {meters})',
   'location.source.manual': 'Ubicación elegida en el mapa',
-  'location.source.demo': 'Ubicación simulada: {label}',
+  'location.source.demo': 'Simulada: {label}',
   'location.privacy': 'Tu ubicación no se guarda ni se envía.',
   'location.lowAccuracy':
     'Precisión baja (± {meters}): tu posición podría estar equivocada. Para un resultado confiable, elige tu ubicación en el mapa.',
 
   'route.title': 'Hacia dónde evacuar',
-  'route.subtitle': 'Encuentra tu zona segura y sigue el plan.',
   'route.toggle': 'Mostrar u ocultar las opciones',
   'route.inDanger': 'Estás dentro del área a evacuar por tsunami.',
   'route.notInDanger': 'Estás fuera del área a evacuar por tsunami.',

@@ -315,9 +315,17 @@ export default function MapView({
     } else {
       const bounds = points.reduce((b, p) => b.extend(p), new LngLatBounds(first, first));
       // Keep the route clear of the floating panels, the controls, the DEMO label and the
-      // "go here" label above the destination.
+      // "go here" label above the destination. Margins shrink with the visible map: on a short
+      // phone screen fixed ones would leave no room, and MapLibre would skip the fit.
+      const { clientWidth: width, clientHeight: height } = map.getContainer();
+      const room = Math.max(0, height - insets.top - insets.bottom);
       map.fitBounds(bounds, {
-        padding: { top: insets.top + 120, right: 72, bottom: insets.bottom + 40, left: 56 },
+        padding: {
+          top: insets.top + Math.min(120, room * 0.4),
+          right: Math.min(72, width * 0.18),
+          bottom: insets.bottom + Math.min(40, room * 0.1),
+          left: Math.min(56, width * 0.12),
+        },
         animate: false,
         maxZoom: 17,
       });

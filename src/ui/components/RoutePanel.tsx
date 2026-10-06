@@ -204,10 +204,7 @@ export function RoutePanel({
     >
       {/* Stays at the top while the sheet scrolls, so folding is always one tap away. */}
       <div className="route-panel__head">
-        <div className="route-panel__titles">
-          <h2 id="route-title">{t('route.title')}</h2>
-          {choosing && <p className="route-panel__subtitle">{t('route.subtitle')}</p>}
-        </div>
+        <h2 id="route-title">{t('route.title')}</h2>
         <button
           type="button"
           className="sheet-toggle"

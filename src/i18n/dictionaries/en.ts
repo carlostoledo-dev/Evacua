@@ -32,8 +32,7 @@ export const en: Dictionary = {
   'disclaimer.title': 'Important',
   'disclaimer.body':
     'A support tool only: it does not replace SENAPRED, SHOA or the Municipality of Coronel. Always follow their official instructions.',
-  'disclaimer.short': 'Support only. Always follow SENAPRED and SHOA.',
-  'disclaimer.more': 'Read the full notice',
+  'disclaimer.short': 'Support only · Always follow SENAPRED and SHOA',
 
   'status.label': 'App status',
   'status.offline.ready': 'Ready to use offline',
@@ -86,11 +85,11 @@ export const en: Dictionary = {
 
   'location.demoBadge': 'DEMO',
   'location.title': 'Your location',
-  'location.findRoute': 'Find my evacuation route',
-  'location.useGps': 'Use your current location (GPS)',
+  'location.findRoute': 'Find my route',
+  'location.useGps': 'With your location (GPS)',
   'location.pickOnMap': 'Pick on the map',
   'location.simulate': 'Simulate a location (DEMO)',
-  'location.simulatePlaceholder': 'Simulate (DEMO)',
+  'location.simulatePlaceholder': 'Try DEMO',
   'location.locating': 'Finding your location… GPS answers faster outdoors.',
   'location.picking': 'Tap the map where you are.',
   'location.cancel': 'Cancel',
@@ -104,13 +103,12 @@ export const en: Dictionary = {
   'location.error.timeout': 'GPS took too long. Try again or pick your location on the map.',
   'location.source.gps': 'GPS location (accuracy ± {meters})',
   'location.source.manual': 'Location picked on the map',
-  'location.source.demo': 'Simulated location: {label}',
+  'location.source.demo': 'Simulated: {label}',
   'location.privacy': 'Your location is never stored or sent.',
   'location.lowAccuracy':
     'Low accuracy (± {meters}): your position may be wrong. For a reliable result, pick your location on the map.',
 
   'route.title': 'Where to evacuate',
-  'route.subtitle': 'Find your safe zone and follow the plan.',
   'route.toggle': 'Show or hide the options',
   'route.inDanger': 'You are inside the tsunami evacuation area.',
   'route.notInDanger': 'You are outside the tsunami evacuation area.',
