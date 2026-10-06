@@ -28,7 +28,7 @@ test('draws the offline map with credits, legend and badges, without CSP errors'
   await expect(map).toContainText('SENAPRED');
 
   const legend = page.getByTestId('map-legend');
-  await legend.getByText('Leyenda').click();
+  await legend.locator('summary').click();
   await expect(legend.getByRole('listitem')).toHaveCount(4);
   await expect(legend).toContainText('Puntos de encuentro');
   await expect(legend.getByText('Fuente oficial verificada')).toHaveCount(4);
@@ -37,11 +37,21 @@ test('draws the offline map with credits, legend and badges, without CSP errors'
   expect(problems).toEqual([]);
 });
 
-test('map controls are at least 48 px for touch', async ({ page }) => {
+test('map controls are at least 48 px for touch', async ({ page, hasTouch }) => {
   await page.goto('/');
   await waitForMap(page);
-  for (const name of ['Acercar', 'Alejar', 'Usar mi ubicación (GPS)']) {
-    const box = await page.getByRole('button', { name }).boundingBox();
+  const controls = [
+    page.getByRole('button', { name: 'Usar mi ubicación (GPS)' }),
+    page.getByTestId('map-legend').locator('summary'),
+  ];
+  // Touch screens zoom with two fingers, so the +/- buttons are hidden there to clear the map.
+  for (const name of ['Acercar', 'Alejar']) {
+    const zoom = page.getByRole('button', { name });
+    if (hasTouch) await expect(zoom).toBeHidden();
+    else controls.push(zoom);
+  }
+  for (const control of controls) {
+    const box = await control.boundingBox();
     expect(box?.width ?? 0).toBeGreaterThanOrEqual(48);
     expect(box?.height ?? 0).toBeGreaterThanOrEqual(48);
   }
@@ -54,7 +64,7 @@ test('tsunami only: no hazard to choose, official tsunami guidance and layers', 
   await waitForMap(page);
   // Owner decision 2026-10-04: a single hazard, so no selector anywhere.
   await expect(page.getByRole('radio', { name: /Tsunami|Terremoto|Incendio/ })).toHaveCount(0);
-  await page.getByTestId('map-legend').getByText('Leyenda').click();
+  await page.getByTestId('map-legend').locator('summary').click();
   await expect(page.getByTestId('map-legend').getByRole('listitem')).toHaveCount(4);
 
   await openTab(page, 'Qué hacer');

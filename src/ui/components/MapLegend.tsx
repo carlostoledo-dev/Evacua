@@ -4,7 +4,7 @@ import type { LayerRole } from '../../data/schema.ts';
 import { useI18n } from '../../i18n/I18nContext.ts';
 import { ROLE_LABEL } from '../labels.ts';
 import { LayerBadge } from './LayerBadge.tsx';
-import { ChevronRightIcon, LayersIcon } from './icons.tsx';
+import { LayersIcon } from './icons.tsx';
 
 // Swatches repeat the map's shapes (hatch, solid line, dashed line, dot) so the legend never
 // relies on color alone. Colors come from CSS custom properties shared with the theme.
@@ -48,10 +48,10 @@ export function MapLegend({ layers }: { layers: readonly LoadedLayer[] }) {
   const { t } = useI18n();
   return (
     <details className="map-legend" data-testid="map-legend">
+      {/* Round icon button, like the map controls under it; the name stays for screen readers. */}
       <summary>
         <LayersIcon />
-        <span>{t('map.legend')}</span>
-        <ChevronRightIcon className="icon map-legend__chevron" />
+        <span className="visually-hidden">{t('map.legend')}</span>
       </summary>
       <ul aria-label={t('map.legend')}>
         {layers.map((layer) => (

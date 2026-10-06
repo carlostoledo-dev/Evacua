@@ -31,6 +31,8 @@ export const esCL = {
   'disclaimer.title': 'Importante',
   'disclaimer.body':
     'Herramienta de apoyo: no reemplaza a SENAPRED, SHOA ni a la Municipalidad de Coronel. Sigue siempre sus instrucciones oficiales.',
+  'disclaimer.short': 'Solo apoyo. Sigue siempre a SENAPRED y SHOA.',
+  'disclaimer.more': 'Ver aviso completo',
 
   'status.label': 'Estado de la app',
   'status.offline.ready': 'Lista para usar sin conexión',

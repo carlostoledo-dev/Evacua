@@ -29,6 +29,10 @@ describe('dictionaries', () => {
       expect(body).toContain('SENAPRED');
       expect(body).toContain('SHOA');
       expect(body).toContain('Coronel');
+      // The one-line version always on screen also names them.
+      const short = DICTIONARIES[locale]['disclaimer.short'];
+      expect(short).toContain('SENAPRED');
+      expect(short).toContain('SHOA');
     }
   });
 });
