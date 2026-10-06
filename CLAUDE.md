@@ -23,7 +23,8 @@ Delivery plan, phase status, pending decisions and risks: `docs/PLAN.md`.
 ## Product
 
 - Installable map that works with no internet. With GPS it shows where to evacuate from a
-  tsunami: where to go (the official meeting point) and the shortest walking route there.
+  tsunami: where to go (the official meeting point) and the shortest walking route there, with
+  a turn-by-turn "Navegar" mode (owner request 2026-10-05; DEMO walk for judges, labeled).
 - Owner decision 2026-10-04: **tsunami only for now** (light, simple, no hazard selector).
   Earthquake and wildfire stay configured in `src/domain/hazards.ts` (`available: false`) and can
   return without code changes; the direction is hazard-specific (high ground is good for tsunami,
