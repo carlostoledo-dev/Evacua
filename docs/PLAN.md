@@ -3,16 +3,16 @@
 Each phase ends with a report (done / tested / pending or uncertain) and waits for
 explicit owner approval before the next one starts.
 
-| Phase                                           | Status                          |
-| ----------------------------------------------- | ------------------------------- |
-| 0. Questions, plan, CLAUDE.md                   | Done — answered 2026-10-01      |
-| 1. Skeleton, CI, PWA, i18n                      | Done — approved 2026-10-01      |
-| 2. Data layer: schema + labeled DEMO data       | Done — approved 2026-10-02      |
-| 3. Offline map + hazard layers and selector     | Done — approved 2026-10-02      |
-| 4. Evacuation guidance: safe point, route, time | Done — approved 2026-10-04      |
-| 5. Profiles + accessibility                     | Built — awaiting owner approval |
-| 6. Security, tests, Lighthouse                  | Not started                     |
-| 7. Docs, screenshots, demo script               | Not started                     |
+| Phase                                           | Status                     |
+| ----------------------------------------------- | -------------------------- |
+| 0. Questions, plan, CLAUDE.md                   | Done — answered 2026-10-01 |
+| 1. Skeleton, CI, PWA, i18n                      | Done — approved 2026-10-01 |
+| 2. Data layer: schema + labeled DEMO data       | Done — approved 2026-10-02 |
+| 3. Offline map + hazard layers and selector     | Done — approved 2026-10-02 |
+| 4. Evacuation guidance: safe point, route, time | Done — approved 2026-10-04 |
+| 5. Profiles + accessibility                     | Done — approved 2026-10-05 |
+| 6. Security, tests, Lighthouse                  | Not started                |
+| 7. Docs, screenshots, demo script               | Not started                |
 
 ---
 
@@ -317,6 +317,24 @@ explicit owner approval before the next one starts.
   routes from 31 % to 41 % across 65 sample points, +1.1 % length on average. Not applied:
   pending owner decision (routing is safety-critical; the current rule is "leave the area by the
   shortest way", in line with SENAPRED's "prioriza la evacuación horizontal").
+
+## Navigation mode (owner request 2026-10-05, between phases 5 and 6)
+
+"Like Google Maps, that helps you where to go." Built:
+
+- **Navegar** button on a route. Real GPS: continuous readings (`watchPosition`) only while
+  navigating, stopped by "Detener"; still memory-only. DEMO point: the route is walked at
+  `DEMO_WALK_SPEEDUP` (10×) the FEMA average pace, labeled "Recorrido simulado (DEMO)".
+- The plan is recomputed from every new position, so leaving the route simply re-plans.
+- Banner with the next instruction ("En 80 m · gira a la derecha por Freire", "Ahora …"), from
+  `src/domain/navigation.ts` (turns judged over ±20 m, so curve vertices are not turns; the snap
+  segment to the network never produces a turn). Voice reads each new instruction once; screen
+  readers get it once through a live region. Arrival within `ARRIVAL_RADIUS_M` (25 m).
+- Map follows the walker at street level (north up) with an arrow pointing where to walk.
+- Street names: the OSM graph now keeps way names (1,378 names; ≈ 48 % of segments named;
+  graph ≈ 1.05 MB raw). Unnamed segments give "gira a la derecha" without a street.
+- Tests: 6 domain tests (turns, curves, snap, heading), 3 text tests, e2e DEMO walk to arrival.
+  Constants are engineering choices, documented in `src/domain/constants.ts`.
 
 ## Phase 6 — Security, tests, Lighthouse
 
