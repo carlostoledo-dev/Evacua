@@ -79,13 +79,12 @@ beyond it so routes can reach nearby safe zones and meeting points.
 | Label glyphs `public/fonts/` (Noto Sans Regular, Latin ranges)     | [protomaps/basemaps-assets](https://github.com/protomaps/basemaps-assets), fetched by [`scripts/fetch-glyphs.ts`](scripts/fetch-glyphs.ts)                                                            | SIL Open Font License 1.1 (`public/fonts/OFL.txt`)            | 2026-10-02       |
 | Map style                                                          | Written for Evacua ([`src/ui/map/style.ts`](src/ui/map/style.ts)) for the Protomaps v4 tile schema                                                                                                    | Project license                                               | n/a              |
 
-**3D view (display only).** The "3D" map button tilts the camera, raises the OSM building
-footprints from the same tiles and shows the relief below. Few buildings carry a `height`
-(158 of 18,393 in the z15 tiles, checked 2026-10-06); the rest are drawn at
-`APPROX_BUILDING_HEIGHT_M` (6 m, an assumption in `src/domain/constants.ts`). The relief is at
-true scale (`MAP_3D_TERRAIN_EXAGGERATION` = 1). The map says "approximate terrain and buildings"
-while 3D is on. **Elevation is never used for safety:** evacuation areas, safe zones and routes
-come only from SENAPRED and the OSM walking network; the relief is a picture to read the ground.
+**3D view (display only).** The "3D" map button tilts the camera over the relief, with hill
+shading. Buildings stay flat. The relief is drawn `MAP_3D_TERRAIN_EXAGGERATION` times taller
+than the data (×3, in `src/domain/constants.ts`) so the hills read on a phone; the map says
+"approximate relief, height exaggerated ×3" while 3D is on. **Elevation is never used for
+safety:** evacuation areas, safe zones and routes come only from SENAPRED and the OSM walking
+network; the relief is a picture to read the ground.
 
 | Asset                                                                      | Source                                                                                                                                                                                                                                | License                                                                                                                                      | Retrieved  |
 | -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |

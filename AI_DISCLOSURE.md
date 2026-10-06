@@ -109,3 +109,5 @@ visibly labeled DEMO. See `DATA_SOURCES.md`.
   source and its attribution terms (Terrain Tiles on AWS Open Data: SRTM, GMTED2010, ETOPO1),
   wrote the reproducible `data:terrain` script, and added the relief, hill shading, sky, two-finger
   rotation with a compass, and course-up navigation to the 3D view. Elevation is display only.
+- 3D view revised (2026-10-06, owner request): AI removed the extruded buildings (flat again) and
+  drew the relief three times taller, with stronger hill shading; the map labels the exaggeration.
