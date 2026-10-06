@@ -3,8 +3,11 @@ import type { LoadedLayer } from '../../data/loader.ts';
 import { manifestSchema, layerSchemas } from '../../data/schema.ts';
 import { manifest, meetingPoints, source } from '../../data/__fixtures__/commune.ts';
 import { diagonalHatch, hexToRgb } from './hatch.ts';
+import { APPROX_BUILDING_HEIGHT_M } from '../../domain/constants.ts';
 import {
   buildStyle,
+  BUILDINGS_3D_LAYER_ID,
+  BUILDINGS_LAYER_ID,
   DARK_PALETTE,
   HATCH_IMAGE_ID,
   LIGHT_PALETTE,
@@ -39,6 +42,33 @@ describe('buildStyle', () => {
       tiles: ['https://evacua.test/tiles/alpha/{z}/{x}/{y}.mvt'],
       attribution: '© OpenStreetMap contributors',
     });
+  });
+
+  it('keeps 3D buildings hidden until asked, with approximate heights when OSM has none', () => {
+    const flat = style.layers.find((l) => l.id === BUILDINGS_LAYER_ID);
+    const raised = style.layers.find((l) => l.id === BUILDINGS_3D_LAYER_ID);
+    expect(flat?.type).toBe('fill');
+    expect(raised).toMatchObject({
+      type: 'fill-extrusion',
+      layout: { visibility: 'none' },
+      paint: {
+        'fill-extrusion-height': ['coalesce', ['get', 'height'], APPROX_BUILDING_HEIGHT_M],
+      },
+    });
+  });
+
+  it('never asks for basemap tiles outside the area that was extracted', () => {
+    const bounded = buildStyle({
+      basemap: parsedManifest.basemap,
+      layers: [layer],
+      palette: LIGHT_PALETTE,
+      origin: 'https://evacua.test',
+      youLabel: 'Tú',
+      goHereLabel: 'Ve aquí',
+      tileBounds: parsedManifest.bounds,
+    });
+    expect(bounded.sources.basemap).toMatchObject({ bounds: [...parsedManifest.bounds] });
+    expect(style.sources.basemap).not.toHaveProperty('bounds');
   });
 
   it('adds each official layer as a GeoJSON source credited to its publisher', () => {

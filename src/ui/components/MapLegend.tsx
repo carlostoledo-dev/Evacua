@@ -53,15 +53,21 @@ export function MapLegend({ layers }: { layers: readonly LoadedLayer[] }) {
         <LayersIcon />
         <span className="visually-hidden">{t('map.legend')}</span>
       </summary>
-      <ul aria-label={t('map.legend')}>
-        {layers.map((layer) => (
-          <li key={layer.entry.id} data-testid={`legend-${layer.entry.id}`}>
-            {SWATCH[layer.entry.role]}
-            <span className="map-legend__name">{t(ROLE_LABEL[layer.entry.role])}</span>
-            <LayerBadge status={layer.status} />
-          </li>
-        ))}
-      </ul>
+      {/* A compact card beside the buttons: one row per layer, its source as a short badge. */}
+      <div className="map-legend__panel">
+        <p className="map-legend__title" aria-hidden="true">
+          {t('map.legend')}
+        </p>
+        <ul aria-label={t('map.legend')}>
+          {layers.map((layer) => (
+            <li key={layer.entry.id} data-testid={`legend-${layer.entry.id}`}>
+              {SWATCH[layer.entry.role]}
+              <span className="map-legend__name">{t(ROLE_LABEL[layer.entry.role])}</span>
+              <LayerBadge status={layer.status} compact />
+            </li>
+          ))}
+        </ul>
+      </div>
     </details>
   );
 }

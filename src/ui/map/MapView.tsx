@@ -15,6 +15,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
 import { useEffect, useRef, useState } from 'react';
 import type { CommuneData } from '../../data/loader.ts';
+import { MAP_3D_MIN_ZOOM, MAP_3D_PITCH_DEG } from '../../domain/constants.ts';
 import { layersForHazard, type HazardId } from '../../domain/hazards.ts';
 import { useI18n } from '../../i18n/I18nContext.ts';
 import type { Theme } from '../theme.ts';
@@ -22,6 +23,8 @@ import { diagonalHatch } from './hatch.ts';
 import { meetingPointIcon, navigationArrowIcon } from './meetingPointIcon.ts';
 import {
   buildStyle,
+  BUILDINGS_3D_LAYER_ID,
+  BUILDINGS_LAYER_ID,
   DARK_PALETTE,
   DESTINATION_SOURCE,
   HATCH_IMAGE_ID,
@@ -120,6 +123,46 @@ class LocateControl implements IControl {
   }
 }
 
+/** "3D" toggle above the "find me" button: tilts the map and raises the buildings. */
+class ThreeDControl implements IControl {
+  private container: HTMLDivElement | null = null;
+  private button: HTMLButtonElement | null = null;
+  private readonly label: string;
+  private readonly onToggle: () => void;
+
+  constructor(label: string, onToggle: () => void) {
+    this.label = label;
+    this.onToggle = onToggle;
+  }
+
+  onAdd(): HTMLElement {
+    const container = document.createElement('div');
+    container.className = 'maplibregl-ctrl maplibregl-ctrl-group';
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'map-3d';
+    button.title = this.label;
+    button.setAttribute('aria-label', this.label);
+    button.setAttribute('aria-pressed', 'false');
+    button.textContent = '3D';
+    button.addEventListener('click', this.onToggle);
+    container.append(button);
+    this.container = container;
+    this.button = button;
+    return container;
+  }
+
+  setPressed(pressed: boolean): void {
+    this.button?.setAttribute('aria-pressed', String(pressed));
+  }
+
+  onRemove(): void {
+    this.container?.remove();
+    this.container = null;
+    this.button = null;
+  }
+}
+
 interface MapViewProps {
   commune: CommuneData;
   hazard: HazardId;
@@ -172,6 +215,9 @@ export default function MapView({
   const pickingRef = useRef(picking);
   const onPickRef = useRef(onPick);
   const onLocateRef = useRef(onLocate);
+  // 3D view: tilted camera and extruded buildings. Kept across map rebuilds (theme, language).
+  const [threeD, setThreeD] = useState(false);
+  const threeDControlRef = useRef<ThreeDControl | null>(null);
   useEffect(() => {
     pickingRef.current = picking;
     onPickRef.current = onPick;
@@ -195,6 +241,7 @@ export default function MapView({
           origin: window.location.origin,
           youLabel: t('route.you'),
           goHereLabel: t('route.goHere'),
+          tileBounds: manifest.bounds,
         }),
         bounds: padBounds(manifest.sector.serviceArea, 0.05),
         // Never show beyond the data bounds: the clipped edge of the evacuation area there is
@@ -225,6 +272,11 @@ export default function MapView({
     }
     mapRef.current = map;
     map.addControl(new NavigationControl({ showCompass: false }), 'top-right');
+    const threeDControl = new ThreeDControl(t('map.view3d'), () => {
+      setThreeD((on) => !on);
+    });
+    threeDControlRef.current = threeDControl;
+    map.addControl(threeDControl, 'top-right');
     map.addControl(
       new LocateControl(t('map.locate'), () => {
         onLocateRef.current();
@@ -254,7 +306,9 @@ export default function MapView({
     map.once('idle', () => {
       setState('ready');
     });
-    map.on('error', () => {
+    map.on('error', (event) => {
+      // A single missing tile is not a broken map; only a style that cannot load is.
+      if ('tile' in event) return;
       if (!map.loaded()) setState('error');
     });
     map.on('click', (event) => {
@@ -262,6 +316,7 @@ export default function MapView({
     });
     return () => {
       mapRef.current = null;
+      threeDControlRef.current = null;
       map.remove();
     };
     // `state` only gates creation; it must not trigger a rebuild when it changes.
@@ -286,6 +341,39 @@ export default function MapView({
       }
     }
   }, [hazard, commune, mapVersion]);
+
+  // Read by the 3D toggle without re-running it on every position update.
+  const viewRef = useRef({ position: overlay.position, insets });
+  useEffect(() => {
+    viewRef.current = { position: overlay.position, insets };
+  });
+
+  // 3D view on/off: swap flat and extruded buildings and tilt the camera, without animation.
+  // Turning it on brings the user's position (if any) to the middle of the visible map.
+  useEffect(() => {
+    const map = mapRef.current;
+    threeDControlRef.current?.setPressed(threeD);
+    if (!map || mapVersion === 0) return;
+    if (map.getLayer(BUILDINGS_3D_LAYER_ID)) {
+      map.setLayoutProperty(BUILDINGS_3D_LAYER_ID, 'visibility', threeD ? 'visible' : 'none');
+    }
+    if (map.getLayer(BUILDINGS_LAYER_ID)) {
+      map.setLayoutProperty(BUILDINGS_LAYER_ID, 'visibility', threeD ? 'none' : 'visible');
+    }
+    if (!threeD) {
+      map.jumpTo({ pitch: 0 });
+      return;
+    }
+    const { position, insets: clear } = viewRef.current;
+    map.jumpTo({
+      center: position ?? map.getCenter(),
+      zoom: Math.max(map.getZoom(), MAP_3D_MIN_ZOOM),
+      pitch: MAP_3D_PITCH_DEG,
+    });
+    // Lift that point from the screen's middle to the middle of the part the panels leave
+    // clear (a camera offset, not map padding, so later route framing is unaffected).
+    if (position) map.panBy([0, (clear.bottom - clear.top) / 2], { duration: 0 });
+  }, [threeD, mapVersion]);
 
   // Draw the user's position, route and destination; frame them without animation (battery).
   const { position, path, destination, heading } = overlay;
@@ -340,11 +428,18 @@ export default function MapView({
       data-route={path && path.length > 1 ? 'shown' : 'none'}
     >
       <div ref={containerRef} className="map-canvas" />
-      {demo && (
-        <p className="map-demo-chip" data-testid="map-demo">
-          {t('location.demoBadge')}
-        </p>
-      )}
+      <div className="map-chips">
+        {demo && (
+          <p className="map-chip map-chip--demo" data-testid="map-demo">
+            {t('location.demoBadge')}
+          </p>
+        )}
+        {threeD && (
+          <p className="map-chip" data-testid="map-3d-note">
+            {t('map.buildingsApprox')}
+          </p>
+        )}
+      </div>
       {state === 'loading' && (
         <p className="map-overlay" role="status">
           {t('map.loading')}

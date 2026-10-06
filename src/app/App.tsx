@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import { DEFAULT_HAZARD, layersForHazard, type HazardId } from '../domain/hazards.ts';
 import { useI18n } from '../i18n/I18nContext.ts';
 import { ConnectionPill } from '../ui/components/ConnectionPill.tsx';
@@ -6,6 +6,7 @@ import { Disclaimer } from '../ui/components/Disclaimer.tsx';
 import { TabBar, type View } from '../ui/components/TabBar.tsx';
 import { UpdatePrompt } from '../ui/components/UpdatePrompt.tsx';
 import { useCommuneData } from '../ui/hooks/useCommuneData.ts';
+import { useElementHeight } from '../ui/hooks/useElementHeight.ts';
 import { useEvacuationPlan } from '../ui/hooks/useEvacuationPlan.ts';
 import { locationPosition, useLocation } from '../ui/hooks/useLocation.ts';
 import { useOnlineStatus } from '../ui/hooks/useOnlineStatus.ts';
@@ -36,6 +37,10 @@ export function App() {
   const [view, setView] = useState<View>('map');
   const profile = useUserProfile();
   const [tourRequested, setTourRequested] = useState(false);
+  // The app bar and the tab bar float over the content (translucent, as on iOS): screens keep
+  // their content clear of them with these heights.
+  const [headerRef, headerHeight] = useElementHeight();
+  const [footerRef, footerHeight] = useElementHeight();
 
   // After a tab change, move focus to the new screen's title so screen readers announce it.
   const firstRenderRef = useRef(true);
@@ -76,13 +81,21 @@ export function App() {
   const showTour = view === 'map' && (!user.tourDone || tourRequested);
 
   return (
-    <div className="app">
+    <div
+      className="app"
+      style={
+        {
+          '--chrome-top': `${String(headerHeight)}px`,
+          '--chrome-bottom': `${String(footerHeight)}px`,
+        } as CSSProperties
+      }
+    >
       <a className="skip-link" href="#main">
         {t('nav.skipToContent')}
       </a>
 
       {/* One compact band: brand, offline status and the permanent notice under them. */}
-      <header className="app-bar">
+      <header className="app-bar" ref={headerRef}>
         <div className="app-bar__row">
           <div className="brand">
             <img className="brand__logo" src="/logo.png" alt="" width="40" height="40" />
@@ -96,11 +109,13 @@ export function App() {
         <div data-tour="disclaimer">
           <Disclaimer />
         </div>
+        {serviceWorker.updateAvailable && (
+          <UpdatePrompt
+            onApply={serviceWorker.applyUpdate}
+            onDismiss={serviceWorker.dismissUpdate}
+          />
+        )}
       </header>
-
-      {serviceWorker.updateAvailable && (
-        <UpdatePrompt onApply={serviceWorker.applyUpdate} onDismiss={serviceWorker.dismissUpdate} />
-      )}
 
       <main id="main" className="app-main" tabIndex={-1}>
         <MapScreen
@@ -117,6 +132,7 @@ export function App() {
           locationActions={location}
           plan={plan}
           profile={profile.config}
+          chrome={{ top: headerHeight, bottom: footerHeight }}
         />
         {view === 'guide' && (
           <GuideScreen
@@ -146,7 +162,7 @@ export function App() {
         )}
       </main>
 
-      <footer className="app-footer">
+      <footer className="app-footer" ref={footerRef}>
         <div data-tour="tabs">
           <TabBar value={view} onChange={setView} />
         </div>

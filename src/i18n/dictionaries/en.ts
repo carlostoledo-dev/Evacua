@@ -66,6 +66,8 @@ export const en: Dictionary = {
   'map.dataError': 'Sector data could not be loaded.',
   'map.showData': 'See details',
   'map.legend': 'Legend',
+  'map.view3d': '3D view',
+  'map.buildingsApprox': '3D · approximate building heights',
   'map.locate': 'Use my location (GPS)',
 
   'guidance.title': 'What to do (official guidance)',
@@ -233,9 +235,9 @@ export const en: Dictionary = {
   'nav.arrivedMeeting': "You reached meeting point {code}. Follow the authorities' instructions.",
   'nav.arrivedSafe': "You reached the safe zone. Follow the authorities' instructions.",
   'nav.waiting': 'Finding your position… GPS answers faster outdoors.',
-  'voice.listen': 'Listen to instructions',
-  'voice.stop': 'Stop voice',
-  'voice.unsupported': 'This phone has no voice available; the instructions are written above.',
+  'voice.listen': 'Listen',
+  'voice.stop': 'Stop',
+  'voice.unsupported': 'This phone has no voice available; the instructions are written on screen.',
 
   'route.time.range': '({fast}–{slow} min)',
   'route.time.slow': '(about {slow} min at a gentle pace)',
@@ -307,6 +309,8 @@ export const en: Dictionary = {
   'layer.sourceLink': 'View the official source record',
   'layer.badge.verified': 'Verified official source',
   'layer.badge.demo': 'DEMO / unverified',
+  'layer.badge.verifiedShort': 'Official',
+  'layer.badge.demoShort': 'DEMO',
 
   'footer.version': 'Version {version}',
 };

@@ -1,4 +1,12 @@
-import { useEffect, useId, useMemo, useRef, useState, type ComponentType } from 'react';
+import {
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+  type ComponentType,
+  type ReactNode,
+} from 'react';
 import type { DemoLocation } from '../../data/schema.ts';
 import type { HazardId } from '../../domain/hazards.ts';
 import type { ProfileConfig } from '../../domain/profiles.ts';
@@ -47,56 +55,75 @@ const GPS_ERROR: Record<GeoErrorKind, MessageKey> = {
   timeout: 'location.error.timeout',
 };
 
-function PlanView({ description }: { description: PlanDescription }) {
+interface PlanViewProps {
+  description: PlanDescription;
+  /** Buttons shown right under the headline (Navigate, listen, change), before the steps. */
+  actions?: ReactNode;
+  /** Announce the headline and the steps to screen readers when they change. */
+  live?: boolean;
+}
+
+/** Order of a glance: am I in danger → what to tap → the steps. */
+function PlanView({ description, actions, live = false }: PlanViewProps) {
   const Icon = description.tone === 'safe' ? CheckIcon : WarningIcon;
   const simpleOnly = description.steps.length === 0;
+  const politeness = live ? 'polite' : undefined;
   return (
-    <div data-testid="plan">
-      <p className={`plan plan--${description.tone}`}>
-        <Icon />
-        {simpleOnly ? <span>{description.headline}</span> : <strong>{description.headline}</strong>}
-      </p>
-      {description.intro && <p className="plan-note">{description.intro}</p>}
-      {description.straightLine && (
-        <p className="plan plan--warning">
-          <WarningIcon />
-          <strong>{description.steps[0]}</strong>
+    <div data-testid="plan" className="plan-view">
+      <div aria-live={politeness} className="plan-view__lead">
+        <p className={`plan plan--${description.tone}`}>
+          <Icon />
+          {simpleOnly ? (
+            <span>{description.headline}</span>
+          ) : (
+            <strong>{description.headline}</strong>
+          )}
         </p>
-      )}
-      {description.items.length > 0 ? (
-        // Route summary for a glance: each step with its icon, where to, how far and how long.
-        <ol className="route-steps">
-          {description.items.map((item) => {
-            const ItemIcon = ITEM_ICON[item.kind];
-            return (
-              <li key={item.kind} className="route-step" data-kind={item.kind}>
-                <span className="route-step__icon">
-                  <ItemIcon className="icon" />
-                </span>
-                <span className="route-step__text">
-                  <strong>{item.title}</strong> <span>{item.detail}</span>
-                </span>
-                {item.time && <span className="route-step__time"> {item.time}</span>}
-              </li>
-            );
-          })}
-        </ol>
-      ) : (
-        description.steps.length > 0 && (
-          <ol className="plan-steps">
-            {(description.straightLine ? description.steps.slice(1) : description.steps).map(
-              (step) => (
-                <li key={step}>{step}</li>
-              ),
-            )}
+        {description.intro && <p className="plan-note">{description.intro}</p>}
+        {description.straightLine && (
+          <p className="plan plan--warning">
+            <WarningIcon />
+            <strong>{description.steps[0]}</strong>
+          </p>
+        )}
+      </div>
+      {actions}
+      <div aria-live={politeness} className="plan-view__details">
+        {description.items.length > 0 ? (
+          // Route summary for a glance: each step with its icon, where to, how far and how long.
+          <ol className="route-steps">
+            {description.items.map((item) => {
+              const ItemIcon = ITEM_ICON[item.kind];
+              return (
+                <li key={item.kind} className="route-step" data-kind={item.kind}>
+                  <span className="route-step__icon">
+                    <ItemIcon className="icon" />
+                  </span>
+                  <span className="route-step__text">
+                    <strong>{item.title}</strong> <span>{item.detail}</span>
+                  </span>
+                  {item.time && <span className="route-step__time"> {item.time}</span>}
+                </li>
+              );
+            })}
           </ol>
-        )
-      )}
-      {description.notes.map((note) => (
-        <p key={note} className="muted small">
-          {note}
-        </p>
-      ))}
+        ) : (
+          description.steps.length > 0 && (
+            <ol className="plan-steps">
+              {(description.straightLine ? description.steps.slice(1) : description.steps).map(
+                (step) => (
+                  <li key={step}>{step}</li>
+                ),
+              )}
+            </ol>
+          )
+        )}
+        {description.notes.map((note) => (
+          <p key={note} className="muted small">
+            {note}
+          </p>
+        ))}
+      </div>
     </div>
   );
 }
@@ -307,46 +334,6 @@ export function RoutePanel({
 
         {!navigation.active && 'position' in location && (
           <>
-            <div className="location-row">
-              <p className="location-source">
-                {location.kind === 'demo' && (
-                  <span className="badge" data-status="demo">
-                    {t('location.demoBadge')}
-                  </span>
-                )}{' '}
-                {location.kind === 'gps' &&
-                  t('location.source.gps', {
-                    meters: formatDistance(location.accuracyMeters, locale),
-                  })}
-                {location.kind === 'manual' && t('location.source.manual')}
-                {location.kind === 'demo' &&
-                  t('location.source.demo', {
-                    // The label's "(inside the evacuation area)" note only helps when choosing a
-                    // test point; here the plan below already says it.
-                    label: demo
-                      ? demo.label[locale].replace(/\s*\([^)]*\)\s*$/, '')
-                      : location.demoId,
-                  })}
-              </p>
-              <button
-                type="button"
-                className="button button--quiet"
-                aria-label={t('location.change')}
-                onClick={onClear}
-              >
-                {t('location.changeShort')}
-              </button>
-            </div>
-            {route && (
-              <button
-                type="button"
-                className="button button--primary button--lg button--block nav-start"
-                onClick={navigation.start}
-              >
-                <WalkIcon />
-                <span>{t('nav.start')}</span>
-              </button>
-            )}
             {location.kind === 'gps' && location.accuracyMeters > LOW_ACCURACY_M && (
               <div className="plan plan--warning low-accuracy" data-testid="low-accuracy">
                 <WarningIcon />
@@ -362,27 +349,75 @@ export function RoutePanel({
                 </div>
               </div>
             )}
-            <div aria-live="polite">{description && <PlanView description={description} />}</div>
-            {text && (
-              <div className="voice">
-                {speech.supported ? (
-                  <button
-                    type="button"
-                    className="button button--block"
-                    aria-pressed={speech.speaking}
-                    onClick={() => {
-                      if (speech.speaking) speech.stop();
-                      else speech.say(text);
-                    }}
-                  >
-                    <SpeakerIcon />
-                    <span>{speech.speaking ? t('voice.stop') : t('voice.listen')}</span>
-                  </button>
-                ) : (
-                  <p className="muted small">{t('voice.unsupported')}</p>
-                )}
-              </div>
+            {description && (
+              <PlanView
+                description={description}
+                live
+                actions={
+                  <div className="plan-actions">
+                    {route && (
+                      <button
+                        type="button"
+                        className="button button--primary button--lg button--block nav-start"
+                        onClick={navigation.start}
+                      >
+                        <WalkIcon />
+                        <span>{t('nav.start')}</span>
+                      </button>
+                    )}
+                    <div className="plan-actions__row">
+                      {text && speech.supported && (
+                        <button
+                          type="button"
+                          className="button button--tinted"
+                          aria-pressed={speech.speaking}
+                          onClick={() => {
+                            if (speech.speaking) speech.stop();
+                            else speech.say(text);
+                          }}
+                        >
+                          <SpeakerIcon />
+                          <span>{speech.speaking ? t('voice.stop') : t('voice.listen')}</span>
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        className="button button--tinted"
+                        aria-label={t('location.change')}
+                        onClick={onClear}
+                      >
+                        <PinIcon />
+                        <span>{t('location.changeShort')}</span>
+                      </button>
+                    </div>
+                    {text && !speech.supported && (
+                      <p className="muted small">{t('voice.unsupported')}</p>
+                    )}
+                  </div>
+                }
+              />
             )}
+            {/* Where the plan comes from, after the actions (the map keeps its own DEMO label). */}
+            <p className="location-source">
+              {location.kind === 'demo' && (
+                <span className="badge" data-status="demo">
+                  {t('location.demoBadge')}
+                </span>
+              )}{' '}
+              {location.kind === 'gps' &&
+                t('location.source.gps', {
+                  meters: formatDistance(location.accuracyMeters, locale),
+                })}
+              {location.kind === 'manual' && t('location.source.manual')}
+              {location.kind === 'demo' &&
+                t('location.source.demo', {
+                  // The label's "(inside the evacuation area)" note only helps when choosing a
+                  // test point; here the plan below already says it.
+                  label: demo
+                    ? demo.label[locale].replace(/\s*\([^)]*\)\s*$/, '')
+                    : location.demoId,
+                })}
+            </p>
             {profile.drill && plan?.kind === 'route' && <DrillMode />}
           </>
         )}

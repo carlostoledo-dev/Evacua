@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 /**
- * Live height (px) of an element via ResizeObserver; 0 until measured.
+ * Live height (px) of an element's border box via ResizeObserver; 0 until measured.
  * Returns a callback ref to put on the element.
  */
 export function useElementHeight(): [(element: HTMLElement | null) => void, number] {
@@ -10,7 +10,8 @@ export function useElementHeight(): [(element: HTMLElement | null) => void, numb
   useEffect(() => {
     if (!element || typeof ResizeObserver === 'undefined') return;
     const observer = new ResizeObserver(([entry]) => {
-      if (entry) setHeight(Math.round(entry.contentRect.height));
+      // Border box: padding and safe-area insets count, they cover the map too.
+      if (entry) setHeight(Math.round(entry.target.getBoundingClientRect().height));
     });
     observer.observe(element);
     return () => {
