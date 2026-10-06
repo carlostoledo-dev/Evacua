@@ -93,3 +93,8 @@ visibly labeled DEMO. See `DATA_SOURCES.md`.
   made it lighter: the permanent disclaimer became one always-visible line that unfolds to the
   full notice, the legend became a round icon button, the zoom buttons are hidden on touch
   screens (pinch zoom), and the header, bottom sheet and tab bar were made more compact.
+- Phone layout redesign (2026-10-06, owner request with a screenshot from an iPhone with large
+  text): AI moved the permanent disclaimer into the app bar as one short amber line (full notice
+  for screen readers, and as a card in "Qué hacer"), made the offline status icon-only on narrow
+  screens, shortened the location buttons' copy, made the bottom sheet never cut its main button,
+  and made the map's route framing scale with the visible map so it works on short screens.

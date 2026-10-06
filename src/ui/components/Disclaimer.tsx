@@ -1,41 +1,43 @@
+import { useId } from 'react';
 import { useI18n } from '../../i18n/I18nContext.ts';
-import { ChevronRightIcon, WarningIcon } from './icons.tsx';
+import { WarningIcon } from './icons.tsx';
+
+interface DisclaimerProps {
+  /** A rounded card with the full notice inside the page flow, instead of the app-bar line. */
+  card?: boolean;
+  /** False when another notice on the same screen is already the landmark. */
+  landmark?: boolean;
+}
 
 /**
  * Permanent notice: the app supports, never replaces, the authorities. Not dismissible.
- * Bar above the tabs: one always-visible line naming the authorities; a tap unfolds the full
- * notice (native <details>, so keyboard and screen readers work).
- * `card`: the full notice as a rounded card inside the page flow (onboarding).
+ * In the app bar it is one short line naming SENAPRED and SHOA (screen readers hear the full
+ * notice); the full text is also shown as a card in the onboarding and in "Qué hacer".
  */
-export function Disclaimer({ card = false }: { card?: boolean }) {
+export function Disclaimer({ card = false, landmark = true }: DisclaimerProps) {
   const { t } = useI18n();
+  const titleId = useId();
+  const Tag = landmark ? 'aside' : 'div';
   if (card) {
     return (
-      <aside className="disclaimer disclaimer--card" aria-labelledby="disclaimer-title">
+      <Tag className="disclaimer disclaimer--card" aria-labelledby={landmark ? titleId : undefined}>
         <WarningIcon />
         <p>
-          <strong id="disclaimer-title">{t('disclaimer.title')}</strong>{' '}
-          <span>{t('disclaimer.body')}</span>
+          <strong id={titleId}>{t('disclaimer.title')}</strong> <span>{t('disclaimer.body')}</span>
         </p>
-      </aside>
+      </Tag>
     );
   }
   return (
-    <aside className="disclaimer" aria-labelledby="disclaimer-title">
-      <details className="disclaimer__details">
-        <summary>
-          <WarningIcon />
-          <span className="disclaimer__short">
-            <strong id="disclaimer-title" className="visually-hidden">
-              {t('disclaimer.title')}
-            </strong>
-            {t('disclaimer.short')}
-          </span>
-          <span className="visually-hidden">{t('disclaimer.more')}</span>
-          <ChevronRightIcon className="icon disclaimer__chevron" />
-        </summary>
-        <p>{t('disclaimer.body')}</p>
-      </details>
+    <aside className="disclaimer" aria-labelledby={titleId}>
+      <WarningIcon />
+      <p>
+        <strong id={titleId} className="visually-hidden">
+          {t('disclaimer.title')}
+        </strong>
+        <span aria-hidden="true">{t('disclaimer.short')}</span>
+        <span className="visually-hidden">{t('disclaimer.body')}</span>
+      </p>
     </aside>
   );
 }

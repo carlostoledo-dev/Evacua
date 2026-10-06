@@ -23,7 +23,7 @@ test('a DEMO location shows a labeled route: out of danger first, then a meeting
   await expect(page.getByTestId('map')).toHaveAttribute('data-route', 'shown');
   await expect(page.getByTestId('map-demo')).toHaveText('DEMO');
   await expect(panel(page)).toContainText('DEMO');
-  await expect(panel(page)).toContainText('Ubicación simulada: Calle Yobilo');
+  await expect(panel(page)).toContainText('Simulada: Calle Yobilo');
   const plan = panel(page).getByTestId('plan');
   await expect(plan).toContainText('Estás dentro del área a evacuar por tsunami.');
   await expect(plan).toContainText(
@@ -78,7 +78,7 @@ test.describe('with GPS permission', () => {
     await page.goto('/');
     await waitForMap(page);
     await panel(page)
-      .getByRole('button', { name: /Buscar mi ruta de evacuación/ })
+      .getByRole('button', { name: /Buscar mi ruta/ })
       .click();
     await expect(panel(page)).toContainText('Ubicación del GPS (precisión ±');
     await expect(panel(page).getByTestId('plan')).toContainText('Estás dentro del área a evacuar');
@@ -96,7 +96,7 @@ test.describe('with an imprecise network location', () => {
     await page.goto('/');
     await waitForMap(page);
     await panel(page)
-      .getByRole('button', { name: /Buscar mi ruta de evacuación/ })
+      .getByRole('button', { name: /Buscar mi ruta/ })
       .click();
     const warning = panel(page).getByTestId('low-accuracy');
     await expect(warning).toContainText('Precisión baja (± 20 km)');
@@ -112,7 +112,7 @@ test.describe('without GPS permission', () => {
     await page.goto('/');
     await waitForMap(page);
     await panel(page)
-      .getByRole('button', { name: /Buscar mi ruta de evacuación/ })
+      .getByRole('button', { name: /Buscar mi ruta/ })
       .click();
     await expect(panel(page).getByRole('alert')).toContainText('No diste permiso');
     await expect(panel(page).getByRole('button', { name: 'Elegir en el mapa' })).toBeVisible();
@@ -146,9 +146,7 @@ test('the location is never stored on the device', async ({ page }) => {
   await openTab(page, 'Mapa');
   await page.reload();
   await waitForMap(page);
-  await expect(
-    panel(page).getByRole('button', { name: /Buscar mi ruta de evacuación/ }),
-  ).toBeVisible();
+  await expect(panel(page).getByRole('button', { name: /Buscar mi ruta/ })).toBeVisible();
 });
 
 test.describe('with GPS, from a folded sheet', () => {

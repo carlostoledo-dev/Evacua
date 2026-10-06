@@ -81,17 +81,21 @@ export function App() {
         {t('nav.skipToContent')}
       </a>
 
+      {/* One compact band: brand, offline status and the permanent notice under them. */}
       <header className="app-bar">
-        <div className="brand">
-          <img className="brand__logo" src="/logo.png" alt="" width="40" height="40" />
-          <div>
+        <div className="app-bar__row">
+          <div className="brand">
+            <img className="brand__logo" src="/logo.png" alt="" width="40" height="40" />
             <p className="brand__name">{t('app.name')}</p>
             {data && (
               <p className="brand__place">{t('app.place', { commune: data.manifest.name })}</p>
             )}
           </div>
+          <ConnectionPill offline={serviceWorker.offline} online={online} />
         </div>
-        <ConnectionPill offline={serviceWorker.offline} online={online} />
+        <div data-tour="disclaimer">
+          <Disclaimer />
+        </div>
       </header>
 
       {serviceWorker.updateAvailable && (
@@ -143,9 +147,6 @@ export function App() {
       </main>
 
       <footer className="app-footer">
-        <div data-tour="disclaimer">
-          <Disclaimer />
-        </div>
         <div data-tour="tabs">
           <TabBar value={view} onChange={setView} />
         </div>
