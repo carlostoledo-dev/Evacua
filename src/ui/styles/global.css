@@ -517,22 +517,21 @@ button svg.icon {
   border-color: #ffe17a;
 }
 
-@media (max-width: 26rem) {
-  .app-bar .pill {
-    justify-content: center;
-    width: 2rem;
-    min-height: 2rem;
-    padding: 0;
-  }
+/* In the bar the status is an icon (shape per state); its words stay for screen readers. */
+.app-bar .pill {
+  justify-content: center;
+  width: 2rem;
+  min-height: 2rem;
+  padding: 0;
+}
 
-  .app-bar .pill span {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
-  }
+.app-bar .pill span {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 /* Tab bar: big thumb targets; the current tab is bold, colored and underlined. */
@@ -928,17 +927,16 @@ button svg.icon {
   border-top-right-radius: 0.5rem;
 }
 
-/* The compass only matters when the map can turn: in the 3D view. */
-.map-frame:not(.map-frame--3d) .maplibregl-ctrl-group:has(.maplibregl-ctrl-compass) {
+/* Compass: only while the map is turned; its needle keeps pointing north. */
+.screen--map .maplibregl-ctrl-group button[hidden] {
   display: none;
 }
 
-/* Touch screens zoom with two fingers: hide the +/- buttons (and the scale) to clear the map. */
-@media (hover: none) and (pointer: coarse) {
-  .screen--map .maplibregl-ctrl-group:has(.maplibregl-ctrl-zoom-in),
-  .screen--map .maplibregl-ctrl-scale {
-    display: none;
-  }
+.map-compass svg {
+  width: 1.5rem;
+  height: 1.5rem;
+  fill: currentColor;
+  transform: rotate(var(--bearing, 0deg));
 }
 
 /* MapLibre's control icons are dark SVG backgrounds; invert them on dark themes. */
@@ -1123,7 +1121,7 @@ button svg.icon {
   bottom: calc(var(--chrome-bottom, 0px) + 0.5rem);
   z-index: 5;
   /* Leave most of the visible map to the map; the rest of the sheet scrolls. */
-  max-height: calc((100% - var(--chrome-top, 0px) - var(--chrome-bottom, 0px)) * 0.55);
+  max-height: calc((100% - var(--chrome-top, 0px) - var(--chrome-bottom, 0px)) * 0.5);
   display: flex;
 }
 

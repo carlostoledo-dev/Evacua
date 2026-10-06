@@ -57,8 +57,6 @@ export const en: Dictionary = {
   'hazard.choose': 'Choose the hazard',
 
   'map.title': 'Sector map',
-  'map.zoomIn': 'Zoom in',
-  'map.zoomOut': 'Zoom out',
   'map.attribution': 'Show or hide map credits',
   'map.loading': 'Loading the map…',
   'map.error':
@@ -67,7 +65,7 @@ export const en: Dictionary = {
   'map.showData': 'See details',
   'map.legend': 'Legend',
   'map.view3d': '3D view',
-  'map.reliefNote': '3D · approximate relief, height exaggerated ×{factor}',
+  'map.reliefNote': 'Relief exaggerated ×{factor} (approx.)',
   'map.resetNorth': 'Point north',
   'map.locate': 'Use my location (GPS)',
 

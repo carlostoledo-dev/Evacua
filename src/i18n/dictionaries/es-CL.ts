@@ -56,8 +56,6 @@ export const esCL = {
   'hazard.choose': 'Elige la amenaza',
 
   'map.title': 'Mapa del sector',
-  'map.zoomIn': 'Acercar',
-  'map.zoomOut': 'Alejar',
   'map.attribution': 'Mostrar u ocultar créditos del mapa',
   'map.loading': 'Cargando el mapa…',
   'map.error':
@@ -66,7 +64,7 @@ export const esCL = {
   'map.showData': 'Ver detalles',
   'map.legend': 'Leyenda',
   'map.view3d': 'Vista 3D',
-  'map.reliefNote': '3D · relieve aproximado, altura exagerada ×{factor}',
+  'map.reliefNote': 'Relieve exagerado ×{factor} (aprox.)',
   'map.resetNorth': 'Apuntar al norte',
   'map.locate': 'Usar mi ubicación (GPS)',
 

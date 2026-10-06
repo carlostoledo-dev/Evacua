@@ -3,8 +3,6 @@ import {
   AttributionControl,
   LngLatBounds,
   Map as MapLibreMap,
-  NavigationControl,
-  ScaleControl,
   setWorkerUrl,
   type GeoJSONSource,
   type IControl,
@@ -88,82 +86,97 @@ function lineCollection(path: [number, number][] | null): GeoJSON.FeatureCollect
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
-/** "Find me" button under the zoom buttons: asks for one GPS reading (same as the sheet's card). */
-class LocateControl implements IControl {
-  private container: HTMLDivElement | null = null;
-  private readonly label: string;
-  private readonly onClick: () => void;
-
-  constructor(label: string, onClick: () => void) {
-    this.label = label;
-    this.onClick = onClick;
-  }
-
-  onAdd(): HTMLElement {
-    const container = document.createElement('div');
-    container.className = 'maplibregl-ctrl maplibregl-ctrl-group';
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = 'map-locate';
-    button.title = this.label;
-    button.setAttribute('aria-label', this.label);
-    const svg = document.createElementNS(SVG_NS, 'svg');
-    svg.setAttribute('viewBox', '0 0 24 24');
-    svg.setAttribute('aria-hidden', 'true');
-    svg.setAttribute('focusable', 'false');
-    const arrow = document.createElementNS(SVG_NS, 'path');
-    arrow.setAttribute('d', 'M20 4 4 11l7 2 2 7 7-16Z');
-    svg.append(arrow);
-    button.append(svg);
-    button.addEventListener('click', this.onClick);
-    container.append(button);
-    this.container = container;
-    return container;
-  }
-
-  onRemove(): void {
-    this.container?.remove();
-    this.container = null;
-  }
+function svgIcon(path: string): SVGSVGElement {
+  const svg = document.createElementNS(SVG_NS, 'svg');
+  svg.setAttribute('viewBox', '0 0 24 24');
+  svg.setAttribute('aria-hidden', 'true');
+  svg.setAttribute('focusable', 'false');
+  const shape = document.createElementNS(SVG_NS, 'path');
+  shape.setAttribute('d', path);
+  svg.append(shape);
+  return svg;
 }
 
-/** "3D" toggle above the "find me" button: tilts the map over the relief. */
-class ThreeDControl implements IControl {
-  private container: HTMLDivElement | null = null;
-  private button: HTMLButtonElement | null = null;
-  private readonly label: string;
-  private readonly onToggle: () => void;
+function mapButton(className: string, label: string, onClick: () => void): HTMLButtonElement {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = className;
+  button.title = label;
+  button.setAttribute('aria-label', label);
+  button.addEventListener('click', onClick);
+  return button;
+}
 
-  constructor(label: string, onToggle: () => void) {
-    this.label = label;
-    this.onToggle = onToggle;
+interface MapButtonLabels {
+  view3d: string;
+  resetNorth: string;
+  locate: string;
+}
+
+/**
+ * The map's only buttons, in one capsule: "3D", a compass (only while the map is turned away
+ * from north, as on iOS) and "find me" (one GPS reading, same as the sheet's card). Zoom is
+ * pinch / scroll / keyboard: no +/- buttons on a phone screen.
+ */
+class MapButtonsControl implements IControl {
+  private container: HTMLDivElement | null = null;
+  private threeD: HTMLButtonElement | null = null;
+  private compass: HTMLButtonElement | null = null;
+  private map: MapLibreMap | null = null;
+  private readonly labels: MapButtonLabels;
+  private readonly onToggle3d: () => void;
+  private readonly onLocate: () => void;
+  private readonly onRotate = () => {
+    this.syncCompass();
+  };
+
+  constructor(labels: MapButtonLabels, onToggle3d: () => void, onLocate: () => void) {
+    this.labels = labels;
+    this.onToggle3d = onToggle3d;
+    this.onLocate = onLocate;
   }
 
-  onAdd(): HTMLElement {
+  onAdd(map: MapLibreMap): HTMLElement {
+    this.map = map;
     const container = document.createElement('div');
     container.className = 'maplibregl-ctrl maplibregl-ctrl-group';
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = 'map-3d';
-    button.title = this.label;
-    button.setAttribute('aria-label', this.label);
-    button.setAttribute('aria-pressed', 'false');
-    button.textContent = '3D';
-    button.addEventListener('click', this.onToggle);
-    container.append(button);
+    const threeD = mapButton('map-3d', this.labels.view3d, this.onToggle3d);
+    threeD.setAttribute('aria-pressed', 'false');
+    threeD.textContent = '3D';
+    const compass = mapButton('map-compass', this.labels.resetNorth, () => {
+      map.jumpTo({ bearing: 0 });
+    });
+    compass.append(svgIcon('M12 3 7 13h10L12 3Z M7 13l5 8 5-8'));
+    compass.hidden = true;
+    const locate = mapButton('map-locate', this.labels.locate, this.onLocate);
+    locate.append(svgIcon('M20 4 4 11l7 2 2 7 7-16Z'));
+    container.append(threeD, compass, locate);
+    map.on('rotate', this.onRotate);
     this.container = container;
-    this.button = button;
+    this.threeD = threeD;
+    this.compass = compass;
     return container;
   }
 
-  setPressed(pressed: boolean): void {
-    this.button?.setAttribute('aria-pressed', String(pressed));
+  setThreeD(on: boolean): void {
+    this.threeD?.setAttribute('aria-pressed', String(on));
+  }
+
+  private syncCompass(): void {
+    if (!this.map || !this.compass) return;
+    const bearing = this.map.getBearing();
+    this.compass.hidden = Math.abs(bearing) < 0.5;
+    // The needle keeps pointing north while the map turns.
+    this.compass.style.setProperty('--bearing', `${String(-bearing)}deg`);
   }
 
   onRemove(): void {
+    this.map?.off('rotate', this.onRotate);
     this.container?.remove();
     this.container = null;
-    this.button = null;
+    this.threeD = null;
+    this.compass = null;
+    this.map = null;
   }
 }
 
@@ -221,7 +234,7 @@ export default function MapView({
   const onLocateRef = useRef(onLocate);
   // 3D view: tilted camera and extruded buildings. Kept across map rebuilds (theme, language).
   const [threeD, setThreeD] = useState(false);
-  const threeDControlRef = useRef<ThreeDControl | null>(null);
+  const buttonsRef = useRef<MapButtonsControl | null>(null);
   useEffect(() => {
     pickingRef.current = picking;
     onPickRef.current = onPick;
@@ -263,9 +276,6 @@ export default function MapView({
         renderWorldCopies: false,
         locale: {
           'Map.Title': t('map.title'),
-          'NavigationControl.ZoomIn': t('map.zoomIn'),
-          'NavigationControl.ZoomOut': t('map.zoomOut'),
-          'NavigationControl.ResetBearing': t('map.resetNorth'),
           'AttributionControl.ToggleAttribution': t('map.attribution'),
         },
       });
@@ -277,30 +287,22 @@ export default function MapView({
       return;
     }
     mapRef.current = map;
-    map.addControl(new NavigationControl({ showCompass: false }), 'top-right');
-    const threeDControl = new ThreeDControl(t('map.view3d'), () => {
-      setThreeD((on) => !on);
-    });
-    threeDControlRef.current = threeDControl;
-    map.addControl(threeDControl, 'top-right');
-    // Compass: only shown in 3D (CSS), where the map can be turned; a tap points it north.
-    map.addControl(
-      new NavigationControl({ showZoom: false, showCompass: true, visualizePitch: false }),
-      'top-right',
+    const buttons = new MapButtonsControl(
+      { view3d: t('map.view3d'), resetNorth: t('map.resetNorth'), locate: t('map.locate') },
+      () => {
+        setThreeD((on) => !on);
+      },
+      () => {
+        onLocateRef.current();
+      },
     );
+    buttonsRef.current = buttons;
+    map.addControl(buttons, 'top-right');
     // Flat map: north always up (fewer ways to get lost). The 3D view allows turning.
     map.touchZoomRotate.disableRotation();
     map.keyboard.disableRotation();
-    map.addControl(
-      new LocateControl(t('map.locate'), () => {
-        onLocateRef.current();
-      }),
-      'top-right',
-    );
-    // Bottom-left, lifted above the route sheet by CSS (--sheet-h), clear of the right-hand
-    // buttons. Bottom controls stack upwards: the scale sits on top of the credits.
+    // Bottom-left, lifted above the route sheet by CSS (--sheet-h), clear of the buttons.
     map.addControl(new AttributionControl({ compact: false }), 'bottom-left');
-    map.addControl(new ScaleControl({ unit: 'metric' }), 'bottom-left');
     map.setMissingStyleImageResolver((id) => {
       if (id === HATCH_IMAGE_ID && !map.hasImage(id)) {
         map.addImage(id, diagonalHatch(palette.evacuationArea));
@@ -330,7 +332,7 @@ export default function MapView({
     });
     return () => {
       mapRef.current = null;
-      threeDControlRef.current = null;
+      buttonsRef.current = null;
       map.remove();
     };
     // `state` only gates creation; it must not trigger a rebuild when it changes.
@@ -366,7 +368,7 @@ export default function MapView({
   // Turning it on brings the user's position (if any) to the middle of the visible map.
   useEffect(() => {
     const map = mapRef.current;
-    threeDControlRef.current?.setPressed(threeD);
+    buttonsRef.current?.setThreeD(threeD);
     if (!map || mapVersion === 0) return;
     if (map.getLayer(HILLSHADE_LAYER_ID)) {
       map.setLayoutProperty(HILLSHADE_LAYER_ID, 'visibility', threeD ? 'visible' : 'none');

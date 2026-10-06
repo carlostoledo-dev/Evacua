@@ -37,20 +37,16 @@ test('draws the offline map with credits, legend and badges, without CSP errors'
   expect(problems).toEqual([]);
 });
 
-test('map controls are at least 48 px for touch', async ({ page, hasTouch }) => {
+test('the map has only its essential buttons, each at least 48 px', async ({ page }) => {
   await page.goto('/');
   await waitForMap(page);
-  const controls = [
+  // Zoom is pinch / scroll / keyboard: no +/- buttons on a phone screen.
+  await expect(page.getByRole('button', { name: /Acercar|Alejar/ })).toHaveCount(0);
+  for (const control of [
     page.getByRole('button', { name: 'Usar mi ubicación (GPS)' }),
+    page.getByRole('button', { name: 'Vista 3D' }),
     page.getByTestId('map-legend').locator('summary'),
-  ];
-  // Touch screens zoom with two fingers, so the +/- buttons are hidden there to clear the map.
-  for (const name of ['Acercar', 'Alejar']) {
-    const zoom = page.getByRole('button', { name });
-    if (hasTouch) await expect(zoom).toBeHidden();
-    else controls.push(zoom);
-  }
-  for (const control of controls) {
+  ]) {
     const box = await control.boundingBox();
     expect(box?.width ?? 0).toBeGreaterThanOrEqual(48);
     expect(box?.height ?? 0).toBeGreaterThanOrEqual(48);
