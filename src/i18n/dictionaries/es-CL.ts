@@ -218,6 +218,27 @@ export const esCL = {
   'tour.disclaimer.body':
     'Evacua es una herramienta de apoyo. Si SENAPRED, el SHOA o la Municipalidad indican otra cosa, hazles caso a ellos.',
 
+  'nav.start': 'Navegar',
+  'nav.stop': 'Detener',
+  'nav.finish': 'Terminar',
+  'nav.voice': 'Voz',
+  'nav.demo': 'Recorrido simulado, {factor} veces más rápido que caminando.',
+  'nav.next': 'Próxima indicación',
+  'nav.in': 'En {distance}',
+  'nav.now': 'Ahora',
+  'nav.slightLeft': 'gira levemente a la izquierda',
+  'nav.slightRight': 'gira levemente a la derecha',
+  'nav.left': 'gira a la izquierda',
+  'nav.right': 'gira a la derecha',
+  'nav.sharpLeft': 'gira cerrado a la izquierda',
+  'nav.sharpRight': 'gira cerrado a la derecha',
+  'nav.arriveMeeting': 'sigue hasta el punto de encuentro',
+  'nav.arriveSafe': 'sigue hasta la zona segura',
+  'nav.onto': 'por {street}',
+  'nav.arrivedMeeting':
+    'Llegaste al punto de encuentro {code}. Sigue las instrucciones de las autoridades.',
+  'nav.arrivedSafe': 'Llegaste a la zona segura. Sigue las instrucciones de las autoridades.',
+  'nav.waiting': 'Buscando tu posición… Al aire libre el GPS responde más rápido.',
   'voice.listen': 'Escuchar indicaciones',
   'voice.stop': 'Detener voz',
   'voice.unsupported':

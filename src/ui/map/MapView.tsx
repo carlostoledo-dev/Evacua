@@ -19,7 +19,7 @@ import { layersForHazard, type HazardId } from '../../domain/hazards.ts';
 import { useI18n } from '../../i18n/I18nContext.ts';
 import type { Theme } from '../theme.ts';
 import { diagonalHatch } from './hatch.ts';
-import { meetingPointIcon } from './meetingPointIcon.ts';
+import { meetingPointIcon, navigationArrowIcon } from './meetingPointIcon.ts';
 import {
   buildStyle,
   DARK_PALETTE,
@@ -27,6 +27,7 @@ import {
   HATCH_IMAGE_ID,
   LIGHT_PALETTE,
   MEETING_POINT_ICON_ID,
+  NAV_ARROW_ICON_ID,
   overlayLayerIds,
   USER_POSITION_SOURCE,
   USER_ROUTE_SOURCE,
@@ -42,6 +43,8 @@ export interface UserOverlay {
   position: [number, number] | null;
   path: [number, number][] | null;
   destination: [number, number] | null;
+  /** While navigating: direction to walk now, in degrees from north. */
+  heading: number | null;
 }
 
 /** Pads [w, s, e, n] by a fraction of its size, so the edges stay reachable when panning. */
@@ -54,11 +57,14 @@ function padBounds([w, s, e, n]: readonly number[], ratio: number): LngLatBounds
   ];
 }
 
-function pointCollection(point: [number, number] | null): GeoJSON.FeatureCollection {
+function pointCollection(
+  point: [number, number] | null,
+  properties: Record<string, number> = {},
+): GeoJSON.FeatureCollection {
   return {
     type: 'FeatureCollection',
     features: point
-      ? [{ type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: point } }]
+      ? [{ type: 'Feature', properties, geometry: { type: 'Point', coordinates: point } }]
       : [],
   };
 }
@@ -128,6 +134,8 @@ interface MapViewProps {
   insets: { top: number; bottom: number };
   /** The map's "find me" button: one GPS reading. */
   onLocate: () => void;
+  /** Navigation: keep the camera on the user instead of framing the whole route. */
+  follow: boolean;
 }
 
 /** Highest device pixel ratio we render at: 3× screens cost ~2× the GPU work for little gain. */
@@ -152,6 +160,7 @@ export default function MapView({
   demo,
   insets,
   onLocate,
+  follow,
 }: MapViewProps) {
   const { t } = useI18n();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -230,6 +239,10 @@ export default function MapView({
       if (id === HATCH_IMAGE_ID && !map.hasImage(id)) {
         map.addImage(id, diagonalHatch(palette.evacuationArea));
       }
+      if (id === NAV_ARROW_ICON_ID && !map.hasImage(id)) {
+        const icon = navigationArrowIcon(palette.userRoute, palette.userRouteCasing);
+        if (icon) map.addImage(id, icon.image, { pixelRatio: icon.pixelRatio });
+      }
       if (id === MEETING_POINT_ICON_ID && !map.hasImage(id)) {
         const icon = meetingPointIcon(palette.meetingPoint, palette.meetingPointStroke);
         if (icon) map.addImage(id, icon.image, { pixelRatio: icon.pixelRatio });
@@ -275,13 +288,25 @@ export default function MapView({
   }, [hazard, commune, mapVersion]);
 
   // Draw the user's position, route and destination; frame them without animation (battery).
-  const { position, path, destination } = overlay;
+  const { position, path, destination, heading } = overlay;
   useEffect(() => {
     const map = mapRef.current;
     if (!map || mapVersion === 0) return;
     void map.getSource<GeoJSONSource>(USER_ROUTE_SOURCE)?.setData(lineCollection(path));
-    void map.getSource<GeoJSONSource>(USER_POSITION_SOURCE)?.setData(pointCollection(position));
+    void map
+      .getSource<GeoJSONSource>(USER_POSITION_SOURCE)
+      ?.setData(pointCollection(position, heading === null ? {} : { bearing: heading }));
     void map.getSource<GeoJSONSource>(DESTINATION_SOURCE)?.setData(pointCollection(destination));
+    // Navigating: follow the walker at street level, north up, without animation (battery).
+    if (follow && position) {
+      // Padding keeps the walker in the visible part of the map, above the route sheet.
+      map.jumpTo({
+        center: position,
+        zoom: Math.max(map.getZoom(), 17),
+        padding: { top: insets.top, bottom: insets.bottom, left: 0, right: 0 },
+      });
+      return;
+    }
     const points = path && path.length > 1 ? path : position ? [position] : [];
     const first = points[0];
     if (!first) return;
@@ -297,7 +322,7 @@ export default function MapView({
         maxZoom: 17,
       });
     }
-  }, [position, path, destination, mapVersion, insets.top, insets.bottom]);
+  }, [position, path, destination, heading, follow, mapVersion, insets.top, insets.bottom]);
 
   return (
     <div

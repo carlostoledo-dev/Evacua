@@ -12,7 +12,7 @@ import {
   type LonLat,
   type PreparedArea,
 } from './geo.ts';
-import { nearestNode, nodeCoordinates, type Graph } from './graph.ts';
+import { edgeName, nearestNode, nodeCoordinates, type Graph } from './graph.ts';
 
 // ---------------------------------------------------------------------------------------------
 // Shortest paths (A* / Dijkstra) with several possible goals
@@ -180,6 +180,8 @@ export type EvacuationPlan =
       destination: Destination;
       /** [lon, lat] vertices from the user's position to the destination. */
       path: [number, number][];
+      /** Street name of each path segment (path.length - 1 entries; null when unknown). */
+      streets: (string | null)[];
       meters: number;
       time: TimeRange;
       /** Walking distance until leaving the evacuation area; null when already outside. */
@@ -303,6 +305,14 @@ export function planEvacuation({
     lonLat(start),
     ...exit.nodes.map((node) => nodeCoordinates(graph, node)),
   ];
+  // The walk from the position to the network, and from it to a meeting point, has no street.
+  const streets: (string | null)[] = [null];
+  const nameSteps = (nodes: readonly number[]) => {
+    for (let i = 1; i < nodes.length; i++) {
+      streets.push(edgeName(graph, nodes[i - 1] ?? -1, nodes[i] ?? -1));
+    }
+  };
+  nameSteps(exit.nodes);
   let meters = startSnap.meters + exit.meters;
   let destination: Destination = {
     kind: 'safe-area',
@@ -310,7 +320,9 @@ export function planEvacuation({
   };
   if (onward && reached) {
     path.push(...onward.nodes.slice(1).map((node) => nodeCoordinates(graph, node)));
+    nameSteps(onward.nodes);
     path.push(lonLat(reached.point.coordinates));
+    streets.push(null);
     meters += onward.meters + reached.snapMeters;
     destination = {
       kind: 'meeting-point',
@@ -325,6 +337,7 @@ export function planEvacuation({
     inDangerZone,
     destination,
     path,
+    streets,
     meters,
     time: walkingTime(meters),
     metersToSafety,

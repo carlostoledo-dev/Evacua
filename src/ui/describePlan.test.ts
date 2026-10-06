@@ -16,6 +16,7 @@ const route: EvacuationPlan = {
     [-73.15, -37.02],
     [-73.14, -37.01],
   ],
+  streets: [null],
   meters: 619,
   time: { fastestMinutes: 6, slowestMinutes: 12 },
   metersToSafety: 174,

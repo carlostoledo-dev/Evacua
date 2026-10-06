@@ -1,15 +1,19 @@
-import { lazy, Suspense, type CSSProperties } from 'react';
+import { lazy, Suspense, useMemo, type CSSProperties } from 'react';
 import type { LoadedLayer } from '../../data/loader.ts';
 import type { DemoLocation } from '../../data/schema.ts';
 import { HAZARD_CHOICE, type HazardId } from '../../domain/hazards.ts';
+import { headingAlong, nextManeuver } from '../../domain/navigation.ts';
 import type { ProfileConfig } from '../../domain/profiles.ts';
 import type { EvacuationPlan } from '../../domain/routing.ts';
 import { useI18n } from '../../i18n/I18nContext.ts';
 import { HazardSelector } from '../components/HazardSelector.tsx';
 import { MapLegend } from '../components/MapLegend.tsx';
+import { NavigationBanner } from '../components/NavigationBanner.tsx';
 import { RoutePanel } from '../components/RoutePanel.tsx';
 import type { CommuneState } from '../hooks/useCommuneData.ts';
 import { useElementHeight } from '../hooks/useElementHeight.ts';
+import { useNavigation } from '../hooks/useNavigation.ts';
+import { describeManeuver } from '../navigationText.ts';
 import { locationPosition, type LocationState } from '../hooks/useLocation.ts';
 import type { Theme } from '../theme.ts';
 
@@ -18,6 +22,8 @@ const MapView = lazy(() => import('../map/MapView.tsx'));
 
 export interface LocationActions {
   locateWithGps: () => void;
+  track: () => void;
+  stopTracking: () => void;
   simulate: (demoId: string, position: [number, number]) => void;
   startPicking: () => void;
   pick: (position: [number, number]) => void;
@@ -57,11 +63,20 @@ export function MapScreen({
   plan,
   profile,
 }: MapScreenProps) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [topRef, topHeight] = useElementHeight();
   const [sheetRef, sheetHeight] = useElementHeight();
   const route = plan?.kind === 'route' ? plan : null;
+  const navigation = useNavigation(location, plan, locationActions);
+  const guiding = navigation.active && !navigation.arrived ? route : null;
+  const maneuver = useMemo(
+    () => (guiding ? nextManeuver(guiding.path, guiding.streets) : null),
+    [guiding],
+  );
+  const maneuverText =
+    maneuver && guiding ? describeManeuver(maneuver, guiding.destination.kind, t, locale) : null;
   const overlay = {
+    heading: guiding ? headingAlong(guiding.path) : null,
     position: locationPosition(location),
     path: route?.path ?? null,
     destination:
@@ -106,6 +121,7 @@ export function MapScreen({
                 demo={location.kind === 'demo'}
                 insets={{ top: topHeight, bottom: sheetHeight }}
                 onLocate={locationActions.locateWithGps}
+                follow={navigation.active}
               />
             </Suspense>
             <MapLegend layers={visibleLayers} />
@@ -125,9 +141,13 @@ export function MapScreen({
           </div>
         )}
       </div>
-      {HAZARD_CHOICE && (
+      {(HAZARD_CHOICE || (maneuver && maneuverText)) && (
         <div className="map-top" ref={topRef} data-tour="hazard">
-          <HazardSelector value={hazard} onChange={onHazardChange} compact />
+          {maneuver && maneuverText ? (
+            <NavigationBanner kind={maneuver.kind} text={maneuverText} />
+          ) : (
+            <HazardSelector value={hazard} onChange={onHazardChange} compact />
+          )}
         </div>
       )}
       {commune.status === 'ready' && (
@@ -144,7 +164,12 @@ export function MapScreen({
             onSimulate={(demo) => {
               locationActions.simulate(demo.id, demo.coordinates);
             }}
-            onClear={locationActions.clear}
+            onClear={() => {
+              navigation.stop();
+              locationActions.clear();
+            }}
+            navigation={navigation}
+            maneuverText={maneuverText}
           />
         </div>
       )}

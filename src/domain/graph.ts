@@ -9,10 +9,18 @@ export interface Graph {
   offsets: Uint32Array;
   targets: Uint32Array;
   meters: Float32Array;
+  /** Street names, and for each slot the index of its edge's name (-1: unnamed). */
+  names: readonly string[];
+  nameIndex: Int32Array;
 }
 
 /** Builds an undirected CSR graph from the compact file format ([lon, lat…], [from, to, m…]). */
-export function buildGraph(file: { nodes: readonly number[]; edges: readonly number[] }): Graph {
+export function buildGraph(file: {
+  nodes: readonly number[];
+  edges: readonly number[];
+  names?: readonly string[] | undefined;
+  edgeNames?: readonly number[] | undefined;
+}): Graph {
   const nodeCount = file.nodes.length / 2;
   const lon = new Float64Array(nodeCount);
   const lat = new Float64Array(nodeCount);
@@ -34,21 +42,32 @@ export function buildGraph(file: { nodes: readonly number[]; edges: readonly num
   const total = offsets[nodeCount] ?? 0;
   const targets = new Uint32Array(total);
   const meters = new Float32Array(total);
+  const nameIndex = new Int32Array(total).fill(-1);
   const cursor = offsets.slice(0, nodeCount);
-  const add = (from: number, to: number, m: number) => {
+  const add = (from: number, to: number, m: number, name: number) => {
     const slot = cursor[from] ?? 0;
     targets[slot] = to;
     meters[slot] = m;
+    nameIndex[slot] = name;
     cursor[from] = slot + 1;
   };
   for (let e = 0; e < file.edges.length; e += 3) {
     const from = file.edges[e] ?? 0;
     const to = file.edges[e + 1] ?? 0;
     const m = file.edges[e + 2] ?? 0;
-    add(from, to, m);
-    add(to, from, m);
+    const name = file.edgeNames?.[e / 3] ?? -1;
+    add(from, to, m, name);
+    add(to, from, m, name);
   }
-  return { nodeCount, lon, lat, offsets, targets, meters };
+  return { nodeCount, lon, lat, offsets, targets, meters, names: file.names ?? [], nameIndex };
+}
+
+/** Name of the street joining two adjacent nodes, or null when unnamed or not adjacent. */
+export function edgeName(graph: Graph, from: number, to: number): string | null {
+  for (let k = graph.offsets[from] ?? 0; k < (graph.offsets[from + 1] ?? 0); k++) {
+    if (graph.targets[k] === to) return graph.names[graph.nameIndex[k] ?? -1] ?? null;
+  }
+  return null;
 }
 
 export function nodeCoordinates(graph: Graph, index: number): [number, number] {

@@ -63,6 +63,8 @@ export const DARK_PALETTE: MapPalette = {
 export const HATCH_IMAGE_ID = 'evacua-hatch';
 /** Meeting point marker (green disc with a walking person), drawn at runtime by MapView. */
 export const MEETING_POINT_ICON_ID = 'evacua-meeting-point';
+/** Arrow on the user's position while navigating, rotated by the feature's `bearing`. */
+export const NAV_ARROW_ICON_ID = 'evacua-nav-arrow';
 
 const BASEMAP_SOURCE = 'basemap';
 const LABEL_FONT = ['Noto Sans Regular'];
@@ -299,6 +301,20 @@ function userLayers(p: MapPalette, youLabel: string, goHereLabel: string): Layer
         'circle-color': p.userRoute,
         'circle-stroke-color': p.userRouteCasing,
         'circle-stroke-width': 4,
+      },
+    },
+    {
+      // Only while navigating: the position carries the direction to walk.
+      id: 'user-heading',
+      type: 'symbol',
+      source: USER_POSITION_SOURCE,
+      filter: ['has', 'bearing'],
+      layout: {
+        'icon-image': NAV_ARROW_ICON_ID,
+        'icon-rotate': ['get', 'bearing'],
+        'icon-rotation-alignment': 'map',
+        'icon-allow-overlap': true,
+        'icon-ignore-placement': true,
       },
     },
     {

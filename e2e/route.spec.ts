@@ -168,3 +168,20 @@ test.describe('with GPS, from a folded sheet', () => {
     await expect(panel(page).getByTestId('plan')).toContainText('Estás dentro del área a evacuar');
   });
 });
+
+test('navigation: a DEMO walk gives turn-by-turn directions and arrives', async ({ page }) => {
+  test.slow();
+  await page.goto('/');
+  await waitForMap(page);
+  await simulate(page, 'nuevo-horizonte');
+  await panel(page).getByRole('button', { name: 'Navegar' }).click();
+  await expect(page.getByTestId('nav-banner')).toBeVisible();
+  const navPanel = panel(page).getByTestId('nav-panel');
+  await expect(navPanel).toContainText('Recorrido simulado, 10 veces más rápido');
+  await expect(navPanel).toContainText('Llegaste al punto de encuentro PE0', { timeout: 30_000 });
+  await expect(page.getByTestId('nav-banner')).toHaveCount(0);
+  await navPanel.getByRole('button', { name: 'Terminar' }).click();
+  await expect(panel(page).getByTestId('nav-panel')).toHaveCount(0);
+  // Location is still never stored while navigating.
+  expect(await page.evaluate(() => JSON.stringify(localStorage))).not.toContain('-37.0');
+});

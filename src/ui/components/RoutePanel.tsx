@@ -6,13 +6,21 @@ import type { EvacuationPlan } from '../../domain/routing.ts';
 import { useI18n } from '../../i18n/I18nContext.ts';
 import type { MessageKey } from '../../i18n/translate.ts';
 import type { GeoErrorKind } from '../../platform/geolocation.ts';
-import { describePlan, spokenText, type PlanDescription, type PlanItem } from '../describePlan.ts';
+import {
+  describePlan,
+  shortCode,
+  spokenText,
+  type PlanDescription,
+  type PlanItem,
+} from '../describePlan.ts';
+import type { Navigation } from '../hooks/useNavigation.ts';
+import type { ManeuverText } from '../navigationText.ts';
 import { formatDistance } from '../format.ts';
 import type { LocationState } from '../hooks/useLocation.ts';
 import { useSpeech } from '../hooks/useSpeech.ts';
 import { DrillMode } from './DrillMode.tsx';
 import { LocationChooser } from './LocationChooser.tsx';
-import { LOW_ACCURACY_M } from '../../domain/constants.ts';
+import { DEMO_WALK_SPEEDUP, LOW_ACCURACY_M } from '../../domain/constants.ts';
 import {
   CheckIcon,
   ChevronRightIcon,
@@ -21,6 +29,7 @@ import {
   PinIcon,
   ShieldCheckIcon,
   SpeakerIcon,
+  StopIcon,
   WalkIcon,
   WarningIcon,
 } from './icons.tsx';
@@ -103,6 +112,9 @@ interface RoutePanelProps {
   onPick: () => void;
   onSimulate: (demo: DemoLocation) => void;
   onClear: () => void;
+  navigation: Navigation;
+  /** The next turn-by-turn instruction while navigating. */
+  maneuverText: ManeuverText | null;
 }
 
 export function RoutePanel({
@@ -116,6 +128,8 @@ export function RoutePanel({
   onPick,
   onSimulate,
   onClear,
+  navigation,
+  maneuverText,
 }: RoutePanelProps) {
   const { t, locale } = useI18n();
   const speech = useSpeech(locale);
@@ -148,10 +162,35 @@ export function RoutePanel({
   const spokenRef = useRef<string | null>(null);
   const { say } = speech;
   useEffect(() => {
-    if (!profile.autoSpeak || !text || spokenRef.current === text) return;
+    if (navigation.active || !profile.autoSpeak || !text || spokenRef.current === text) return;
     spokenRef.current = text;
     say(text);
-  }, [profile.autoSpeak, text, say]);
+  }, [navigation.active, profile.autoSpeak, text, say]);
+
+  // Navigation voice: each new instruction once (not every meter), then the arrival.
+  const route = plan?.kind === 'route' ? plan : null;
+  const arrivedText =
+    route?.destination.kind === 'meeting-point'
+      ? t('nav.arrivedMeeting', { code: shortCode(route.destination.code) })
+      : t('nav.arrivedSafe');
+  const navSpeech = navigation.arrived
+    ? { key: 'arrived', words: arrivedText }
+    : maneuverText
+      ? { key: maneuverText.key, words: maneuverText.spoken }
+      : null;
+  const navKey = navSpeech?.key ?? null;
+  const navWords = navSpeech?.words ?? null;
+  const navKeyRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (!navigation.active) {
+      navKeyRef.current = null;
+      return;
+    }
+    if (!navigation.voice || navKey === null || navWords === null || navKeyRef.current === navKey)
+      return;
+    navKeyRef.current = navKey;
+    say(navWords);
+  }, [navigation.active, navigation.voice, navKey, navWords, say]);
 
   const choosing = location.kind === 'none' || location.kind === 'gps-error';
 
@@ -191,7 +230,56 @@ export function RoutePanel({
       )}
 
       <div id={bodyId} className="route-panel__body" hidden={folded}>
-        {choosing && (
+        {navigation.active && (
+          <div className="nav-panel" data-testid="nav-panel">
+            {navigation.mode === 'demo' && (
+              <p className="nav-demo">
+                <span className="badge" data-status="demo">
+                  {t('location.demoBadge')}
+                </span>{' '}
+                {t('nav.demo', { factor: DEMO_WALK_SPEEDUP })}
+              </p>
+            )}
+            {navigation.arrived ? (
+              <p className="plan plan--safe" role="status">
+                <CheckIcon />
+                <strong>{arrivedText}</strong>
+              </p>
+            ) : location.kind === 'gps-error' ? (
+              <p className="plan plan--warning" role="alert">
+                <WarningIcon />
+                <span>{t(GPS_ERROR[location.error])}</span>
+              </p>
+            ) : 'position' in location ? (
+              description && <PlanView description={description} />
+            ) : (
+              <p role="status">{t('nav.waiting')}</p>
+            )}
+            {/* Screen readers hear each new instruction once, not every distance update. */}
+            <p className="visually-hidden" aria-live="polite">
+              {navigation.arrived ? '' : (maneuverText?.action ?? '')}
+            </p>
+            <div className="nav-actions">
+              {speech.supported && (
+                <button
+                  type="button"
+                  className="button"
+                  aria-pressed={navigation.voice}
+                  onClick={navigation.toggleVoice}
+                >
+                  <SpeakerIcon />
+                  <span>{t('nav.voice')}</span>
+                </button>
+              )}
+              <button type="button" className="button button--primary" onClick={navigation.stop}>
+                <StopIcon />
+                <span>{navigation.arrived ? t('nav.finish') : t('nav.stop')}</span>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {!navigation.active && choosing && (
           <>
             {location.kind === 'gps-error' && (
               <p className="plan plan--warning" role="alert">
@@ -209,7 +297,7 @@ export function RoutePanel({
           </>
         )}
 
-        {(location.kind === 'locating' || location.kind === 'picking') && (
+        {!navigation.active && (location.kind === 'locating' || location.kind === 'picking') && (
           <div className="route-wait">
             <p role="status">
               {t(location.kind === 'locating' ? 'location.locating' : 'location.picking')}
@@ -220,7 +308,7 @@ export function RoutePanel({
           </div>
         )}
 
-        {'position' in location && (
+        {!navigation.active && 'position' in location && (
           <>
             <div className="location-row">
               <p className="location-source">
@@ -252,6 +340,16 @@ export function RoutePanel({
                 {t('location.changeShort')}
               </button>
             </div>
+            {route && (
+              <button
+                type="button"
+                className="button button--primary button--lg button--block nav-start"
+                onClick={navigation.start}
+              >
+                <WalkIcon />
+                <span>{t('nav.start')}</span>
+              </button>
+            )}
             {location.kind === 'gps' && location.accuracyMeters > LOW_ACCURACY_M && (
               <div className="plan plan--warning low-accuracy" data-testid="low-accuracy">
                 <WarningIcon />

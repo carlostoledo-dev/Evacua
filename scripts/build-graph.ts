@@ -5,6 +5,7 @@
 // Downloads walkable ways inside the commune's data bounds (plus a margin) from the Overpass
 // API, keeps the largest connected component, and writes a compact graph file:
 //   nodes: [lon, lat, …]   edges: [from, to, meters, …]
+//   names: [street name, …]   edgeNames: [index into names or -1, one per edge]
 // The manifest's `graph` entry records source, license and retrieval date.
 import { readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
@@ -27,6 +28,7 @@ interface OverpassElement {
   lat?: number;
   lon?: number;
   nodes?: number[];
+  tags?: Record<string, string>;
 }
 
 function round(value: number): number {
@@ -53,7 +55,7 @@ async function main(): Promise<void> {
   const query = `[out:json][timeout:120];
 way["highway"~"^(${WALKABLE})$"]["access"!~"^(private|no)$"]["foot"!~"^no$"](${bbox});
 (._;>;);
-out skel qt;`;
+out body qt;`;
   const response = await fetch(OVERPASS_URL, {
     method: 'POST',
     headers: {
@@ -80,9 +82,19 @@ out skel qt;`;
     adjacency.get(a)?.add(b);
     adjacency.get(b)?.add(a);
   };
+  // Street name per node pair (the first named way wins), for turn-by-turn directions.
+  const pairName = new Map<string, string>();
+  const pairKey = (a: number, b: number) =>
+    a < b ? `${String(a)}-${String(b)}` : `${String(b)}-${String(a)}`;
   for (const el of elements) {
     if (el.type !== 'way' || !el.nodes) continue;
-    for (let i = 1; i < el.nodes.length; i++) link(el.nodes[i - 1] ?? -1, el.nodes[i] ?? -1);
+    const name = el.tags?.name?.trim();
+    for (let i = 1; i < el.nodes.length; i++) {
+      const a = el.nodes[i - 1] ?? -1;
+      const b = el.nodes[i] ?? -1;
+      link(a, b);
+      if (name && !pairName.has(pairKey(a, b))) pairName.set(pairKey(a, b), name);
+    }
   }
 
   // Keep the largest connected component: isolated fragments cannot lead anywhere useful.
@@ -114,6 +126,9 @@ out skel qt;`;
     nodes.push(round(lon), round(lat));
   }
   const edges: number[] = [];
+  const names: string[] = [];
+  const nameIds = new Map<string, number>();
+  const edgeNames: number[] = [];
   for (const id of largest) {
     for (const next of adjacency.get(id) ?? []) {
       if (id >= next) continue; // each undirected edge once
@@ -123,10 +138,16 @@ out skel qt;`;
       const a = coords.get(id) ?? [0, 0];
       const b = coords.get(next) ?? [0, 0];
       edges.push(from, to, Math.max(1, Math.round(haversineMeters(a, b))));
+      const name = pairName.get(pairKey(id, next));
+      if (name !== undefined && !nameIds.has(name)) {
+        nameIds.set(name, names.length);
+        names.push(name);
+      }
+      edgeNames.push(name === undefined ? -1 : (nameIds.get(name) ?? -1));
     }
   }
 
-  const graph = graphFileSchema.parse({ schemaVersion: 1, nodes, edges });
+  const graph = graphFileSchema.parse({ schemaVersion: 1, nodes, edges, names, edgeNames });
   await writeFile(path.join(communeDir, GRAPH_FILE), `${JSON.stringify(graph)}\n`);
 
   const graphEntry = {

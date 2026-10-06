@@ -36,6 +36,29 @@ export const MAX_SNAP_DISTANCE_M = 250;
  */
 export const LOW_ACCURACY_M = 100;
 
+// Turn-by-turn navigation. Engineering choices for walking directions, not safety standards.
+
+/** Distance before and after a route vertex used to judge a turn (ignores small curve vertices). */
+export const NAV_TURN_LOOKAHEAD_M = 20;
+
+/**
+ * A first route segment shorter than this is the walk from the user's position to the nearest
+ * street node; a turn there is GPS noise, not a real turn, so it is never announced.
+ */
+export const NAV_SNAP_SEGMENT_M = 20;
+
+/** Closer than this, a turn is announced as "now" instead of "in N m". */
+export const NAV_NOW_M = 30;
+
+/** Within this distance of the meeting point the user has arrived (≈ GPS accuracy outdoors). */
+export const ARRIVAL_RADIUS_M = 25;
+
+/**
+ * The DEMO walk (judges are not in Coronel) moves this many times faster than the average
+ * healthy walking pace above, so a whole route fits in a short demo. Always labeled DEMO.
+ */
+export const DEMO_WALK_SPEEDUP = 10;
+
 /**
  * Age bands printed on the profile cards (labels only: nothing is computed from a user's age,
  * and the age is never asked). Retrieved 2026-10-04 from Chile's Biblioteca del Congreso Nacional.
