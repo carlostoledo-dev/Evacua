@@ -422,10 +422,13 @@ export function RoutePanel({
           </>
         )}
 
-        <p className="privacy-line">
-          <LockIcon />
-          <span>{t('location.privacy')}</span>
-        </p>
+        {/* Reassurance where it matters: while choosing how to share a location. */}
+        {!navigation.active && choosing && (
+          <p className="privacy-line">
+            <LockIcon />
+            <span>{t('location.privacy')}</span>
+          </p>
+        )}
       </div>
     </section>
   );

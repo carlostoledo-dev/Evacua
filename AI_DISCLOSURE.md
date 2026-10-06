@@ -111,3 +111,7 @@ visibly labeled DEMO. See `DATA_SOURCES.md`.
   rotation with a compass, and course-up navigation to the 3D view. Elevation is display only.
 - 3D view revised (2026-10-06, owner request): AI removed the extruded buildings (flat again) and
   drew the relief three times taller, with stronger hill shading; the map labels the exaggeration.
+- Essentials-only map screen (2026-10-06, owner request): AI merged the map buttons into one
+  capsule (3D, a compass shown only while the map is turned, find me), removed the zoom buttons
+  and the scale bar, made the offline status icon-only, shortened the 3D note and lowered the
+  route sheet.
