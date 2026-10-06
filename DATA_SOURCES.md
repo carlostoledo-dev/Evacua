@@ -79,15 +79,28 @@ beyond it so routes can reach nearby safe zones and meeting points.
 | Label glyphs `public/fonts/` (Noto Sans Regular, Latin ranges)     | [protomaps/basemaps-assets](https://github.com/protomaps/basemaps-assets), fetched by [`scripts/fetch-glyphs.ts`](scripts/fetch-glyphs.ts)                                                            | SIL Open Font License 1.1 (`public/fonts/OFL.txt`)            | 2026-10-02       |
 | Map style                                                          | Written for Evacua ([`src/ui/map/style.ts`](src/ui/map/style.ts)) for the Protomaps v4 tile schema                                                                                                    | Project license                                               | n/a              |
 
-**3D view (display only).** The "3D" map button tilts the camera and raises the OSM building
-footprints from the same tiles. Few of them carry a `height` (158 of 18,393 in the z15 tiles,
-checked 2026-10-06); the rest are drawn at `APPROX_BUILDING_HEIGHT_M` (6 m, an assumption in
-`src/domain/constants.ts`). The map says "approximate building heights" while 3D is on. There is
-no terrain/elevation model: none is bundled, and none is fetched at runtime.
+**3D view (display only).** The "3D" map button tilts the camera, raises the OSM building
+footprints from the same tiles and shows the relief below. Few buildings carry a `height`
+(158 of 18,393 in the z15 tiles, checked 2026-10-06); the rest are drawn at
+`APPROX_BUILDING_HEIGHT_M` (6 m, an assumption in `src/domain/constants.ts`). The relief is at
+true scale (`MAP_3D_TERRAIN_EXAGGERATION` = 1). The map says "approximate terrain and buildings"
+while 3D is on. **Elevation is never used for safety:** evacuation areas, safe zones and routes
+come only from SENAPRED and the OSM walking network; the relief is a picture to read the ground.
+
+| Asset                                                                      | Source                                                                                                                                                                                                                                | License                                                                                                                                      | Retrieved  |
+| -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| Elevation tiles `public/terrain/coronel/` (22 PNG tiles, z10–13, ≈ 750 KB) | [Terrain Tiles](https://registry.opendata.aws/terrain-tiles/) (Tilezen/Mapzen, AWS Open Data, Terrarium encoding), fetched by [`scripts/build-terrain.ts`](scripts/build-terrain.ts). For Chile built from SRTM, GMTED2010 and ETOPO1 | Public domain (U.S. Government works), credit requested ([attribution.md](https://github.com/tilezen/joerd/blob/master/docs/attribution.md)) | 2026-10-06 |
+
+Credit lines (verbatim, as requested by the providers; shortened on the map to "Relieve: USGS,
+NOAA"): "SRTM data courtesy of the U.S. Geological Survey"; "GMTED2010 data courtesy of the
+U.S. Geological Survey"; ETOPO1: "DOC/NOAA/NESDIS/NCEI > National Centers for Environmental
+Information, NESDIS, NOAA, U.S. Department of Commerce". z13 is ≈ 15 m per pixel at this
+latitude, already finer than SRTM (≈ 30 m); MapLibre overzooms beyond it.
 
 ```bash
 npm run data:tiles    # re-extract tiles from the latest Protomaps build and update the manifest
 npm run data:glyphs   # re-download the label glyphs
+npm run data:terrain  # re-download the elevation tiles for the 3D relief
 ```
 
 ## Pedestrian network and routing

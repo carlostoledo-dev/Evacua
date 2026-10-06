@@ -11,31 +11,13 @@ import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { gunzipSync } from 'node:zlib';
 import { PMTiles, FetchSource } from 'pmtiles';
-import { boundsSchema, formatIssues, manifestSchema, type Bounds } from '../src/data/schema.ts';
+import { boundsSchema, formatIssues, manifestSchema } from '../src/data/schema.ts';
+import { tilesFor } from './lib/tiles.ts';
 
 const MIN_ZOOM = 12;
 const MAX_ZOOM = 15; // Protomaps builds stop at 15; MapLibre overzooms beyond.
 const BUILDS_INDEX = 'https://build-metadata.protomaps.dev/builds.json';
 const BUILD_BASE = 'https://build.protomaps.com/';
-
-function lonToTileX(lon: number, z: number): number {
-  return Math.floor(((lon + 180) / 360) * 2 ** z);
-}
-
-function latToTileY(lat: number, z: number): number {
-  const rad = (lat * Math.PI) / 180;
-  return Math.floor(((1 - Math.log(Math.tan(rad) + 1 / Math.cos(rad)) / Math.PI) / 2) * 2 ** z);
-}
-
-/** Every tile intersecting `bounds` at zoom `z`. */
-export function tilesFor(bounds: Bounds, z: number): [number, number][] {
-  const [west, south, east, north] = bounds;
-  const tiles: [number, number][] = [];
-  for (let x = lonToTileX(west, z); x <= lonToTileX(east, z); x++) {
-    for (let y = latToTileY(north, z); y <= latToTileY(south, z); y++) tiles.push([x, y]);
-  }
-  return tiles;
-}
 
 async function latestBuild(): Promise<string> {
   const response = await fetch(BUILDS_INDEX);
