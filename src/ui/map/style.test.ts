@@ -3,11 +3,8 @@ import type { LoadedLayer } from '../../data/loader.ts';
 import { manifestSchema, layerSchemas } from '../../data/schema.ts';
 import { manifest, meetingPoints, source } from '../../data/__fixtures__/commune.ts';
 import { diagonalHatch, hexToRgb } from './hatch.ts';
-import { APPROX_BUILDING_HEIGHT_M } from '../../domain/constants.ts';
 import {
   buildStyle,
-  BUILDINGS_3D_LAYER_ID,
-  BUILDINGS_LAYER_ID,
   DARK_PALETTE,
   HATCH_IMAGE_ID,
   HILLSHADE_LAYER_ID,
@@ -46,17 +43,9 @@ describe('buildStyle', () => {
     });
   });
 
-  it('keeps 3D buildings hidden until asked, with approximate heights when OSM has none', () => {
-    const flat = style.layers.find((l) => l.id === BUILDINGS_LAYER_ID);
-    const raised = style.layers.find((l) => l.id === BUILDINGS_3D_LAYER_ID);
-    expect(flat?.type).toBe('fill');
-    expect(raised).toMatchObject({
-      type: 'fill-extrusion',
-      layout: { visibility: 'none' },
-      paint: {
-        'fill-extrusion-height': ['coalesce', ['get', 'height'], APPROX_BUILDING_HEIGHT_M],
-      },
-    });
+  it('draws buildings flat only: no 3D extrusion (the 3D view is about the relief)', () => {
+    expect(style.layers.find((l) => l.id === 'buildings')?.type).toBe('fill');
+    expect(style.layers.some((l) => l.type === 'fill-extrusion')).toBe(false);
   });
 
   it('never asks for basemap tiles outside the area that was extracted', () => {

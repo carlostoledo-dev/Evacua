@@ -16,7 +16,7 @@ import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
 import { useEffect, useRef, useState } from 'react';
 import type { CommuneData } from '../../data/loader.ts';
 import {
-  MAP_3D_MIN_ZOOM,
+  MAP_3D_ZOOM,
   MAP_3D_PITCH_DEG,
   MAP_3D_TERRAIN_EXAGGERATION,
 } from '../../domain/constants.ts';
@@ -27,8 +27,6 @@ import { diagonalHatch } from './hatch.ts';
 import { meetingPointIcon, navigationArrowIcon } from './meetingPointIcon.ts';
 import {
   buildStyle,
-  BUILDINGS_3D_LAYER_ID,
-  BUILDINGS_LAYER_ID,
   DARK_PALETTE,
   DESTINATION_SOURCE,
   HATCH_IMAGE_ID,
@@ -129,7 +127,7 @@ class LocateControl implements IControl {
   }
 }
 
-/** "3D" toggle above the "find me" button: tilts the map and raises the buildings. */
+/** "3D" toggle above the "find me" button: tilts the map over the relief. */
 class ThreeDControl implements IControl {
   private container: HTMLDivElement | null = null;
   private button: HTMLButtonElement | null = null;
@@ -364,18 +362,12 @@ export default function MapView({
     viewRef.current = { position: overlay.position, insets, threeD };
   });
 
-  // 3D view on/off: swap flat and extruded buildings and tilt the camera, without animation.
+  // 3D view on/off: relief (exaggerated, labeled), hill shading and a tilted camera.
   // Turning it on brings the user's position (if any) to the middle of the visible map.
   useEffect(() => {
     const map = mapRef.current;
     threeDControlRef.current?.setPressed(threeD);
     if (!map || mapVersion === 0) return;
-    if (map.getLayer(BUILDINGS_3D_LAYER_ID)) {
-      map.setLayoutProperty(BUILDINGS_3D_LAYER_ID, 'visibility', threeD ? 'visible' : 'none');
-    }
-    if (map.getLayer(BUILDINGS_LAYER_ID)) {
-      map.setLayoutProperty(BUILDINGS_LAYER_ID, 'visibility', threeD ? 'none' : 'visible');
-    }
     if (map.getLayer(HILLSHADE_LAYER_ID)) {
       map.setLayoutProperty(HILLSHADE_LAYER_ID, 'visibility', threeD ? 'visible' : 'none');
     }
@@ -398,7 +390,7 @@ export default function MapView({
     const { position, insets: clear } = viewRef.current;
     map.jumpTo({
       center: position ?? map.getCenter(),
-      zoom: Math.max(map.getZoom(), MAP_3D_MIN_ZOOM),
+      zoom: Math.min(Math.max(map.getZoom(), MAP_3D_ZOOM.min), MAP_3D_ZOOM.max),
       pitch: MAP_3D_PITCH_DEG,
     });
     // Lift that point from the screen's middle to the middle of the part the panels leave
@@ -472,7 +464,7 @@ export default function MapView({
         )}
         {threeD && (
           <p className="map-chip" data-testid="map-3d-note">
-            {t('map.buildingsApprox')}
+            {t('map.reliefNote', { factor: MAP_3D_TERRAIN_EXAGGERATION })}
           </p>
         )}
       </div>

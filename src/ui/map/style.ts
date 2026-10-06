@@ -3,15 +3,12 @@
 import type { ExpressionSpecification, LayerSpecification, StyleSpecification } from 'maplibre-gl';
 import type { LoadedLayer } from '../../data/loader.ts';
 import type { Basemap, Bounds, Terrain } from '../../data/schema.ts';
-import { APPROX_BUILDING_HEIGHT_M } from '../../domain/constants.ts';
 
 export interface MapPalette {
   water: string;
   land: string;
   park: string;
   building: string;
-  /** Walls and roofs in the 3D view: a bit lighter than the flat footprint. */
-  building3d: string;
   /** Relief shading in the 3D view (slopes facing away from / towards the light). */
   hillShadow: string;
   hillHighlight: string;
@@ -36,7 +33,6 @@ export const LIGHT_PALETTE: MapPalette = {
   land: '#f4f1ea',
   park: '#d3e6c7',
   building: '#dcd7cc',
-  building3d: '#d2ccbf',
   hillShadow: '#7a6648',
   hillHighlight: '#fffaf0',
   sky: '#8ec1f0',
@@ -60,7 +56,6 @@ export const DARK_PALETTE: MapPalette = {
   land: '#000000',
   park: '#0c1d10',
   building: '#1a1c20',
-  building3d: '#3a414e',
   hillShadow: '#000000',
   hillHighlight: '#4a5263',
   sky: '#050c1f',
@@ -86,9 +81,6 @@ export const MEETING_POINT_ICON_ID = 'evacua-meeting-point';
 export const NAV_ARROW_ICON_ID = 'evacua-nav-arrow';
 
 const BASEMAP_SOURCE = 'basemap';
-/** Flat building footprints, and their extruded twin for the 3D view. */
-export const BUILDINGS_LAYER_ID = 'buildings';
-export const BUILDINGS_3D_LAYER_ID = 'buildings-3d';
 /** Offline elevation (3D relief) and its shading, both only used by the 3D view. */
 export const TERRAIN_SOURCE = 'terrain';
 export const HILLSHADE_LAYER_ID = 'hillshade';
@@ -135,7 +127,7 @@ function basemapLayers(p: MapPalette): LayerSpecification[] {
       paint: { 'fill-color': p.water },
     },
     {
-      id: BUILDINGS_LAYER_ID,
+      id: 'buildings',
       type: 'fill',
       ...src,
       'source-layer': 'buildings',
@@ -167,20 +159,6 @@ function basemapLayers(p: MapPalette): LayerSpecification[] {
       'source-layer': 'roads',
       filter: ['==', ['get', 'kind'], 'path'],
       paint: { 'line-color': p.roadCasing, 'line-width': 1, 'line-dasharray': [2, 2] },
-    },
-    // Hidden until the user turns on the 3D view (MapView switches it with `buildings`).
-    {
-      id: BUILDINGS_3D_LAYER_ID,
-      type: 'fill-extrusion',
-      ...src,
-      'source-layer': 'buildings',
-      minzoom: 14,
-      layout: { visibility: 'none' },
-      paint: {
-        'fill-extrusion-color': p.building3d,
-        'fill-extrusion-height': ['coalesce', ['get', 'height'], APPROX_BUILDING_HEIGHT_M],
-        'fill-extrusion-opacity': 0.85,
-      },
     },
     {
       id: 'road-labels',
@@ -427,7 +405,7 @@ export function buildStyle({
         'hillshade-shadow-color': palette.hillShadow,
         'hillshade-accent-color': palette.hillShadow,
         'hillshade-highlight-color': palette.hillHighlight,
-        'hillshade-exaggeration': 0.3,
+        'hillshade-exaggeration': 0.5,
       },
     });
   }

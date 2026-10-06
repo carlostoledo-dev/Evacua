@@ -3,7 +3,7 @@ import { waitForMap } from './helpers.ts';
 
 // Its own Playwright project, run after the others: the tilted 3D view (relief + extruded
 // buildings) is heavy for software WebGL and slowed the tests running beside it.
-test('3D view: relief, buildings and compass, labeled approximate', async ({ page }) => {
+test('3D view: exaggerated relief and compass, labeled', async ({ page }) => {
   await page.goto('/');
   await waitForMap(page);
   const toggle = page.getByRole('button', { name: 'Vista 3D' });
@@ -15,7 +15,7 @@ test('3D view: relief, buildings and compass, labeled approximate', async ({ pag
   await expect(toggle).toHaveAttribute('aria-pressed', 'true');
   await expect(compass).toBeVisible();
   await expect(page.getByTestId('map')).toContainText('Relieve: USGS, NOAA');
-  await expect(page.getByTestId('map-3d-note')).toContainText('relieve y edificios aproximados');
+  await expect(page.getByTestId('map-3d-note')).toContainText('altura exagerada ×3');
   // Tiles towards the horizon are outside the offline area: the map must not break.
   await page.waitForTimeout(1500);
   await expect(page.getByTestId('map')).toHaveAttribute('data-state', 'ready');

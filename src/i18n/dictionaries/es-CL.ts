@@ -66,7 +66,7 @@ export const esCL = {
   'map.showData': 'Ver detalles',
   'map.legend': 'Leyenda',
   'map.view3d': 'Vista 3D',
-  'map.buildingsApprox': '3D · relieve y edificios aproximados',
+  'map.reliefNote': '3D · relieve aproximado, altura exagerada ×{factor}',
   'map.resetNorth': 'Apuntar al norte',
   'map.locate': 'Usar mi ubicación (GPS)',
 

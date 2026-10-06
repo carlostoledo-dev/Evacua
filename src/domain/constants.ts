@@ -82,22 +82,18 @@ export const WALKING_SPEED_MPS = {
   mobilityImpaired: mphToMetersPerSecond(2),
 } as const;
 
-/**
- * 3D map view only (display, not safety data): height drawn for a building whose
- * OpenStreetMap record has no `height`. Most buildings in the pilot area have none (158 of
- * 18,393 in the z15 tiles, checked 2026-10-06), so the 3D view says its heights are approximate.
- * 6 m ≈ a two-storey house; an assumption for the drawing, not a measured value.
- */
-export const APPROX_BUILDING_HEIGHT_M = 6;
-
 /** 3D map view: camera tilt in degrees (MapLibre allows up to 85; 60 keeps streets readable). */
 export const MAP_3D_PITCH_DEG = 60;
 
-/** 3D map view: zoom it moves to if farther out, so the buildings (drawn from z14) show. */
-export const MAP_3D_MIN_ZOOM = 15.5;
+/**
+ * 3D map view: zoom range it opens in. Wide enough to see the hills around the user, close
+ * enough to read the streets (display choice).
+ */
+export const MAP_3D_ZOOM = { min: 13, max: 14.5 } as const;
 
 /**
- * 3D map view: vertical scale of the relief. 1 = true scale (no exaggeration), so the hills
- * look as high as the elevation data says (SRTM ≈ 30 m cells; display only, not safety data).
+ * 3D map view: vertical scale of the relief (display only, never safety data). At true scale
+ * the pilot area's hills (0–≈490 m over ≈8 km) look almost flat on a phone, so they are drawn
+ * this many times taller to read where the high ground is. The map says so while 3D is on.
  */
-export const MAP_3D_TERRAIN_EXAGGERATION = 1;
+export const MAP_3D_TERRAIN_EXAGGERATION = 3;

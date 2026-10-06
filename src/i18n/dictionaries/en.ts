@@ -67,7 +67,7 @@ export const en: Dictionary = {
   'map.showData': 'See details',
   'map.legend': 'Legend',
   'map.view3d': '3D view',
-  'map.buildingsApprox': '3D · approximate terrain and buildings',
+  'map.reliefNote': '3D · approximate relief, height exaggerated ×{factor}',
   'map.resetNorth': 'Point north',
   'map.locate': 'Use my location (GPS)',
 
