@@ -89,3 +89,7 @@ visibly labeled DEMO. See `DATA_SOURCES.md`.
 - Navigation mode (2026-10-05, owner request): AI designed and wrote the turn-by-turn logic
   (maneuvers from route geometry), continuous GPS adapter, DEMO walk, banner, voice, street names
   in the OSM graph, and their tests.
+- Mobile decluttering (2026-10-06, owner request): AI reviewed the map screen at phone size and
+  made it lighter: the permanent disclaimer became one always-visible line that unfolds to the
+  full notice, the legend became a round icon button, the zoom buttons are hidden on touch
+  screens (pinch zoom), and the header, bottom sheet and tab bar were made more compact.

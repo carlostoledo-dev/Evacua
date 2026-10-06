@@ -32,6 +32,8 @@ export const en: Dictionary = {
   'disclaimer.title': 'Important',
   'disclaimer.body':
     'A support tool only: it does not replace SENAPRED, SHOA or the Municipality of Coronel. Always follow their official instructions.',
+  'disclaimer.short': 'Support only. Always follow SENAPRED and SHOA.',
+  'disclaimer.more': 'Read the full notice',
 
   'status.label': 'App status',
   'status.offline.ready': 'Ready to use offline',
