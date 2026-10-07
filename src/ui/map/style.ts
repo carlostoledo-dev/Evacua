@@ -274,9 +274,20 @@ const EMPTY: GeoJSON.FeatureCollection = { type: 'FeatureCollection', features: 
 function userLayers(p: MapPalette, youLabel: string): LayerSpecification[] {
   return [
     {
+      // Off-street ends (position → street, street → meeting point): a thin dashed line, so a
+      // straight walk across a lot or a hill never looks like part of the street route.
+      id: 'user-route-offstreet',
+      type: 'line',
+      source: USER_ROUTE_SOURCE,
+      filter: ['==', ['get', 'street'], false],
+      layout: { 'line-cap': 'round' },
+      paint: { 'line-color': p.userRoute, 'line-width': 4, 'line-dasharray': [0.5, 2] },
+    },
+    {
       id: 'user-route-casing',
       type: 'line',
       source: USER_ROUTE_SOURCE,
+      filter: ['==', ['get', 'street'], true],
       layout: { 'line-cap': 'round', 'line-join': 'round' },
       paint: { 'line-color': p.userRouteCasing, 'line-width': 11 },
     },
@@ -284,6 +295,7 @@ function userLayers(p: MapPalette, youLabel: string): LayerSpecification[] {
       id: 'user-route',
       type: 'line',
       source: USER_ROUTE_SOURCE,
+      filter: ['==', ['get', 'street'], true],
       layout: { 'line-cap': 'round', 'line-join': 'round' },
       paint: { 'line-color': p.userRoute, 'line-width': 7 },
     },
@@ -292,6 +304,7 @@ function userLayers(p: MapPalette, youLabel: string): LayerSpecification[] {
       id: 'user-route-chevrons',
       type: 'symbol',
       source: USER_ROUTE_SOURCE,
+      filter: ['==', ['get', 'street'], true],
       layout: {
         'symbol-placement': 'line',
         'symbol-spacing': 34,

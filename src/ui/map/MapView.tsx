@@ -53,6 +53,12 @@ type MapState = 'loading' | 'ready' | 'error';
 export interface UserOverlay {
   position: [number, number] | null;
   path: [number, number][] | null;
+  /**
+   * The route's first segment (from the position to the nearest street) has no street, and so
+   * has its last one when it ends at a meeting point (from the street to the point). They are
+   * drawn dashed so they never look like a street.
+   */
+  endsOffStreet: boolean;
   destination: [number, number] | null;
   /** While navigating: direction to walk now, in degrees from north. */
   heading: number | null;
@@ -91,13 +97,30 @@ function pointCollection(
   };
 }
 
-function lineCollection(path: [number, number][] | null): GeoJSON.FeatureCollection {
+function line(
+  coordinates: [number, number][],
+  street: boolean,
+): GeoJSON.Feature<GeoJSON.LineString> {
+  return {
+    type: 'Feature',
+    properties: { street },
+    geometry: { type: 'LineString', coordinates },
+  };
+}
+
+/** The route along streets, plus its off-street ends (`street: false`), drawn apart. */
+function routeCollection(
+  path: [number, number][] | null,
+  endsOffStreet: boolean,
+): GeoJSON.FeatureCollection {
+  if (!path || path.length < 2) return { type: 'FeatureCollection', features: [] };
+  const last = endsOffStreet ? path.length - 1 : path.length;
+  const features = [line(path.slice(0, 2), false)];
+  if (last - 1 >= 1) features.push(line(path.slice(1, last), true));
+  if (endsOffStreet && path.length > 2) features.push(line(path.slice(-2), false));
   return {
     type: 'FeatureCollection',
-    features:
-      path && path.length > 1
-        ? [{ type: 'Feature', properties: {}, geometry: { type: 'LineString', coordinates: path } }]
-        : [],
+    features: features.filter((f) => f.geometry.coordinates.length > 1),
   };
 }
 
@@ -340,11 +363,13 @@ export default function MapView({
   }, [threeD, mapVersion]);
 
   // Draw the user's position, route and destination, and glide the camera to frame them.
-  const { position, path, destination, heading, destinationLabel } = overlay;
+  const { position, path, endsOffStreet, destination, heading, destinationLabel } = overlay;
   useEffect(() => {
     const map = mapRef.current;
     if (!map || mapVersion === 0) return;
-    void map.getSource<GeoJSONSource>(USER_ROUTE_SOURCE)?.setData(lineCollection(path));
+    void map
+      .getSource<GeoJSONSource>(USER_ROUTE_SOURCE)
+      ?.setData(routeCollection(path, endsOffStreet));
     void map
       .getSource<GeoJSONSource>(USER_POSITION_SOURCE)
       ?.setData(pointCollection(position, heading === null ? {} : { bearing: heading }));
@@ -391,6 +416,7 @@ export default function MapView({
   }, [
     position,
     path,
+    endsOffStreet,
     destination,
     destinationLabel,
     heading,

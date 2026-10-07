@@ -118,6 +118,7 @@ export function MapScreen({
     heading: guiding ? headingAlong(guiding.path) : null,
     position: locationPosition(location),
     path: route?.path ?? null,
+    endsOffStreet: route?.destination.kind === 'meeting-point',
     destination:
       route?.destination.coordinates ??
       (plan?.kind === 'straight-line' ? plan.destination.coordinates : null),
