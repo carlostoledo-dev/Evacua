@@ -1,5 +1,9 @@
 # Evacua
 
+[![CI](https://github.com/carlostoledo-dev/Evacua/actions/workflows/ci.yml/badge.svg)](https://github.com/carlostoledo-dev/Evacua/actions/workflows/ci.yml)
+[![Live demo](https://img.shields.io/badge/demo-evacua--phi.vercel.app-0b5fd8)](https://evacua-phi.vercel.app)
+[![License: PolyForm Noncommercial](https://img.shields.io/badge/license-PolyForm%20Noncommercial%201.0.0-555)](LICENSE)
+
 **An offline tsunami evacuation map for Coronel, Chile.** Install it from the browser, and when
 the ground shakes it tells you, with no internet, whether you are in the official evacuation
 area, where to go (the nearest official meeting point) and the shortest walking way there,
