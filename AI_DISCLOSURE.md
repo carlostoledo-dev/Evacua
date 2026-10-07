@@ -163,3 +163,7 @@ visibly labeled DEMO. See `DATA_SOURCES.md`.
   on wide screens with a mouse, added a side panel with a QR code to open the demo on a phone
   (generated once by `npm run qr`), kept the tutorial and the bottom sheets inside the frame, and
   added end-to-end tests for the computer and phone layouts.
+- Routes over the hills (2026-10-07, owner report): AI reproduced a route that crossed a hill on
+  dirt tracks, measured which kinds of OpenStreetMap ways the routes used on a grid of starting
+  points, rebuilt the walking network without tracks and trails, and drew the off-street ends of
+  a route as a dashed line.

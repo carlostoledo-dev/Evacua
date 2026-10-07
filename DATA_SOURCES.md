@@ -104,9 +104,9 @@ npm run data:terrain  # re-download the elevation tiles for the 3D relief
 
 ## Pedestrian network and routing
 
-| Asset                                                                                                                  | Source                                                                                                                                                                                                                                                      | License                                     | Retrieved        |
-| ---------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- | ---------------- |
-| `public/data/communes/coronel/graph.json` (26,590 nodes, 29,322 street segments, 1,378 street names, ≈ 235 KB gzipped) | OpenStreetMap walkable ways (footways, paths, residential and other streets; motorways excluded; `access=private` / `foot=no` excluded) via the Overpass API, built by [`scripts/build-graph.ts`](scripts/build-graph.ts); largest connected component kept | **ODbL-1.0** (© OpenStreetMap contributors) | 2026-10-05 (UTC) |
+| Asset                                                                                                                  | Source                                                                                                                                                                                                                                                                                              | License                                     | Retrieved        |
+| ---------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- | ---------------- |
+| `public/data/communes/coronel/graph.json` (17,138 nodes, 19,760 street segments, 1,372 street names, ≈ 185 KB gzipped) | OpenStreetMap streets, sidewalks, pedestrian ways and stairs (motorways, dirt tracks `highway=track` and trails `highway=path` excluded; `access=private` / `foot=no` excluded) via the Overpass API, built by [`scripts/build-graph.ts`](scripts/build-graph.ts); largest connected component kept | **ODbL-1.0** (© OpenStreetMap contributors) | 2026-10-07 (UTC) |
 
 ```bash
 npm run data:graph   # rebuild the walking network from OpenStreetMap and update the manifest
@@ -122,6 +122,13 @@ How a route is computed ([`src/domain/routing.ts`](src/domain/routing.ts)), all 
 3. Outside the evacuation area → the nearest meeting point through safe ground, or "already safe".
 4. No street network, start farther than 250 m from any street, or no path → only a straight
    line with distance and compass direction, labeled "not a route".
+
+**Streets only (2026-10-07).** Dirt tracks and trails are not in the network: in Coronel they
+cross the wooded hills, and before this change more than half of the routes from the evacuation
+area used them for over 150 m, some for 2 km over the hill. Without them no route uses a trail
+(checked on a grid of starting points every ≈ 200 m). The short walks with no street — from the
+position to the nearest street and from the street to the meeting point — are drawn as a thin
+dashed line, never as part of the route.
 
 Walking time is shown as a range between FEMA P-646's average healthy pace (4 mph) and its
 mobility-impaired pace (2 mph), never as a promise.

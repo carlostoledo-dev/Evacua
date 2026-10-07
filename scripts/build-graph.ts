@@ -18,8 +18,12 @@ const GRAPH_FILE = 'graph.json';
 const COORDINATE_DECIMALS = 5; // ≈ 1 m: plenty for walking directions, smaller file
 
 // Ways a person can walk on. Motorways are excluded; private or foot=no ways are filtered out.
+// `track` (forestry and farm tracks) and `path` (trails, mostly untagged dirt paths) are
+// excluded too: in Coronel they cross the wooded hills, and an evacuation route must follow
+// streets, sidewalks and stairs people know and can use at night (owner report 2026-10-07: a
+// route went over the hill on dirt tracks; with them excluded no route uses a trail).
 const WALKABLE =
-  'footway|path|pedestrian|living_street|residential|service|unclassified|road|track|steps|' +
+  'footway|pedestrian|living_street|residential|service|unclassified|road|steps|' +
   'cycleway|tertiary|tertiary_link|secondary|secondary_link|primary|primary_link|trunk|trunk_link';
 
 interface OverpassElement {
