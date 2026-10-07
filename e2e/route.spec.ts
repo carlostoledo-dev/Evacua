@@ -162,8 +162,12 @@ test('the location is never stored on the device', async ({ page }) => {
   await openTab(page, 'Ajustes');
   await openTab(page, 'Mapa');
   await page.reload();
-  await waitForMap(page);
-  await expect(panel(page).getByRole('button', { name: /Buscar mi ruta/ })).toBeVisible();
+  // After a reload nothing is remembered: the sheet asks for a location again. (Waiting for the
+  // whole map to draw is not needed here, and is slow when many tests draw maps in software.)
+  await expect(panel(page).getByRole('button', { name: /Buscar mi ruta/ })).toBeVisible({
+    timeout: 30_000,
+  });
+  await expect(page.getByTestId('map-demo')).toHaveCount(0);
 });
 
 test('the sheet shows a summary first and pulls up for the details', async ({ page }) => {
