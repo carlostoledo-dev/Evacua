@@ -18,6 +18,9 @@ export default defineConfig({
     // tests opt out with an empty storage state.
     storageState: 'e2e/state/onboarded.json',
     trace: 'on-first-retry',
+    // No camera glides or sheet animations: faster, deterministic runs on software WebGL, and
+    // the reduced-motion path (people who ask for it) is the one exercised.
+    reducedMotion: 'reduce',
     // Software WebGL so MapLibre can draw in headless CI browsers.
     launchOptions: { args: ['--enable-unsafe-swiftshader', '--use-angle=swiftshader'] },
   },
