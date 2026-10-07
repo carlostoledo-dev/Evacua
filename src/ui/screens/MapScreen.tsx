@@ -1,4 +1,4 @@
-import { lazy, Suspense, useMemo, type CSSProperties } from 'react';
+import { lazy, Suspense, useMemo, useState, type CSSProperties, type ReactNode } from 'react';
 import type { LoadedLayer } from '../../data/loader.ts';
 import type { DemoLocation } from '../../data/schema.ts';
 import { HAZARD_CHOICE, type HazardId } from '../../domain/hazards.ts';
@@ -6,16 +6,21 @@ import { headingAlong, nextManeuver } from '../../domain/navigation.ts';
 import type { ProfileConfig } from '../../domain/profiles.ts';
 import type { EvacuationPlan } from '../../domain/routing.ts';
 import { useI18n } from '../../i18n/I18nContext.ts';
+import { ArrivedScreen } from '../components/ArrivedScreen.tsx';
+import { Disclaimer } from '../components/Disclaimer.tsx';
 import { HazardSelector } from '../components/HazardSelector.tsx';
-import { MapLegend } from '../components/MapLegend.tsx';
+import { ChevronRightIcon, MenuIcon, WarningIcon } from '../components/icons.tsx';
+import { LayersSheet } from '../components/LayersSheet.tsx';
 import { MenuSheet } from '../components/MainMenu.tsx';
 import { NavigationBanner } from '../components/NavigationBanner.tsx';
 import { RoutePanel } from '../components/RoutePanel.tsx';
+import { formatShortTime, shortCode } from '../describePlan.ts';
+import { formatDistance } from '../format.ts';
 import type { CommuneState } from '../hooks/useCommuneData.ts';
 import { useElementHeight } from '../hooks/useElementHeight.ts';
+import { locationPosition, type LocationState } from '../hooks/useLocation.ts';
 import { useNavigation } from '../hooks/useNavigation.ts';
 import { describeManeuver } from '../navigationText.ts';
-import { locationPosition, type LocationState } from '../hooks/useLocation.ts';
 import type { Theme } from '../theme.ts';
 import type { View } from '../views.ts';
 
@@ -44,19 +49,25 @@ interface MapScreenProps {
   locationActions: LocationActions;
   plan: EvacuationPlan | null;
   profile: ProfileConfig;
-  /** Heights (px) of the translucent app bar and tab bar floating over the map. */
-  chrome: { top: number; bottom: number };
-  /** Opens one of the screens behind the map (from the sheet's menu). */
+  /** The offline status icon and the "new version" prompt, shown with the notice on top. */
+  status: ReactNode;
+  prompt: ReactNode;
+  /** Opens one of the screens behind the map. */
   onNavigate: (view: Exclude<View, 'map'>) => void;
+  onReplayTour: () => void;
 }
 
 const NO_DEMO_LOCATIONS: readonly DemoLocation[] = [];
-/** The route sheet floats this far above the tab bar (`.map-sheet` bottom offset: 0.5rem). */
+/** The route sheet floats this far above the bottom edge (`.map-sheet` bottom: 0.5rem). */
 const SHEET_GAP_PX = 8;
 
 /**
- * Stays mounted while other screens are shown (hidden), so the map is not rebuilt on every
- * tab switch; a hidden map does not render, so it costs no battery.
+ * The map screen, as in the design: cards on top (danger or the next turn, and the permanent
+ * notice), the map with its buttons, and the route sheet at the bottom; layers and the quick
+ * menu open as sheets, and arriving fills the screen.
+ *
+ * Stays mounted while other screens are shown (hidden), so the map is not rebuilt each time; a
+ * hidden map does not render, so it costs no battery.
  */
 export function MapScreen({
   active,
@@ -70,8 +81,10 @@ export function MapScreen({
   locationActions,
   plan,
   profile,
-  chrome,
+  status,
+  prompt,
   onNavigate,
+  onReplayTour,
 }: MapScreenProps) {
   const { t, locale } = useI18n();
   const [topRef, topHeight] = useElementHeight();
@@ -85,6 +98,20 @@ export function MapScreen({
   );
   const maneuverText =
     maneuver && guiding ? describeManeuver(maneuver, guiding.destination.kind, t, locale) : null;
+
+  // Map view state, set from the map buttons and the layers sheet.
+  const [threeD, setThreeD] = useState(false);
+  const [relief, setRelief] = useState(false);
+  const [hiddenLayers, setHiddenLayers] = useState<ReadonlySet<string>>(() => new Set());
+  const [layersOpen, setLayersOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  // Route details under the summary; a new kind of location starts with the summary only.
+  const [expandedFor, setExpandedFor] = useState<LocationState['kind'] | null>(null);
+  const expanded = expandedFor === location.kind;
+  const setExpanded = (open: boolean) => {
+    setExpandedFor(open ? location.kind : null);
+  };
+
   const overlay = {
     heading: guiding ? headingAlong(guiding.path) : null,
     position: locationPosition(location),
@@ -92,14 +119,41 @@ export function MapScreen({
     destination:
       route?.destination.coordinates ??
       (plan?.kind === 'straight-line' ? plan.destination.coordinates : null),
+    destinationLabel:
+      route?.destination.kind === 'meeting-point'
+        ? shortCode(route.destination.code)
+        : plan?.kind === 'straight-line'
+          ? shortCode(plan.destination.code)
+          : route
+            ? t('route.goHere')
+            : null,
   };
-  // The map runs under the translucent bars; these are the parts of it that stay uncovered.
+  // The map runs under the floating cards and sheet; these are the parts that stay uncovered.
   const insets = {
-    top: chrome.top + topHeight,
-    bottom: chrome.bottom + (sheetHeight > 0 ? sheetHeight + SHEET_GAP_PX : 0),
+    top: topHeight,
+    bottom: sheetHeight > 0 ? sheetHeight + SHEET_GAP_PX : 0,
   };
   const demoLocations =
     commune.status === 'ready' ? commune.data.manifest.demoLocations : NO_DEMO_LOCATIONS;
+  const inDanger =
+    plan !== null && 'inDangerZone' in plan && plan.inDangerZone && !navigation.active;
+
+  const routeTime = route ? formatShortTime(route.time, profile, t) : null;
+  const menuSummary = route
+    ? {
+        title:
+          route.destination.kind === 'meeting-point'
+            ? shortCode(route.destination.code)
+            : t('route.item.safeArea'),
+        subtitle: routeTime
+          ? t('route.summary', { distance: formatDistance(route.meters, locale), time: routeTime })
+          : formatDistance(route.meters, locale),
+      }
+    : null;
+  const stopAndClear = () => {
+    navigation.stop();
+    locationActions.clear();
+  };
 
   return (
     <section
@@ -136,7 +190,13 @@ export function MapScreen({
               insets={insets}
               onLocate={locationActions.locateWithGps}
               follow={navigation.active}
-              legend={<MapLegend layers={visibleLayers} />}
+              threeD={threeD}
+              onThreeDChange={setThreeD}
+              hiddenLayers={hiddenLayers}
+              relief={relief}
+              onOpenLayers={() => {
+                setLayersOpen(true);
+              }}
             />
           </Suspense>
         )}
@@ -154,17 +214,55 @@ export function MapScreen({
           </div>
         )}
       </div>
-      {(HAZARD_CHOICE || (maneuver && maneuverText)) && (
-        <div className="map-top" ref={topRef} data-tour="hazard">
-          {maneuver && maneuverText ? (
-            <NavigationBanner kind={maneuver.kind} text={maneuverText} />
-          ) : (
+
+      {/* Cards on top: the next turn or the danger, then the permanent notice and the status. */}
+      <div className="map-top" ref={topRef}>
+        {maneuver && maneuverText ? (
+          <NavigationBanner kind={maneuver.kind} text={maneuverText} onClose={navigation.stop} />
+        ) : (
+          inDanger && (
+            <button
+              type="button"
+              className="danger-card"
+              data-testid="danger-card"
+              aria-expanded={route ? expanded : undefined}
+              onClick={() => {
+                if (route) setExpanded(true);
+              }}
+            >
+              <WarningIcon className="icon danger-card__icon" />
+              <span className="danger-card__text">
+                <strong>{t('danger.title')}</strong>
+                <span>
+                  {route?.destination.kind === 'safe-area'
+                    ? t('danger.bodySafe')
+                    : t('danger.bodyMeeting')}
+                </span>
+              </span>
+              {route && <ChevronRightIcon className="icon" />}
+            </button>
+          )
+        )}
+        {HAZARD_CHOICE && !navigation.active && (
+          <div data-tour="hazard">
             <HazardSelector value={hazard} onChange={onHazardChange} compact />
-          )}
+          </div>
+        )}
+        <div className="map-top__row">
+          <div className="map-top__notice" data-tour="disclaimer">
+            <Disclaimer
+              onMore={() => {
+                onNavigate('guide');
+              }}
+            />
+          </div>
+          {status}
         </div>
-      )}
-      {commune.status === 'ready' && (
-        <div className="map-sheet" ref={sheetRef}>
+        {prompt}
+      </div>
+
+      <div className="map-sheet" ref={sheetRef}>
+        {commune.status === 'ready' ? (
           <RoutePanel
             location={location}
             plan={plan}
@@ -177,20 +275,75 @@ export function MapScreen({
             onSimulate={(demo) => {
               locationActions.simulate(demo.id, demo.coordinates);
             }}
-            onClear={() => {
-              navigation.stop();
-              locationActions.clear();
-            }}
+            onClear={stopAndClear}
             navigation={navigation}
             maneuverText={maneuverText}
-            onNavigate={onNavigate}
+            expanded={expanded}
+            onExpandedChange={setExpanded}
+            onOpenMenu={() => {
+              setMenuOpen(true);
+            }}
           />
-        </div>
+        ) : (
+          // No sector data yet (or it failed): ≡ still leads to "Datos" and "Ajustes".
+          <div className="route-panel glass-sheet menu-sheet">
+            <button
+              type="button"
+              className="menu-button"
+              aria-label={t('nav.menu')}
+              aria-haspopup="dialog"
+              onClick={() => {
+                setMenuOpen(true);
+              }}
+            >
+              <MenuIcon className="icon" />
+            </button>
+          </div>
+        )}
+      </div>
+
+      {commune.status === 'ready' && (
+        <LayersSheet
+          open={layersOpen}
+          onClose={() => {
+            setLayersOpen(false);
+          }}
+          layers={visibleLayers}
+          hidden={hiddenLayers}
+          onToggle={(id) => {
+            setHiddenLayers((current) => {
+              const next = new Set(current);
+              if (!next.delete(id)) next.add(id);
+              return next;
+            });
+          }}
+          relief={commune.data.manifest.terrain ? relief : null}
+          onReliefChange={setRelief}
+          threeD={threeD}
+          onThreeDChange={setThreeD}
+        />
       )}
-      {commune.status !== 'ready' && (
-        <div className="map-sheet">
-          <MenuSheet onOpen={onNavigate} />
-        </div>
+      <MenuSheet
+        open={menuOpen}
+        onClose={() => {
+          setMenuOpen(false);
+        }}
+        onOpen={onNavigate}
+        summary={menuSummary}
+        onChangeLocation={'position' in location ? stopAndClear : null}
+        onReplayTour={onReplayTour}
+      />
+
+      {navigation.active && navigation.arrived && route && (
+        <ArrivedScreen
+          destination={route.destination}
+          demo={navigation.mode === 'demo'}
+          onMoreInfo={() => {
+            navigation.stop();
+            onNavigate('guide');
+          }}
+          onFinish={navigation.stop}
+        />
       )}
     </section>
   );

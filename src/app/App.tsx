@@ -77,6 +77,10 @@ export function App() {
     );
   }
   const user = profile.user;
+  const pill = <ConnectionPill offline={serviceWorker.offline} online={online} />;
+  const updatePrompt = serviceWorker.updateAvailable && (
+    <UpdatePrompt onApply={serviceWorker.applyUpdate} onDismiss={serviceWorker.dismissUpdate} />
+  );
   const showTour = view === 'map' && (!user.tourDone || tourRequested);
 
   return (
@@ -84,7 +88,7 @@ export function App() {
       className="app"
       style={
         {
-          '--chrome-top': `${String(headerHeight)}px`,
+          '--chrome-top': `${String(view === 'map' ? 0 : headerHeight)}px`,
         } as CSSProperties
       }
     >
@@ -92,15 +96,11 @@ export function App() {
         {t('nav.skipToContent')}
       </a>
 
-      {/* Map: only the permanent notice and the offline status float over it (iOS Maps style).
-          Other screens: a way back to the map, the status, and the same notice. */}
-      <header className={view === 'map' ? 'app-bar app-bar--map' : 'app-bar'} ref={headerRef}>
-        <div className="app-bar__row">
-          {view === 'map' ? (
-            <div className="app-bar__notice" data-tour="disclaimer">
-              <Disclaimer />
-            </div>
-          ) : (
+      {/* The map draws its own floating cards (notice, status); the other screens get a bar
+          with a way back to the map, the status and the same notice. */}
+      {view !== 'map' && (
+        <header className="app-bar" ref={headerRef}>
+          <div className="app-bar__row">
             <button
               type="button"
               className="back-button"
@@ -112,17 +112,12 @@ export function App() {
               <ChevronLeftIcon className="icon" />
               <span>{t('nav.map')}</span>
             </button>
-          )}
-          <ConnectionPill offline={serviceWorker.offline} online={online} />
-        </div>
-        {view !== 'map' && <Disclaimer />}
-        {serviceWorker.updateAvailable && (
-          <UpdatePrompt
-            onApply={serviceWorker.applyUpdate}
-            onDismiss={serviceWorker.dismissUpdate}
-          />
-        )}
-      </header>
+            {pill}
+          </div>
+          <Disclaimer />
+          {updatePrompt}
+        </header>
+      )}
 
       <main id="main" className="app-main" tabIndex={-1}>
         <MapScreen
@@ -139,8 +134,12 @@ export function App() {
           locationActions={location}
           plan={plan}
           profile={profile.config}
-          chrome={{ top: headerHeight, bottom: 0 }}
+          status={pill}
+          prompt={updatePrompt}
           onNavigate={setView}
+          onReplayTour={() => {
+            setTourRequested(true);
+          }}
         />
         {view === 'guide' && (
           <GuideScreen

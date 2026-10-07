@@ -1,3 +1,4 @@
+import { useId } from 'react';
 import type { HazardId } from '../../domain/hazards.ts';
 import { useI18n } from '../../i18n/I18nContext.ts';
 import type { MessageKey } from '../../i18n/translate.ts';
@@ -21,13 +22,23 @@ const GUIDANCE: Record<HazardId, { steps: MessageKey[]; sourceUrl: string } | nu
   wildfire: null, // out of the pilot (docs/PLAN.md, D2 = C)
 };
 
-export function HazardGuidance({ hazard }: { hazard: HazardId }) {
+/**
+ * The official guidance for a hazard. `brief`: inside the route sheet (a smaller heading, and
+ * its own ids, since the map stays mounted while the "Qué hacer" screen shows the full one).
+ */
+export function HazardGuidance({ hazard, brief = false }: { hazard: HazardId; brief?: boolean }) {
   const { t } = useI18n();
+  const titleId = useId();
   const guidance = GUIDANCE[hazard];
   if (!guidance) return null;
+  const Heading = brief ? 'h3' : 'h2';
   return (
-    <section className="guidance" aria-labelledby="guidance-title" data-testid="guidance">
-      <h2 id="guidance-title">{t('guidance.title')}</h2>
+    <section
+      className={brief ? 'guidance guidance--brief' : 'guidance'}
+      aria-labelledby={titleId}
+      data-testid={brief ? 'guidance-brief' : 'guidance'}
+    >
+      <Heading id={titleId}>{t('guidance.title')}</Heading>
       <ol>
         {guidance.steps.map((key) => (
           <li key={key}>{t(key)}</li>

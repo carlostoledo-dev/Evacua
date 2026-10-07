@@ -17,10 +17,8 @@ test('opens on a full-screen map with a menu and the permanent disclaimer', asyn
   await page.goto('/');
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Mapa del sector');
   // iOS Maps style: no tab bar; the other screens are behind ≡ in the route sheet.
-  const menu = page.getByRole('button', { name: 'Menú' });
-  await expect(menu).toHaveAttribute('aria-expanded', 'false');
-  await menu.click();
-  await expect(menu).toHaveAttribute('aria-expanded', 'true');
+  await page.getByRole('button', { name: 'Menú' }).click();
+  await expect(page.getByTestId('menu-sheet')).toBeVisible();
   const nav = page.getByRole('navigation', { name: 'Navegación principal' });
   await expect(nav.getByRole('button')).toHaveText(['Qué hacer', 'Datos', 'Ajustes']);
   const disclaimer = page.getByRole('complementary', { name: 'Importante' });

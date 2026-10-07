@@ -79,6 +79,10 @@ export const HATCH_IMAGE_ID = 'evacua-hatch';
 export const MEETING_POINT_ICON_ID = 'evacua-meeting-point';
 /** Arrow on the user's position while navigating, rotated by the feature's `bearing`. */
 export const NAV_ARROW_ICON_ID = 'evacua-nav-arrow';
+/** White chevrons repeated along the user's route, pointing the way. */
+export const ROUTE_CHEVRON_ICON_ID = 'evacua-route-chevron';
+/** Stretchable green pill behind the destination's label (its meeting point code). */
+export const LABEL_PILL_ICON_ID = 'evacua-label-pill';
 
 const BASEMAP_SOURCE = 'basemap';
 /** Offline elevation (3D relief) and its shading, both only used by the 3D view. */
@@ -267,21 +271,36 @@ export const DESTINATION_SOURCE = 'destination';
 
 const EMPTY: GeoJSON.FeatureCollection = { type: 'FeatureCollection', features: [] };
 
-function userLayers(p: MapPalette, youLabel: string, goHereLabel: string): LayerSpecification[] {
+function userLayers(p: MapPalette, youLabel: string): LayerSpecification[] {
   return [
     {
       id: 'user-route-casing',
       type: 'line',
       source: USER_ROUTE_SOURCE,
       layout: { 'line-cap': 'round', 'line-join': 'round' },
-      paint: { 'line-color': p.userRouteCasing, 'line-width': 10 },
+      paint: { 'line-color': p.userRouteCasing, 'line-width': 11 },
     },
     {
       id: 'user-route',
       type: 'line',
       source: USER_ROUTE_SOURCE,
       layout: { 'line-cap': 'round', 'line-join': 'round' },
-      paint: { 'line-color': p.userRoute, 'line-width': 6 },
+      paint: { 'line-color': p.userRoute, 'line-width': 7 },
+    },
+    {
+      // Chevrons along the line show which way to walk, not only where the line goes.
+      id: 'user-route-chevrons',
+      type: 'symbol',
+      source: USER_ROUTE_SOURCE,
+      layout: {
+        'symbol-placement': 'line',
+        'symbol-spacing': 34,
+        'icon-image': ROUTE_CHEVRON_ICON_ID,
+        'icon-rotation-alignment': 'map',
+        'icon-padding': 0,
+        'icon-allow-overlap': true,
+        'icon-ignore-placement': true,
+      },
     },
     {
       id: 'destination-ring',
@@ -295,19 +314,23 @@ function userLayers(p: MapPalette, youLabel: string, goHereLabel: string): Layer
       },
     },
     {
-      // Says in words where to go, above the destination ring.
+      // The destination's name (its meeting point code) in a green pill under the ring.
       id: 'destination-label',
       type: 'symbol',
       source: DESTINATION_SOURCE,
       layout: {
-        'text-field': goHereLabel,
+        'text-field': ['get', 'label'],
         'text-font': PLACE_FONT,
-        'text-size': 15,
-        'text-offset': [0, -1.9],
-        'text-anchor': 'bottom',
+        'text-size': 14,
+        'text-offset': [0, 1.9],
+        'text-anchor': 'top',
         'text-allow-overlap': true,
+        'icon-image': LABEL_PILL_ICON_ID,
+        'icon-text-fit': 'both',
+        'icon-text-fit-padding': [3, 8, 3, 8],
+        'icon-allow-overlap': true,
       },
-      paint: { 'text-color': p.label, 'text-halo-color': p.labelHalo, 'text-halo-width': 2.5 },
+      paint: { 'text-color': '#ffffff' },
     },
     {
       id: 'user-position',
@@ -359,8 +382,6 @@ export interface StyleInput {
   origin: string;
   /** Label of the user's position marker, already translated. */
   youLabel: string;
-  /** Label above the destination ("go here"), already translated. */
-  goHereLabel: string;
   /**
    * Area the offline tiles cover (the manifest's data bounds). MapLibre never asks for tiles
    * outside it, e.g. towards the horizon of the tilted 3D view, where none were extracted.
@@ -376,7 +397,6 @@ export function buildStyle({
   palette,
   origin,
   youLabel,
-  goHereLabel,
   tileBounds,
   terrain,
 }: StyleInput): StyleSpecification {
@@ -453,7 +473,7 @@ export function buildStyle({
     layers: [
       ...base,
       ...layers.flatMap((layer) => overlayLayers(layer, palette)),
-      ...userLayers(palette, youLabel, goHereLabel),
+      ...userLayers(palette, youLabel),
     ],
   };
 }
