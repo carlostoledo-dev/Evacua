@@ -43,11 +43,6 @@ export function Disclaimer({ card = false, landmark = true, onMore }: Disclaimer
         <strong id={titleId} className="visually-hidden">
           {t('disclaimer.title')}
         </strong>
-        {onMore && (
-          <strong className="disclaimer__title" aria-hidden="true">
-            {t('disclaimer.supportTitle')}
-          </strong>
-        )}
         <span aria-hidden="true">{t('disclaimer.short')}</span>
         <span className="visually-hidden">{t('disclaimer.body')}</span>
       </p>
