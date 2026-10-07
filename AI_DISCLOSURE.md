@@ -172,3 +172,8 @@ visibly labeled DEMO. See `DATA_SOURCES.md`.
   network position fell outside the pilot area, leaving "Buscando tu posición…" forever), made
   it walk the route as a labeled DEMO instead, explained the missing route while navigating and
   added a "leave" button there.
+- Trails as a last resort (2026-10-07, owner report and decision): AI measured on a grid of
+  starting points that removing trails had left whole areas without a route, put dirt tracks
+  and trails back in the walking network marked as trails, made routing count each trail meter
+  4 times (with searches that may begin or end at the nearest street node), compared factors
+  1, 2, 4, 8 and 1000, and showed trail stretches as a broken line, a note and named legs.

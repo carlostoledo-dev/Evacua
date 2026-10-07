@@ -274,12 +274,12 @@ const EMPTY: GeoJSON.FeatureCollection = { type: 'FeatureCollection', features: 
 function userLayers(p: MapPalette, youLabel: string): LayerSpecification[] {
   return [
     {
-      // Off-street ends (position → street, street → meeting point): a thin dashed line, so a
-      // straight walk across a lot or a hill never looks like part of the street route.
+      // Off-network ends (position → street, street → meeting point): a thin dotted line, so a
+      // straight walk across a lot or a hill never looks like part of the route.
       id: 'user-route-offstreet',
       type: 'line',
       source: USER_ROUTE_SOURCE,
-      filter: ['==', ['get', 'street'], false],
+      filter: ['==', ['get', 'kind'], 'off-network'],
       layout: { 'line-cap': 'round' },
       paint: { 'line-color': p.userRoute, 'line-width': 4, 'line-dasharray': [0.5, 2] },
     },
@@ -287,7 +287,7 @@ function userLayers(p: MapPalette, youLabel: string): LayerSpecification[] {
       id: 'user-route-casing',
       type: 'line',
       source: USER_ROUTE_SOURCE,
-      filter: ['==', ['get', 'street'], true],
+      filter: ['!=', ['get', 'kind'], 'off-network'],
       layout: { 'line-cap': 'round', 'line-join': 'round' },
       paint: { 'line-color': p.userRouteCasing, 'line-width': 11 },
     },
@@ -295,16 +295,26 @@ function userLayers(p: MapPalette, youLabel: string): LayerSpecification[] {
       id: 'user-route',
       type: 'line',
       source: USER_ROUTE_SOURCE,
-      filter: ['==', ['get', 'street'], true],
+      filter: ['==', ['get', 'kind'], 'street'],
       layout: { 'line-cap': 'round', 'line-join': 'round' },
       paint: { 'line-color': p.userRoute, 'line-width': 7 },
+    },
+    {
+      // Dirt trails (used only when there is no reasonable street way): the same outline with a
+      // broken fill, so they read as part of the route but never as a street.
+      id: 'user-route-trail',
+      type: 'line',
+      source: USER_ROUTE_SOURCE,
+      filter: ['==', ['get', 'kind'], 'trail'],
+      layout: { 'line-join': 'round' },
+      paint: { 'line-color': p.userRoute, 'line-width': 7, 'line-dasharray': [1.2, 0.8] },
     },
     {
       // Chevrons along the line show which way to walk, not only where the line goes.
       id: 'user-route-chevrons',
       type: 'symbol',
       source: USER_ROUTE_SOURCE,
-      filter: ['==', ['get', 'street'], true],
+      filter: ['!=', ['get', 'kind'], 'off-network'],
       layout: {
         'symbol-placement': 'line',
         'symbol-spacing': 34,

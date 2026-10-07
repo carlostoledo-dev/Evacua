@@ -205,6 +205,8 @@ export const graphFileSchema = z
     names: z.array(z.string().min(1)).optional(),
     /** One entry per edge: index into `names`, or -1 for an unnamed way. */
     edgeNames: numberArray({ int: true }).optional(),
+    /** Indices of the edges that are dirt tracks or trails (routes use them only as a last resort). */
+    trailEdges: numberArray({ int: true }).optional(),
   })
   .superRefine((graph, ctx) => {
     if (graph.nodes.length % 2 !== 0) {
@@ -247,6 +249,10 @@ export const graphFileSchema = z
       if (graph.edgeNames.some((n) => n < -1 || n >= nameCount)) {
         ctx.addIssue({ code: 'custom', path: ['edgeNames'], message: 'name index out of range' });
       }
+    }
+    const edgeCount = graph.edges.length / 3;
+    if (graph.trailEdges?.some((e) => e < 0 || e >= edgeCount)) {
+      ctx.addIssue({ code: 'custom', path: ['trailEdges'], message: 'edge index out of range' });
     }
   });
 export type GraphFile = z.infer<typeof graphFileSchema>;

@@ -12,6 +12,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
 import { useEffect, useRef, useState } from 'react';
 import type { CommuneData } from '../../data/loader.ts';
+import type { SegmentKind } from '../../domain/routing.ts';
 import {
   MAP_3D_ZOOM,
   MAP_3D_PITCH_DEG,
@@ -54,11 +55,11 @@ export interface UserOverlay {
   position: [number, number] | null;
   path: [number, number][] | null;
   /**
-   * The route's first segment (from the position to the nearest street) has no street, and so
-   * has its last one when it ends at a meeting point (from the street to the point). They are
-   * drawn dashed so they never look like a street.
+   * How each path segment is walked. Streets are a solid line; dirt trails a broken one; the
+   * walks off the network (position → street, street → meeting point) a thin dotted line, so
+   * neither ever looks like a street.
    */
-  endsOffStreet: boolean;
+  segments: readonly SegmentKind[] | null;
   destination: [number, number] | null;
   /** While navigating: direction to walk now, in degrees from north. */
   heading: number | null;
@@ -97,31 +98,26 @@ function pointCollection(
   };
 }
 
-function line(
-  coordinates: [number, number][],
-  street: boolean,
-): GeoJSON.Feature<GeoJSON.LineString> {
-  return {
-    type: 'Feature',
-    properties: { street },
-    geometry: { type: 'LineString', coordinates },
-  };
-}
-
-/** The route along streets, plus its off-street ends (`street: false`), drawn apart. */
+/** The route as one line per run of segments of the same kind, drawn apart by `kind`. */
 function routeCollection(
   path: [number, number][] | null,
-  endsOffStreet: boolean,
+  segments: readonly SegmentKind[] | null,
 ): GeoJSON.FeatureCollection {
-  if (!path || path.length < 2) return { type: 'FeatureCollection', features: [] };
-  const last = endsOffStreet ? path.length - 1 : path.length;
-  const features = [line(path.slice(0, 2), false)];
-  if (last - 1 >= 1) features.push(line(path.slice(1, last), true));
-  if (endsOffStreet && path.length > 2) features.push(line(path.slice(-2), false));
-  return {
-    type: 'FeatureCollection',
-    features: features.filter((f) => f.geometry.coordinates.length > 1),
-  };
+  const features: GeoJSON.Feature<GeoJSON.LineString>[] = [];
+  if (path && path.length >= 2) {
+    let start = 0;
+    for (let i = 1; i <= path.length - 1; i++) {
+      const kind = segments?.[i - 1] ?? 'street';
+      if (i < path.length - 1 && (segments?.[i] ?? 'street') === kind) continue;
+      features.push({
+        type: 'Feature',
+        properties: { kind },
+        geometry: { type: 'LineString', coordinates: path.slice(start, i + 1) },
+      });
+      start = i;
+    }
+  }
+  return { type: 'FeatureCollection', features };
 }
 
 interface MapViewProps {
@@ -363,13 +359,11 @@ export default function MapView({
   }, [threeD, mapVersion]);
 
   // Draw the user's position, route and destination, and glide the camera to frame them.
-  const { position, path, endsOffStreet, destination, heading, destinationLabel } = overlay;
+  const { position, path, segments, destination, heading, destinationLabel } = overlay;
   useEffect(() => {
     const map = mapRef.current;
     if (!map || mapVersion === 0) return;
-    void map
-      .getSource<GeoJSONSource>(USER_ROUTE_SOURCE)
-      ?.setData(routeCollection(path, endsOffStreet));
+    void map.getSource<GeoJSONSource>(USER_ROUTE_SOURCE)?.setData(routeCollection(path, segments));
     void map
       .getSource<GeoJSONSource>(USER_POSITION_SOURCE)
       ?.setData(pointCollection(position, heading === null ? {} : { bearing: heading }));
@@ -416,7 +410,7 @@ export default function MapView({
   }, [
     position,
     path,
-    endsOffStreet,
+    segments,
     destination,
     destinationLabel,
     heading,

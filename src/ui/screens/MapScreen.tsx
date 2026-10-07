@@ -12,7 +12,7 @@ import { LayersSheet } from '../components/LayersSheet.tsx';
 import { MenuSheet } from '../components/MainMenu.tsx';
 import { NavigationBanner } from '../components/NavigationBanner.tsx';
 import { RoutePanel } from '../components/RoutePanel.tsx';
-import { formatShortTime, shortCode } from '../describePlan.ts';
+import { displayStreets, formatShortTime, shortCode } from '../describePlan.ts';
 import { formatDistance } from '../format.ts';
 import type { CommuneState } from '../hooks/useCommuneData.ts';
 import { useElementHeight } from '../hooks/useElementHeight.ts';
@@ -89,8 +89,8 @@ export function MapScreen({
   const navigation = useNavigation(location, plan, locationActions);
   const guiding = navigation.active && !navigation.arrived ? route : null;
   const maneuver = useMemo(
-    () => (guiding ? nextManeuver(guiding.path, guiding.streets) : null),
-    [guiding],
+    () => (guiding ? nextManeuver(guiding.path, displayStreets(guiding, t)) : null),
+    [guiding, t],
   );
   const maneuverText =
     maneuver && guiding ? describeManeuver(maneuver, guiding.destination.kind, t, locale) : null;
@@ -118,7 +118,7 @@ export function MapScreen({
     heading: guiding ? headingAlong(guiding.path) : null,
     position: locationPosition(location),
     path: route?.path ?? null,
-    endsOffStreet: route?.destination.kind === 'meeting-point',
+    segments: route?.segments ?? null,
     destination:
       route?.destination.coordinates ??
       (plan?.kind === 'straight-line' ? plan.destination.coordinates : null),

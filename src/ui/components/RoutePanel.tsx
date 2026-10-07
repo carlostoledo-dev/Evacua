@@ -18,6 +18,7 @@ import type { MessageKey } from '../../i18n/translate.ts';
 import type { GeoErrorKind } from '../../platform/geolocation.ts';
 import {
   describePlan,
+  displayStreets,
   formatShortTime,
   shortCode,
   spokenText,
@@ -207,7 +208,7 @@ export function RoutePanel({
     if (route.metersToSafety !== null) {
       steps.push(`${t('route.item.exit')} (${formatDistance(route.metersToSafety, locale)})`);
     }
-    streetLegs(route.path, route.streets).forEach((leg, index) => {
+    streetLegs(route.path, displayStreets(route, t)).forEach((leg, index) => {
       const action = leg.turn
         ? t(TURN_ACTION[leg.turn])
         : t(index === 0 ? 'route.legStart' : 'route.legStraight');

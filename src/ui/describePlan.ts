@@ -34,6 +34,15 @@ const STRAIGHT_LINE_REASON: Record<StraightLineReason, MessageKey> = {
   'no-path': 'route.straightLine.noPath',
 };
 
+type Route = Extract<EvacuationPlan, { kind: 'route' }>;
+
+/** The route's street names, with "a dirt trail" for the unnamed trail segments. */
+export function displayStreets(route: Route, t: Translate): (string | null)[] {
+  return route.streets.map(
+    (street, i) => street ?? (route.segments[i] === 'trail' ? t('route.trailName') : null),
+  );
+}
+
 /** "PE029" from the official code "08102PE029". */
 export function shortCode(code: string): string {
   return code.replace(/^\d+/, '');
@@ -165,14 +174,11 @@ export function describePlan(
       time: null,
     });
   }
-  return {
-    tone,
-    headline,
-    steps,
-    items,
-    notes: profile.time === 'hidden' ? [] : [t('route.timeNote')],
-    straightLine: false,
-  };
+  const notes = profile.time === 'hidden' ? [] : [t('route.timeNote')];
+  if (plan.trailMeters > 0) {
+    notes.unshift(t('route.trailNote', { distance: distance(plan.trailMeters) }));
+  }
+  return { tone, headline, steps, items, notes, straightLine: false };
 }
 
 /** What the voice reads: the same sentences, in the same order. */

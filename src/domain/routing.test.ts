@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { TRAIL_COST_FACTOR } from './constants.ts';
 import { buildGraph, nearestNode } from './graph.ts';
 import {
   planEvacuation,
@@ -202,5 +203,97 @@ describe('planEvacuation (safety first)', () => {
       start: at(0, 0),
     });
     expect(plan).toEqual({ kind: 'no-destination', inDangerZone: true });
+  });
+});
+
+describe('trails as a last resort', () => {
+  //   2 ─────── 3        Street detour 0 → 2 → 3 → 1 (dy = `detour`); the direct way 0 → 5 → 1
+  //   │         │        is a dirt trail, and so is the spur 1 → 6.
+  //   0 ┄┄ 5 ┄┄ 1
+  //             ┆
+  //             6
+  const trailTown = (detour: number) => {
+    const points = [
+      at(0, 0), // 0
+      at(0.003, 0), // 1
+      at(0, detour), // 2
+      at(0.003, detour), // 3
+      at(0.0015, 0.5), // 4 (unused, far away)
+      at(0.0015, 0), // 5 (on the trail)
+      at(0.003, -0.002), // 6 (end of the trail spur)
+    ];
+    const meters = (a: number, b: number) => {
+      const [ax = 0, ay = 0] = points[a] ?? [];
+      const [bx = 0, by = 0] = points[b] ?? [];
+      return Math.hypot((bx - ax) * 88_800, (by - ay) * 111_000);
+    };
+    const pairs = [
+      [0, 2],
+      [2, 3],
+      [3, 1],
+      [0, 5],
+      [5, 1],
+      [1, 6],
+    ];
+    return buildGraph({
+      nodes: points.flat(),
+      edges: pairs.flatMap(([a = 0, b = 0]) => [a, b, meters(a, b)]),
+      trailEdges: [3, 4, 5],
+    });
+  };
+  const short = trailTown(0.002); // detour ≈ 711 m vs a 267 m trail: under the factor
+  const long = trailTown(0.006); // detour ≈ 1 600 m: over the factor
+
+  it('prefers a street detour up to TRAIL_COST_FACTOR times the trail', () => {
+    expect(711 / 267).toBeLessThan(TRAIL_COST_FACTOR);
+    const result = shortestPathToAny(short, 0, new Set([1]));
+    expect(result?.nodes).toEqual([0, 2, 3, 1]);
+    expect(result?.meters).toBeCloseTo(711, -1); // real meters, not the weighted cost
+  });
+
+  it('takes the trail when the street way is much longer, and reports it', () => {
+    expect(shortestPathToAny(long, 0, new Set([1]))?.nodes).toEqual([0, 5, 1]);
+    const plan = planEvacuation({
+      context: prepareRouting(long, []),
+      serviceArea,
+      meetingPoints: [{ code: 'PE-T', coordinates: at(0.003, 0) }],
+      start: at(0, 0),
+    });
+    expect(plan.kind).toBe('route');
+    if (plan.kind !== 'route') return;
+    expect(plan.segments).toEqual(['off-network', 'trail', 'trail', 'off-network']);
+    expect(plan.segments).toHaveLength(plan.path.length - 1);
+    expect(plan.trailMeters).toBeCloseTo(267, -1);
+    expect(plan.meters).toBeCloseTo(267, -1);
+  });
+
+  it('may begin at a street node a little farther than the closest trail node', () => {
+    const start = at(0.0015, 0.0013); // 144 m from trail node 5, 154 m from street node 2
+    expect(nearestNode(short, start)?.index).toBe(5);
+    const plan = planEvacuation({
+      context: prepareRouting(short, []),
+      serviceArea,
+      meetingPoints: [{ code: 'PE-T', coordinates: at(0.003, 0) }],
+      start,
+    });
+    expect(plan.kind).toBe('route');
+    if (plan.kind !== 'route') return;
+    expect(plan.trailMeters).toBe(0);
+    expect(plan.segments).not.toContain('trail');
+  });
+
+  it('reaches a meeting point from its nearest street node rather than down a trail spur', () => {
+    const point = at(0.0032, -0.0019); // ≈ 20 m from trail node 6, ≈ 211 m from street node 1
+    expect(nearestNode(short, point)?.index).toBe(6);
+    const plan = planEvacuation({
+      context: prepareRouting(short, []),
+      serviceArea,
+      meetingPoints: [{ code: 'PE-T', coordinates: point }],
+      start: at(0, 0.0001),
+    });
+    expect(plan).toMatchObject({ kind: 'route', trailMeters: 0 });
+    if (plan.kind !== 'route') return;
+    expect(plan.path.at(-2)).toEqual(at(0.003, 0));
+    expect(plan.segments.at(-1)).toBe('off-network');
   });
 });

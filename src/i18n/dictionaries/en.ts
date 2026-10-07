@@ -326,6 +326,9 @@ export const en: Dictionary = {
   'route.meetingPointLabel': 'Meeting point',
   'route.leg': '{action} on {street} · {distance}',
   'route.legNoName': '{action} · {distance}',
+  'route.trailName': 'a dirt trail',
+  'route.trailNote':
+    '{distance} of this route follow dirt trails or tracks, because there is no reasonable street way. The map draws them as a broken line.',
   'route.legStart': 'go',
   'route.legStraight': 'continue',
   'route.time.single': '{minutes} min',

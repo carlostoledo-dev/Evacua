@@ -151,6 +151,7 @@ describe('walking graph', () => {
     edges: [0, 1, 89],
     names: ['Freire'],
     edgeNames: [0],
+    trailEdges: [0],
   };
 
   it('accepts a valid graph', () => {
@@ -163,6 +164,8 @@ describe('walking graph', () => {
     ['a non-integer street index', { edgeNames: [0.5] }],
     ['fewer than one node', { nodes: [-73.15] }],
     ['a node index out of range', { edges: [0, 7, 89] }],
+    ['a trail edge index out of range', { trailEdges: [1] }],
+    ['a non-integer trail edge index', { trailEdges: [0.5] }],
   ])('rejects %s', (_label, change) => {
     expect(graphFileSchema.safeParse({ ...graph, ...change }).success).toBe(false);
   });

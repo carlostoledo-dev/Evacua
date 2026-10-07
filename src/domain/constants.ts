@@ -28,6 +28,17 @@ export function mphToMetersPerSecond(mph: number): number {
 export const MAX_SNAP_DISTANCE_M = 250;
 
 /**
+ * Each meter of dirt track or trail counts as this many meters when choosing a route, so routes
+ * follow streets, sidewalks and stairs and take a trail only when there is no reasonable street
+ * way (a street detour more than this many times longer, or none at all). Distances and times
+ * shown are always the real ones.
+ * Design choice (owner decision 2026-10-07), not a safety standard: trails in the pilot area
+ * cross wooded hills and are hard to follow at night, but leaving them out entirely left whole
+ * areas inside the evacuation area without any route.
+ */
+export const TRAIL_COST_FACTOR = 4;
+
+/**
  * A location reading less precise than this (its reported accuracy radius, in meters) gets a
  * visible warning and a shortcut to pick the place on the map.
  * Engineering choice, not a safety standard: with a wider radius the reading can fall on the

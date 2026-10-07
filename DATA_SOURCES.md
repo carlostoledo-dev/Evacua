@@ -104,9 +104,9 @@ npm run data:terrain  # re-download the elevation tiles for the 3D relief
 
 ## Pedestrian network and routing
 
-| Asset                                                                                                                  | Source                                                                                                                                                                                                                                                                                              | License                                     | Retrieved        |
-| ---------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- | ---------------- |
-| `public/data/communes/coronel/graph.json` (17,138 nodes, 19,760 street segments, 1,372 street names, ≈ 185 KB gzipped) | OpenStreetMap streets, sidewalks, pedestrian ways and stairs (motorways, dirt tracks `highway=track` and trails `highway=path` excluded; `access=private` / `foot=no` excluded) via the Overpass API, built by [`scripts/build-graph.ts`](scripts/build-graph.ts); largest connected component kept | **ODbL-1.0** (© OpenStreetMap contributors) | 2026-10-07 (UTC) |
+| Asset                                                                                                                                                    | Source                                                                                                                                                                                                                                                                                                                                   | License                                     | Retrieved        |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- | ---------------- |
+| `public/data/communes/coronel/graph.json` (27,136 nodes, 29,949 segments of which 9,933 are dirt tracks or trails, 1,378 street names, ≈ 290 KB gzipped) | OpenStreetMap walkable ways (streets, sidewalks, pedestrian ways, stairs, and dirt tracks `highway=track` / trails `highway=path` marked as trails unless paved; motorways, `access=private` and `foot=no` excluded) via the Overpass API, built by [`scripts/build-graph.ts`](scripts/build-graph.ts); largest connected component kept | **ODbL-1.0** (© OpenStreetMap contributors) | 2026-10-07 (UTC) |
 
 ```bash
 npm run data:graph   # rebuild the walking network from OpenStreetMap and update the manifest
@@ -115,7 +115,7 @@ npm run data:graph   # rebuild the walking network from OpenStreetMap and update
 How a route is computed ([`src/domain/routing.ts`](src/domain/routing.ts)), all on the phone:
 
 1. Outside the pilot service area → no route, only a message.
-2. Inside SENAPRED's evacuation area → the shortest walk (by street) to **leave the area**,
+2. Inside SENAPRED's evacuation area → the shortest walk (by street, see trails below) to **leave the area**,
    then the nearest official meeting point reachable **without walking back into the area**.
    If none is, the destination is the safe zone itself. This follows SENAPRED's instruction to
    prioritize reaching a meeting point and/or safety area.
@@ -123,12 +123,21 @@ How a route is computed ([`src/domain/routing.ts`](src/domain/routing.ts)), all 
 4. No street network, start farther than 250 m from any street, or no path → only a straight
    line with distance and compass direction, labeled "not a route".
 
-**Streets only (2026-10-07).** Dirt tracks and trails are not in the network: in Coronel they
-cross the wooded hills, and before this change more than half of the routes from the evacuation
-area used them for over 150 m, some for 2 km over the hill. Without them no route uses a trail
-(checked on a grid of starting points every ≈ 200 m). The short walks with no street — from the
-position to the nearest street and from the street to the meeting point — are drawn as a thin
-dashed line, never as part of the route.
+**Trails only as a last resort (2026-10-07, owner decisions).** In Coronel dirt tracks and
+trails cross the wooded hills. With no preference, 1,116 of 2,661 routes from the evacuation
+area used them for over 150 m, some for 2 km over a hill; leaving them out of the network
+instead left whole areas without any route. So they stay in the network, but each meter of trail
+counts **4 times** when choosing a route (`TRAIL_COST_FACTOR` in
+[`src/domain/constants.ts`](src/domain/constants.ts), a design choice, not a safety standard):
+a route follows streets unless the street way is more than 4 times longer or does not exist.
+The search may also begin at the nearest street node instead of a slightly closer trail node,
+and reach a meeting point through its nearest street node, so a nearby trail is never forced.
+On a grid of 4,575 starting points (≈ 90 × 110 m) over the pilot area, 264 of the 2,661 routes
+from the evacuation area use more than 150 m of trail, 191 of them because there is no street
+way at all. Distances and times are always the real ones. The route panel says how much of the
+route is on trails and names those legs "un sendero de tierra"; the map draws trails with a
+broken line and the short walks with no way at all — from the position to the network and from
+it to the meeting point — as a thin dotted line, never as a street.
 
 Walking time is shown as a range between FEMA P-646's average healthy pace (4 mph) and its
 mobility-impaired pace (2 mph), never as a promise.

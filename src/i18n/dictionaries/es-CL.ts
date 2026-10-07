@@ -333,6 +333,9 @@ export const esCL = {
   'route.meetingPointLabel': 'Punto de encuentro',
   'route.leg': '{action} por {street} · {distance}',
   'route.legNoName': '{action} · {distance}',
+  'route.trailName': 'un sendero de tierra',
+  'route.trailNote':
+    '{distance} de este camino van por senderos o huellas de tierra, porque no hay una calle razonable. En el mapa se ven con línea cortada.',
   'route.legStart': 'sigue',
   'route.legStraight': 'continúa',
   'route.time.single': '{minutes} min',

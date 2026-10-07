@@ -3,7 +3,7 @@ import { PROFILES } from '../domain/profiles.ts';
 import type { EvacuationPlan } from '../domain/routing.ts';
 import { esCL } from '../i18n/dictionaries/es-CL.ts';
 import { translate, type MessageKey, type MessageParams } from '../i18n/translate.ts';
-import { describePlan, shortCode, spokenText } from './describePlan.ts';
+import { describePlan, displayStreets, shortCode, spokenText } from './describePlan.ts';
 
 const t = (key: MessageKey, params?: MessageParams) => translate(esCL, key, params);
 const route: EvacuationPlan = {
@@ -16,6 +16,8 @@ const route: EvacuationPlan = {
     [-73.14, -37.01],
   ],
   streets: [null],
+  segments: ['off-network'],
+  trailMeters: 0,
   meters: 619,
   time: { fastestMinutes: 6, slowestMinutes: 12 },
   metersToSafety: 174,
@@ -89,6 +91,21 @@ describe('describePlan', () => {
     expect(spokenText(d, 'Busca a tu adulto.')).toBe(
       ['Busca a tu adulto.', d.headline, ...d.steps].join(' '),
     );
+  });
+
+  it('says when part of the route follows dirt trails, and names those legs', () => {
+    const withTrail = {
+      ...route,
+      path: [...route.path, [-73.13, -37.0] as [number, number]],
+      streets: [null, null],
+      segments: ['off-network', 'trail'],
+      trailMeters: 120,
+    } satisfies EvacuationPlan;
+    expect(describe_(withTrail).notes[0]).toBe(
+      '120 m de este camino van por senderos o huellas de tierra, porque no hay una calle razonable. En el mapa se ven con línea cortada.',
+    );
+    expect(describe_(route).notes.join(' ')).not.toContain('sendero');
+    expect(displayStreets(withTrail, t)).toEqual([null, 'un sendero de tierra']);
   });
 
   it('shortens official meeting point codes', () => {

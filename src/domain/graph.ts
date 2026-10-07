@@ -12,6 +12,8 @@ export interface Graph {
   /** Street names, and for each slot the index of its edge's name (-1: unnamed). */
   names: readonly string[];
   nameIndex: Int32Array;
+  /** 1 for each slot whose edge is a dirt track or trail (see scripts/build-graph.ts). */
+  trail: Uint8Array;
 }
 
 /** Builds an undirected CSR graph from the compact file format ([lon, lat…], [from, to, m…]). */
@@ -20,6 +22,7 @@ export function buildGraph(file: {
   edges: readonly number[];
   names?: readonly string[] | undefined;
   edgeNames?: readonly number[] | undefined;
+  trailEdges?: readonly number[] | undefined;
 }): Graph {
   const nodeCount = file.nodes.length / 2;
   const lon = new Float64Array(nodeCount);
@@ -43,12 +46,15 @@ export function buildGraph(file: {
   const targets = new Uint32Array(total);
   const meters = new Float32Array(total);
   const nameIndex = new Int32Array(total).fill(-1);
+  const trail = new Uint8Array(total);
+  const trailEdges = new Set(file.trailEdges);
   const cursor = offsets.slice(0, nodeCount);
-  const add = (from: number, to: number, m: number, name: number) => {
+  const add = (from: number, to: number, m: number, name: number, isTrail: boolean) => {
     const slot = cursor[from] ?? 0;
     targets[slot] = to;
     meters[slot] = m;
     nameIndex[slot] = name;
+    trail[slot] = isTrail ? 1 : 0;
     cursor[from] = slot + 1;
   };
   for (let e = 0; e < file.edges.length; e += 3) {
@@ -56,10 +62,21 @@ export function buildGraph(file: {
     const to = file.edges[e + 1] ?? 0;
     const m = file.edges[e + 2] ?? 0;
     const name = file.edgeNames?.[e / 3] ?? -1;
-    add(from, to, m, name);
-    add(to, from, m, name);
+    const isTrail = trailEdges.has(e / 3);
+    add(from, to, m, name, isTrail);
+    add(to, from, m, name, isTrail);
   }
-  return { nodeCount, lon, lat, offsets, targets, meters, names: file.names ?? [], nameIndex };
+  return {
+    nodeCount,
+    lon,
+    lat,
+    offsets,
+    targets,
+    meters,
+    names: file.names ?? [],
+    nameIndex,
+    trail,
+  };
 }
 
 /** Name of the street joining two adjacent nodes, or null when unnamed or not adjacent. */
@@ -70,12 +87,27 @@ export function edgeName(graph: Graph, from: number, to: number): string | null 
   return null;
 }
 
+/** True when the edge joining two adjacent nodes is a dirt track or trail. */
+export function edgeIsTrail(graph: Graph, from: number, to: number): boolean {
+  for (let k = graph.offsets[from] ?? 0; k < (graph.offsets[from + 1] ?? 0); k++) {
+    if (graph.targets[k] === to) return graph.trail[k] === 1;
+  }
+  return false;
+}
+
 export function nodeCoordinates(graph: Graph, index: number): [number, number] {
   return [graph.lon[index] ?? 0, graph.lat[index] ?? 0];
 }
 
-/** Closest graph node to `point`, with its distance in meters; null for an empty graph. */
-export function nearestNode(graph: Graph, point: LonLat): { index: number; meters: number } | null {
+/**
+ * Closest graph node to `point` (among those `accept` allows), with its distance in meters;
+ * null when there is none.
+ */
+export function nearestNode(
+  graph: Graph,
+  point: LonLat,
+  accept?: (index: number) => boolean,
+): { index: number; meters: number } | null {
   const [lon = 0, lat = 0] = point;
   // Fast pre-selection with an equirectangular approximation, then one exact distance.
   const cosLat = Math.cos((lat * Math.PI) / 180);
@@ -85,7 +117,7 @@ export function nearestNode(graph: Graph, point: LonLat): { index: number; meter
     const dx = ((graph.lon[i] ?? 0) - lon) * cosLat;
     const dy = (graph.lat[i] ?? 0) - lat;
     const score = dx * dx + dy * dy;
-    if (score < bestScore) {
+    if (score < bestScore && (!accept || accept(i))) {
       bestScore = score;
       best = i;
     }
