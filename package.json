@@ -21,6 +21,7 @@
     "check": "npm run format:check && npm run lint && npm run typecheck && npm run test && npm run build",
     "data:import": "node scripts/import-senapred.ts && prettier --write public/data/communes",
     "data:validate": "node scripts/validate-data.ts",
+    "check:headers": "node scripts/check-headers.ts",
     "data:tiles": "node scripts/build-tiles.ts && prettier --write public/data/communes",
     "data:glyphs": "node scripts/fetch-glyphs.ts",
     "data:terrain": "node scripts/build-terrain.ts && prettier --write public/data/communes/*/manifest.json",
