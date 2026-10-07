@@ -10,6 +10,13 @@ function watchPage(page: Page) {
   page.on('console', (message) => {
     if (message.type() === 'error') problems.push(`console: ${message.text()}`);
   });
+  // Even a blocked-and-caught attempt (e.g. a library probing `new Function`) is a violation:
+  // Lighthouse reports it, so the page must not try at all.
+  void page.addInitScript(() => {
+    document.addEventListener('securitypolicyviolation', (event) => {
+      console.error(`CSP violation: ${event.violatedDirective} ${event.blockedURI}`);
+    });
+  });
   return { requests, problems };
 }
 
