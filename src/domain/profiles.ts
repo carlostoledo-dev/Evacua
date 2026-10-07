@@ -17,6 +17,8 @@ export interface ProfileConfig {
   autoSpeak: boolean;
   /** Fewer elements and bigger controls: one primary action, three steps. */
   simpleMode: boolean;
+  /** Layers, 3D and "find me" buttons over the map (older adults: none, one big button). */
+  mapButtons: boolean;
   /** Show "Busca a tu adulto o profesor y sigue el plan". */
   guardianMessage: boolean;
 }
@@ -28,6 +30,7 @@ export const PROFILES: Readonly<Record<ProfileId, ProfileConfig>> = {
     time: 'range',
     autoSpeak: false,
     simpleMode: false,
+    mapButtons: true,
     guardianMessage: false,
   },
   senior: {
@@ -36,6 +39,7 @@ export const PROFILES: Readonly<Record<ProfileId, ProfileConfig>> = {
     time: 'slow',
     autoSpeak: true,
     simpleMode: true,
+    mapButtons: false,
     guardianMessage: false,
   },
   child: {
@@ -44,6 +48,7 @@ export const PROFILES: Readonly<Record<ProfileId, ProfileConfig>> = {
     time: 'hidden',
     autoSpeak: false,
     simpleMode: true,
+    mapButtons: true,
     guardianMessage: true,
   },
 };

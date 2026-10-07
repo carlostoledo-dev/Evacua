@@ -12,8 +12,13 @@ describe('profiles', () => {
     expect(PROFILES.senior.textScale).toBeGreaterThan(PROFILES.adult.textScale);
   });
 
-  it('child: guardian message and no timing pressure', () => {
-    expect(PROFILES.child).toMatchObject({ guardianMessage: true, time: 'hidden' });
+  it('child: guardian message, no timing pressure, the map buttons', () => {
+    expect(PROFILES.child).toMatchObject({
+      guardianMessage: true,
+      time: 'hidden',
+      mapButtons: true,
+    });
+    expect(PROFILES.senior.mapButtons).toBe(false);
   });
 
   it('validates ids', () => {

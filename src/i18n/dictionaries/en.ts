@@ -342,6 +342,7 @@ export const en: Dictionary = {
   'route.legStart': 'go',
   'route.legStraight': 'continue',
   'route.time.single': '{minutes} min',
+  'route.showPlan': 'Show the plan',
   'menu.title': 'Menu',
 
   'footer.version': 'Version {version}',

@@ -171,7 +171,7 @@ export function App() {
 
       {showTour && (
         <Tour
-          simple={profile.config.simpleMode}
+          simple={!profile.config.mapButtons}
           onClose={() => {
             setTourRequested(false);
             if (!user.tourDone) profile.save({ ...user, tourDone: true });

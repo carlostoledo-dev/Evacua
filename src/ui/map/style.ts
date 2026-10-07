@@ -64,7 +64,7 @@ export const DARK_PALETTE: MapPalette = {
   roadCasing: '#000000',
   label: '#e8eef5',
   labelHalo: '#000000',
-  evacuationArea: '#ff6b7f',
+  evacuationArea: '#ff4d5e',
   safeLine: '#d59cff',
   route: '#5fe39a',
   meetingPoint: '#1f9d57',

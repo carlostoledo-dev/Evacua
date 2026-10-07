@@ -222,6 +222,12 @@ test('the sheets follow the finger: swipe up for details, down to fold or close'
   await expect(toggle).toHaveAttribute('aria-expanded', 'true');
   await flick(page, '[data-testid="plan-summary"]', 300, 480);
   await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+  // One more swipe down leaves only a slim bar; a tap on it brings the summary back.
+  await flick(page, '[data-testid="plan-summary"]', 480, 640);
+  await expect(panel(page).getByTestId('plan-mini')).toContainText(/PE0\d\d/);
+  await expect(panel(page).getByRole('button', { name: 'Iniciar evacuación' })).toHaveCount(0);
+  await panel(page).getByRole('button', { name: 'Mostrar el plan' }).click();
+  await expect(panel(page).getByTestId('plan-summary')).toBeVisible();
   // A tap right after a swipe still works.
   await panel(page).getByRole('button', { name: 'Menú' }).click();
   await expect(page.getByTestId('menu-sheet')).toBeVisible();
