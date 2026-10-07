@@ -25,10 +25,8 @@ Delivery plan, phase status, pending decisions and risks: `docs/PLAN.md`.
 - Installable map that works with no internet. With GPS it shows where to evacuate from a
   tsunami: where to go (the official meeting point) and the shortest walking route there, with
   a turn-by-turn "Navegar" mode (owner request 2026-10-05; DEMO walk for judges, labeled).
-- Owner decision 2026-10-04: **tsunami only for now** (light, simple, no hazard selector).
-  Earthquake and wildfire stay configured in `src/domain/hazards.ts` (`available: false`) and can
-  return without code changes; the direction is hazard-specific (high ground is good for tsunami,
-  may be dangerous in a wildfire), so each needs its own data before it comes back.
+- Owner decisions 2026-10-04 and 2026-10-07: **tsunami only** (light, simple, no hazard
+  selector). Every other hazard was removed from the code, texts and docs; do not add one back.
 - Three profiles — Persona, Adulto mayor, Niño/a — are typed configuration presets
   (speed, text size, simple mode, voice, backpack checklist, messages), not separate apps.
 - Scope (owner decision 2026-10-04): ONE pilot area of Coronel covering **Lagunillas, Yobilo and
@@ -54,7 +52,7 @@ Delivery plan, phase status, pending decisions and risks: `docs/PLAN.md`.
 
 ### 1. Never fabricate safety data
 
-- Never present inundation zones, wildfire-risk zones, official routes, meeting points or
+- Never present inundation zones, evacuation areas, official routes, meeting points or
   walking speeds as real unless they come from a cited, checked source.
 - Every geographic feature carries metadata: `source`, `sourceUrl`, `retrievedAt` (ISO date),
   `license`, `verified` (boolean). Enforced by zod; the build fails if any is missing.
@@ -62,7 +60,7 @@ Delivery plan, phase status, pending decisions and risks: `docs/PLAN.md`.
   (A third badge for derived/approximate data is proposed in `docs/PLAN.md` — pending approval.)
 - Missing official data → generate DEMO data clearly labeled "DEMO" on screen, and document
   in `DATA_SOURCES.md` how to load the official dataset (e.g. a georeferenced SHOA inundation chart).
-- No reliable source for a layer (e.g. wildfire) → tell the owner and propose alternatives
+- No reliable source for a layer → tell the owner and propose alternatives
   (mark as approximate, or replace with another layer). Do not invent it.
 - All constants (profile walking speeds, thresholds, etc.) live in ONE file, each with a
   source comment or `// TODO: citar fuente`.
@@ -122,11 +120,11 @@ Delivery plan, phase status, pending decisions and risks: `docs/PLAN.md`.
 
 ## Architecture conventions
 
-- Layering: `domain/` (pure, framework-free: hazards, profiles, routing, geo math)
+- Layering: `domain/` (pure, framework-free: profiles, routing, navigation, geo math)
   ← `data/` (loading + zod validation) ← `ui/`. Domain never imports UI or browser APIs.
 - Browser APIs (geolocation, storage, speech, service worker) sit behind small adapters
   that return explicit result types instead of throwing.
-- Profiles and hazards are typed config objects. No `if (profile === '...')` branching
+- Profiles are typed config objects. No `if (profile === '...')` branching
   scattered through UI components.
 - Multi-commune by data: `public/data/communes/<id>/manifest.json` (zone, bbox, layers, sources)
   listed in `public/data/communes/index.json`. `npm run data:import` re-downloads SENAPRED layers;
@@ -179,6 +177,6 @@ docs/DEMO_SCRIPT.md (2–3 min).
 
 ## Definition of done
 
-A user opens the demo on a phone, installs it, enables airplane mode, picks a hazard and a
+A user opens the demo on a phone, installs it, enables airplane mode, picks a
 profile, and sees where to evacuate with estimated time and voice, with every layer labeled
 official or DEMO. Everything is documented, tests pass in CI, and no personal data is collected.

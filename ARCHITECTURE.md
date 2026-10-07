@@ -44,7 +44,7 @@ before bundling, so a broken or unlabeled data file fails the build.
 flowchart TB
   ui["src/ui — React screens, MapLibre map, sheets, hooks, i18n text"]
   data["src/data — fetch + zod validation of manifest, layers, graph"]
-  domain["src/domain — pure TypeScript: routing (A*), navigation, geo, profiles, hazards, constants"]
+  domain["src/domain — pure TypeScript: routing (A*), navigation, geo, profiles, constants"]
   platform["src/platform — adapters: geolocation, localStorage, speech, install prompt"]
   ui --> data
   ui --> domain
@@ -52,12 +52,12 @@ flowchart TB
   data --> domain
 ```
 
-| Folder          | What lives there                                                                                                                                                                                                            | Rules                                                                                                                    |
-| --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| `src/domain/`   | Evacuation planning (`routing.ts`), turn-by-turn and "how to get there" (`navigation.ts`), geometry (`geo.ts`), walking graph (`graph.ts`), profiles and hazards as typed config, **all safety constants** (`constants.ts`) | Pure functions, no browser APIs, no React. ESLint forbids importing UI, platform or i18n. ≥ 95 % coverage enforced in CI |
-| `src/data/`     | `loader.ts` fetches and validates every file; `schema.ts` holds the zod schemas (every feature must carry `source`, `sourceUrl`, `retrievedAt`, `license`, `verified`)                                                      | Any invalid file fails the whole commune with an explicit error screen                                                   |
-| `src/platform/` | Small adapters around browser APIs that return result types instead of throwing                                                                                                                                             | Storage access is wrapped in try/catch; the app works with defaults when storage is blocked                              |
-| `src/ui/`       | Screens, the MapLibre map (`map/`), the route sheet, dialogs, tutorial, hooks                                                                                                                                               | No UI text in code: everything goes through the `es-CL` / `en` dictionaries (identical keys)                             |
+| Folder          | What lives there                                                                                                                                                                                                | Rules                                                                                                                    |
+| --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `src/domain/`   | Evacuation planning (`routing.ts`), turn-by-turn and "how to get there" (`navigation.ts`), geometry (`geo.ts`), walking graph (`graph.ts`), profiles as typed config, **all safety constants** (`constants.ts`) | Pure functions, no browser APIs, no React. ESLint forbids importing UI, platform or i18n. ≥ 95 % coverage enforced in CI |
+| `src/data/`     | `loader.ts` fetches and validates every file; `schema.ts` holds the zod schemas (every feature must carry `source`, `sourceUrl`, `retrievedAt`, `license`, `verified`)                                          | Any invalid file fails the whole commune with an explicit error screen                                                   |
+| `src/platform/` | Small adapters around browser APIs that return result types instead of throwing                                                                                                                                 | Storage access is wrapped in try/catch; the app works with defaults when storage is blocked                              |
+| `src/ui/`       | Screens, the MapLibre map (`map/`), the route sheet, dialogs, tutorial, hooks                                                                                                                                   | No UI text in code: everything goes through the `es-CL` / `en` dictionaries (identical keys)                             |
 
 ## Data model: adding a commune is adding data
 

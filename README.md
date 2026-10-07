@@ -141,7 +141,6 @@ SEO 100; installability verified by an e2e test; all 8 security headers checked 
   terms in writing (it is cited as IDE Chile asks).
 - **Times are estimates** from published walking speeds, not a guarantee that you have time.
 - **GPS can be wrong** indoors or near tall buildings.
-- **Tsunami only.** Earthquake and wildfire need their own official data before they come back.
 - **Voice** needs an on-device voice for the language; otherwise the text stays on screen.
 - Not tested with the community or the authorities yet.
 
@@ -151,7 +150,6 @@ SEO 100; installability verified by an e2e test; all 8 security headers checked 
 - The rest of Coronel and the other 12 coastal communes of Biobío as per-commune downloads
   (official SENAPRED data exists for all of them; adding a commune is adding data, not code).
 - Vertical evacuation buildings and accessible routes, once official data exists.
-- Earthquake and wildfire guidance with their own official layers.
 
 ## Pre-existing work
 

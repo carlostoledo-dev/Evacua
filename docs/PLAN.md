@@ -3,12 +3,17 @@
 Each phase ends with a report (done / tested / pending or uncertain) and waits for
 explicit owner approval before the next one starts.
 
+This is the build log, kept as written at each step. Some features described in earlier phases
+were later removed or redesigned (the bottom tab bar, the profile name, the child drill). Evacua
+covers **tsunami only** (owner decision 2026-10-07). The current product is described in the
+[README](../README.md).
+
 | Phase                                           | Status                     |
 | ----------------------------------------------- | -------------------------- |
 | 0. Questions, plan, CLAUDE.md                   | Done — answered 2026-10-01 |
 | 1. Skeleton, CI, PWA, i18n                      | Done — approved 2026-10-01 |
 | 2. Data layer: schema + labeled DEMO data       | Done — approved 2026-10-02 |
-| 3. Offline map + hazard layers and selector     | Done — approved 2026-10-02 |
+| 3. Offline map + tsunami layers                 | Done — approved 2026-10-02 |
 | 4. Evacuation guidance: safe point, route, time | Done — approved 2026-10-04 |
 | 5. Profiles + accessibility                     | Done — approved 2026-10-05 |
 | 6. Security, tests, Lighthouse                  | Done — approved 2026-10-07 |
@@ -57,8 +62,8 @@ explicit owner approval before the next one starts.
 
 - zod schemas: commune manifest, layer FeatureCollections with required per-feature metadata
   (`source`, `sourceUrl`, `retrievedAt`, `license`, `verified`).
-- `public/data/communes/coronel/manifest.json` + layers: tsunami zone / safe zone, meeting points,
-  wildfire layer per decision D2. Official data if obtainable; otherwise DEMO, labeled.
+- `public/data/communes/coronel/manifest.json` + layers: tsunami zone / safe zone, meeting points.
+  Official data if obtainable; otherwise DEMO, labeled.
 - Data loader returning typed results (ok / invalid / missing), never partial silent rendering.
 - `scripts/validate-data` run in CI.
 - Single constants file (walking speeds per profile etc.), each value sourced or `TODO: citar fuente`.
@@ -78,7 +83,7 @@ explicit owner approval before the next one starts.
 **Phase 2 notes (2026-10-01)**
 
 - No DEMO data was needed: all four tsunami layers for Yobilo come from SENAPRED's official
-  service and are labeled "Fuente oficial verificada". The wildfire layer stays pending (D2).
+  service and are labeled "Fuente oficial verificada".
 - Data lives in `public/data/communes/<id>/` (served same-origin and precached for offline use);
   the registry is `public/data/communes/index.json`.
 - Pilot service area `[-73.166, -37.018, -73.132, -36.996]` (defined by Evacua, not official);
@@ -90,7 +95,7 @@ explicit owner approval before the next one starts.
 - UX note for Phase 3: the sticky disclaimer takes ~20 % of a phone screen; compact it (still
   always visible) when the map arrives.
 
-## Phase 3 — Offline map and hazard layers
+## Phase 3 — Offline map and tsunami layers
 
 **Build**
 
@@ -98,15 +103,15 @@ explicit owner approval before the next one starts.
   from a Protomaps OSM build — licenses to verify; no Java/Docker needed on this machine).
 - Self-hosted glyphs and sprites; MapLibre CSP build (no blob workers needed).
 - PMTiles read from the precached file (no HTTP range requests through the service worker).
-- Hazard selector (tsunami / incendio / terremoto), layers with patterns + text, not color only.
+- Official tsunami layers with patterns + text, not color only.
 - Per-layer badge, legend, visible OSM attribution.
 
 **Acceptance criteria**
 
 - [x] Offline after the first visit, the sector map renders fully (Playwright: offline reload,
       map `ready`, zero failed requests). Manual phone test in airplane mode: done by the owner (2026-10-07).
-- [x] Switching hazard changes guidance and layer visibility; each layer shows its badge in the
-      legend (tsunami and earthquake both use the tsunami layers by design).
+- [x] SENAPRED's tsunami guidance and layers are shown; each layer shows its badge in the
+      legend.
 - [x] App shell JS 104 KB gzip (MapLibre chunk 279 KB gzip, lazy). Offline precache ≈ 3.5 MB
       (87 files: shell, data ≈ 134 KB, tiles ≈ 946 KB, glyphs ≈ 544 KB, MapLibre + worker).
 
@@ -123,9 +128,6 @@ explicit owner approval before the next one starts.
 - The evacuation area uses a hatch pattern and the legend repeats each shape, so nothing relies
   on color alone. The map never pans past the data bounds, so the artificial clip edge of the
   evacuation polygon is never shown.
-- Earthquake guidance uses SENAPRED's own wording. SENAPRED does **not** use "agáchate, cúbrete
-  y afírmate"; it says to go to a "Lugar de Protección Sísmica". The earlier plan text was wrong
-  and has been corrected.
 - Found and fixed during visual review: MapLibre's CSS made the map container collapse to
   0 px; e2e now asserts the canvas height and visible credits.
 - Owner request (2026-10-02): make it feel like a mobile app, light, fast and battery-friendly.
@@ -138,16 +140,15 @@ explicit owner approval before the next one starts.
   - Battery and low-end phones: map rendered at most at 2× pixel ratio, no label fade animation,
     no world copies, no CSS animations; the map stays mounted but hidden on other tabs, so it is
     not rebuilt and does not render.
-  - Accessibility kept: native radios (selected hazard shows a ✓ + fill), focus moves to each
-    screen title on tab change, 48 px map controls (e2e-verified).
-  - Bug found by e2e: two hazard selectors shared one radio group name; fixed with `useId`.
+  - Accessibility kept: focus moves to each screen title on tab change, 48 px map controls
+    (e2e-verified).
 
 ## Phase 4 — Evacuation guidance
 
 **Build**
 
 - Data-build script: OSM pedestrian graph for the sector → compact JSON (committed).
-- Domain: A* with binary heap and multiple goals; hazard-specific edge cost functions; ETA.
+- Domain: A* with binary heap and multiple goals; ETA.
 - Geolocation adapter with explicit states; manual "Estoy aquí" (tap on map) when GPS is slow
   or denied; out-of-zone detection.
 - "Simular ubicación (DEMO)" with preset points, always labeled DEMO (decision D3).
@@ -159,9 +160,6 @@ explicit owner approval before the next one starts.
 - [x] Unit tests: shortest path, unreachable goal, multi-goal (network-nearest beats air-nearest),
       node filters, ETA ranges; real-data test checks every DEMO location against its label.
       Domain coverage: 99 % statements, 100 % lines.
-- [~] "Same demo point, different destinations for tsunami vs. wildfire": not applicable after
-  D2 = C (no wildfire). Instead, e2e checks that earthquake mode adds SENAPRED's
-  protect-first instruction to the same route.
 - [x] Outside zone → clear message, no route drawn (e2e).
 - [x] No GPS / denied / timeout → explicit state + manual "Elegir en el mapa" (e2e for denied;
       unit tests for every geolocation error code).
@@ -215,7 +213,7 @@ explicit owner approval before the next one starts.
   SENAPRED publishes no per-profile kit, so none was invented.
 - Privacy: the profile (type and tutorial flag, no personal data) and checklist ticks live only in
   localStorage; "Borrar mis datos" removes every key (e2e-checked). Location is still never stored.
-- Look (redesigned 2026-10-04, see below): navy header with the hazard control, white route
+- Look (redesigned 2026-10-04, see below): navy header, white route
   sheet with large action cards, accessible vivid blue (#0a5bd8, 6:1).
 - Dev-only dependency `@axe-core/playwright` is MPL-2.0; it is never shipped in the app.
 
@@ -235,8 +233,8 @@ explicit owner approval before the next one starts.
 - Done: new wave app icon (PNG icons regenerated); welcome hero with a self-drawn SVG coastal
   scene and three feature tiles; progress stepper, big headings and Atrás/Continuar buttons on
   each step; phone illustration with install instructions; profile cards with self-drawn avatars
-  and a visual radio; navy header (commune · sector from the manifest, green offline pill) with
-  the hazard segmented control; white route sheet with "Buscar mi ruta de evacuación" (GPS) and
+  and a visual radio; navy header (commune · sector from the manifest, green offline pill);
+  white route sheet with "Buscar mi ruta de evacuación" (GPS) and
   "Elegir en el mapa" action cards; underlined active tab; yellow disclaimer bar (a card on the
   onboarding pages). Glass translucency was dropped: everything is solid, so no fallback needed.
 - Not copied from the mockups: "Search for a place" (Evacua has no place search; the second card
@@ -269,7 +267,7 @@ explicit owner approval before the next one starts.
   step fills exactly one screen with no scrolling; the illustration takes the leftover height and
   the actions plus the disclaimer sit at the bottom. E2e-checked on Pixel 7 (412 × 839) and on a
   small 360 × 640 screen; also checked by hand at 375 × 667, 390 × 844 and the desktop column.
-  Main app: slimmer header, hazard band and tab bar; one-row "new version" bar (≈ 57 px instead of
+  Main app: slimmer header and tab bar; one-row "new version" bar (≈ 57 px instead of
   ≈ 100 px); the route sheet keeps its title row pinned while its content scrolls; "Elegir en el
   mapa" and the DEMO points share one row; "Cambiar" sits next to the location line; credits and
   scale moved to the bottom left so they never collide with the map buttons.
@@ -292,9 +290,8 @@ explicit owner approval before the next one starts.
 
 **Owner decisions (2026-10-04, later): tsunami only; pilot area = Lagunillas, Yobilo, Coronel Centro**
 
-- Tsunami only for now: earthquake set to `available: false` (wildfire already was). With a single
-  hazard there is no selector on the map or in "Qué hacer", and the tutorial drops its "choose the
-  hazard" step (4 steps). The map gains the band's height.
+- Tsunami only: no hazard selector on the map or in "Qué hacer". On 2026-10-07 the owner made it
+  final: every other hazard was removed from the code, the texts and the documentation.
 - Pilot area: one rectangle from Lagunillas through Yobilo to the centre of Coronel, located with
   OpenStreetMap. Re-imported SENAPRED layers (2 evacuation areas, 3 safe lines, 40 routes,
   19 meeting points), basemap (168 tiles, 1.8 MB) and walking network (26,590 nodes). New DEMO
@@ -418,7 +415,6 @@ explicit owner approval before the next one starts.
 
 - Pilot sector: **Yobilo**, Coronel. Solo developer + Claude Code. Official deadline per Devpost: 2026-10-13 23:45 CDT (the owner first estimated ≈ 2026-10-09). The rules say nothing about licensing or IP.
 - D1 approved (Vite + React). D3 approved (simulated DEMO location). D5 approved.
-- D2 (wildfire) deferred: focus on everything else first, revisit later. D4 goes with D2.
 - English UI added as second locale (es-CL stays default).
 - Demo will be shown in a web browser (no app stores; a PWA is a web app anyway).
 - The owner runs git/GitHub/Vercel personally with Claude's step-by-step guidance.
@@ -451,7 +447,6 @@ FeatureServer (WGS84, JSON query):
   for Coronel exists (Revista Terra Australis, case study for Coronel).
 - Yobilo in OSM (Nominatim): road "Yobilo" from ≈ (-37.0118, -73.1565) to ≈ (-36.9996, -73.1349).
 - Text encoding: some attributes come back mis-encoded (e.g. "Biob�o"); normalize in the import script.
-- Wildfire: not researched yet (D2 deferred).
 
 ## Stretch features (only after the minimum demo works, target 2026-10-06)
 
@@ -481,34 +476,18 @@ consent) and contact the Municipalidad de Coronel / SENAPRED Biobío / a local s
 - Smaller initial load for low-end phones; Vitest is native to Vite.
 - Recorded as an ADR in ARCHITECTURE.md either way.
 
-### D2 — Wildfire layer (DECIDED 2026-10-02: option C for now)
+### D2 — Hazards covered (DECIDED: tsunami only)
 
-Owner chose **C**: no wildfire hazard in the pilot for now; the selector offers tsunami and
-earthquake. Consequence: the "same spot, two hazards, two routes" demo contrast is weaker,
-because after a strong quake near the coast the official instruction is to evacuate as for a
-tsunami. Option A can be added later without rework (hazards are data + config).
-
-A static offline app cannot know where a fire is, the wind, or which roads are cut, so there is
-no valid precomputed "official wildfire route". Options:
-
-- **A (recommended):** vegetation/fuel layer derived from OSM (`landuse=forest`, `natural=wood`,
-  `natural=scrub`), labeled "Aproximada — derivada de OSM, no es un mapa oficial de riesgo";
-  routing penalizes edges near vegetation and goes to meeting points in consolidated urban areas;
-  optional user input "¿Hacia dónde ves el humo o fuego?" penalizes that direction.
-- **B:** official CONAF/SENAPRED layer, only if a usable, licensed source is found and verified.
-- **C:** drop wildfire for the pilot; keep tsunami + earthquake.
-
-Earthquake mode: SENAPRED's official wording (https://www.senapred.cl/sismos/): go to a
-"Lugar de Protección Sísmica"; on the coast, if the quake made it hard to stay standing, evacuate
-immediately toward a meeting point. (Corrected 2026-10-02: SENAPRED does not use "agáchate,
-cúbrete y afírmate".)
+Owner decisions 2026-10-02, 2026-10-04 and 2026-10-07: Evacua covers **tsunami only**. A
+tsunami has official, mapped evacuation areas, routes and meeting points (SENAPRED); other
+hazards would need their own official data and their own guidance, and none is in this project.
 
 ### D3 — Simulated location for the demo (APPROVED)
 
 Judges will not be in Coronel. A "Simular ubicación (DEMO)" mode with preset points, permanently
 labeled DEMO, lets the live demo and video show the real flow. Real GPS remains the default.
 
-### D4 — Layer status model (decided together with D2)
+### D4 — Layer status model
 
 Per feature: `verified: boolean` plus `kind: "official" | "derived" | "demo"`, giving three badges:
 "Fuente oficial verificada", "Aproximada (derivada, no oficial)", "DEMO / sin verificar".

@@ -139,12 +139,9 @@ route panel.
 Shown in the hazard guidance card, quoted verbatim in Spanish from SENAPRED (English is a labeled
 translation). Retrieved 2026-10-02.
 
-| Hazard     | Source page                                                         | Quoted recommendations                                                                                                                                                                                                                                  |
-| ---------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Tsunami    | https://www.senapred.cl/tsunami/ ("¿Qué hacer en caso de tsunami?") | Evacuate immediately if a quake makes it hard to stay standing in a tsunami evacuation area; evacuate to high ground if the sea recedes unusually; prefer horizontal evacuation to a meeting point / safety area.                                       |
-| Earthquake | https://www.senapred.cl/sismos/ ("¿Qué hacer en caso sismo?")       | Go to a "Lugar de Protección Sísmica"; protect yourself under or next to something sturdy; outdoors, move away from buildings, poles and cables; on the coast, if the quake made it hard to stay standing, evacuate immediately toward a meeting point. |
-
-Note: SENAPRED's guidance does not use "agáchate, cúbrete y afírmate", so Evacua does not either.
+| Hazard  | Source page                                                         | Quoted recommendations                                                                                                                                                                                            |
+| ------- | ------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Tsunami | https://www.senapred.cl/tsunami/ ("¿Qué hacer en caso de tsunami?") | Evacuate immediately if a quake makes it hard to stay standing in a tsunami evacuation area; evacuate to high ground if the sea recedes unusually; prefer horizontal evacuation to a meeting point / safety area. |
 
 | Content                                                               | Source page                                                   | Use                                                                                                                                                             |
 | --------------------------------------------------------------------- | ------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -163,12 +160,10 @@ FEMA uses these speeds to space evacuation structures, not to promise arrival ti
 4 mph is an optimistic pace. Evacua will therefore show travel time as a range and never as
 "you have time".
 
-## Not available yet (no data is invented to fill these gaps)
+## Scope
 
-| Need                      | Status                                                                                                                                                                                                                                                                                                                                           |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Wildfire layer            | Out of the pilot for now (owner decision 2026-10-02, [docs/PLAN.md](docs/PLAN.md) D2 = C). No official, licensed wildfire layer for Yobilo has been identified yet. Options: an approximate layer derived from OpenStreetMap vegetation, clearly labeled; an official CONAF/SENAPRED layer if one is found; or dropping wildfire from the pilot. |
-| Earthquake meeting points | No official open-space meeting points found for Yobilo. Earthquake mode shows SENAPRED's official guidance and, near the coast, the tsunami layers above.                                                                                                                                                                                        |
+Evacua covers **tsunami only** (owner decision 2026-10-07). It shows no layer or guidance for
+any other hazard, and no data is invented to fill gaps.
 
 ## How to update the data
 
