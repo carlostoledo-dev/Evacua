@@ -161,6 +161,9 @@ interface RoutePanelProps {
   onExpandedChange: (expanded: boolean) => void;
   /** Opens the quick menu (≡). */
   onOpenMenu: () => void;
+  /** Only a slim bar left (swiped all the way down), to see the most map. */
+  minimized: boolean;
+  onMinimizedChange: (minimized: boolean) => void;
 }
 
 /**
@@ -184,6 +187,8 @@ export function RoutePanel({
   expanded,
   onExpandedChange,
   onOpenMenu,
+  minimized,
+  onMinimizedChange,
 }: RoutePanelProps) {
   const { t, locale } = useI18n();
   const speech = useSpeech(locale);
@@ -253,12 +258,15 @@ export function RoutePanel({
   }, [expanded]);
 
   // Swipe the sheet up for the details and down for the summary only (as on iOS).
+  // Three levels, like iOS: slim bar ↔ summary ↔ details.
   const swipe = useSwipe({
     onSwipeUp: () => {
-      setExpanded(true);
+      if (minimized) onMinimizedChange(false);
+      else setExpanded(true);
     },
     onSwipeDown: () => {
-      setExpanded(false);
+      if (expanded) setExpanded(false);
+      else onMinimizedChange(true);
     },
   });
 
@@ -513,7 +521,30 @@ export function RoutePanel({
             </div>
           )}
 
-          {route ? (
+          {route && minimized ? (
+            // Slim bar: where to and how far; a tap or a swipe up brings the summary back.
+            <button
+              type="button"
+              className="plan-mini sheet-drag"
+              data-testid="plan-mini"
+              aria-label={t('route.showPlan')}
+              {...swipe.handlers}
+              onClick={() => {
+                onMinimizedChange(false);
+              }}
+            >
+              <span className="plan-summary__icon">
+                <WalkIcon className="icon" />
+              </span>
+              <strong>
+                {route.destination.kind === 'meeting-point'
+                  ? shortCode(route.destination.code)
+                  : t('route.item.safeArea')}
+              </strong>
+              <span>{formatDistance(route.meters, locale)}</span>
+              <ChevronRightIcon className="icon plan-mini__chevron" />
+            </button>
+          ) : route ? (
             <>
               {/* Summary: where to, how far, how long, and one big button. */}
               <div

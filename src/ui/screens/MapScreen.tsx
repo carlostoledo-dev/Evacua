@@ -108,6 +108,12 @@ export function MapScreen({
   // Route details under the summary; a new kind of location starts with the summary only.
   const [expandedFor, setExpandedFor] = useState<LocationState['kind'] | null>(null);
   const expanded = expandedFor === location.kind;
+  // Swiped all the way down: only a slim bar, to see the most map. Also per location kind.
+  const [minimizedFor, setMinimizedFor] = useState<LocationState['kind'] | null>(null);
+  const minimized = minimizedFor === location.kind;
+  const setMinimized = (on: boolean) => {
+    setMinimizedFor(on ? location.kind : null);
+  };
   const setExpanded = (open: boolean) => {
     setExpandedFor(open ? location.kind : null);
   };
@@ -197,7 +203,7 @@ export function MapScreen({
               onOpenLayers={() => {
                 setLayersOpen(true);
               }}
-              simple={profile.simpleMode}
+              simple={!profile.mapButtons}
             />
           </Suspense>
         )}
@@ -228,7 +234,9 @@ export function MapScreen({
               data-testid="danger-card"
               aria-expanded={route ? expanded : undefined}
               onClick={() => {
-                if (route) setExpanded(true);
+                if (!route) return;
+                setMinimized(false);
+                setExpanded(true);
               }}
             >
               <WarningIcon className="icon danger-card__icon" />
@@ -281,6 +289,8 @@ export function MapScreen({
             maneuverText={maneuverText}
             expanded={expanded}
             onExpandedChange={setExpanded}
+            minimized={minimized}
+            onMinimizedChange={setMinimized}
             onOpenMenu={() => {
               setMenuOpen(true);
             }}

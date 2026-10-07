@@ -350,6 +350,7 @@ export const esCL = {
   'route.legStart': 'sigue',
   'route.legStraight': 'continúa',
   'route.time.single': '{minutes} min',
+  'route.showPlan': 'Mostrar el plan',
   'menu.title': 'Menú',
 
   'footer.version': 'Versión {version}',

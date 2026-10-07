@@ -140,3 +140,7 @@ visibly labeled DEMO. See `DATA_SOURCES.md`.
   and a visible grow/shrink animation to the route sheet, made the swipe follow the finger
   further, and rewrote the tutorial (icon per step, progress dots, an animated "swipe up" step,
   a map-buttons step skipped in simple mode).
+- Child mode and colors (2026-10-07, owner request): AI turned the guardian message into a small
+  violet chip, made "Iniciar evacuación" vivid green and the danger red more intense, gave the
+  child profile its map buttons back (a separate `mapButtons` profile setting; older adults
+  keep none), and added a third, minimized sheet level (a slim bar) reached by swiping down.
