@@ -114,8 +114,8 @@ Delivery plan, phase status, pending decisions and risks: `docs/PLAN.md`.
   honor `prefers-reduced-motion` and `prefers-color-scheme`.
 - Never convey information by color alone (icons, patterns, text).
 - Adulto mayor: very large text, one primary button, 3 steps, voice.
-- Niño/a: icons, short phrases, the message "Busca a tu adulto o profesor y sigue el plan",
-  and a game-like drill mode (modo simulacro).
+- Niño/a: icons, short phrases and the message "Busca a tu adulto o profesor y sigue el plan".
+  (Owner decision 2026-10-07: the timed drill mode / modo simulacro was removed.)
 - Voice via Web Speech API (`speechSynthesis`), always with a text alternative.
 - Targets: Lighthouse ≥ 90 in Accessibility and Best Practices; PWA installability verified
   separately (Lighthouse 12+ no longer has a PWA category).

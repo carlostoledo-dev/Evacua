@@ -135,3 +135,8 @@ visibly labeled DEMO. See `DATA_SOURCES.md`.
   the route sheet (up for details, down to fold) and to the layers / menu sheets (down to
   close), and hid the map buttons in simple mode (older adults, children) so the sheet's one
   big button is the only thing to press.
+- Child drill removed, clearer sheet and tour (2026-10-07, owner request): AI removed the timed
+  drill (modo simulacro) from the child profile, added a labeled "Ver cómo llegar y más" button
+  and a visible grow/shrink animation to the route sheet, made the swipe follow the finger
+  further, and rewrote the tutorial (icon per step, progress dots, an animated "swipe up" step,
+  a map-buttons step skipped in simple mode).

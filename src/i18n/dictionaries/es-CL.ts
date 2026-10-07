@@ -117,7 +117,8 @@ export const esCL = {
     'Precisión baja (± {meters}): tu posición podría estar equivocada. Para un resultado confiable, elige tu ubicación en el mapa.',
 
   'route.title': 'Hacia dónde evacuar',
-  'route.toggle': 'Mostrar u ocultar las opciones',
+  'route.moreDetails': 'Ver cómo llegar y más',
+  'route.lessDetails': 'Ocultar detalles',
   'route.inDanger': 'Estás dentro del área a evacuar por tsunami.',
   'route.notInDanger': 'Estás fuera del área a evacuar por tsunami.',
   'route.toSafety': 'Sal del área de peligro: {distance} a pie {time}.',
@@ -196,7 +197,7 @@ export const esCL = {
   'profile.senior': 'Adulto mayor',
   'profile.senior.description': 'Letra grande, voz y pasos simples.',
   'profile.child': 'Niño o niña',
-  'profile.child.description': 'Íconos, frases cortas y simulacro.',
+  'profile.child.description': 'Íconos y frases cortas, junto a su adulto.',
   'profile.child.age': 'Menos de {age} años',
   'profile.adult.age': '{from} a {to} años',
   'profile.senior.age': '{age} años o más',
@@ -209,15 +210,21 @@ export const esCL = {
   'tour.skip': 'Saltar tutorial',
   'tour.hazard.title': 'Elige la amenaza',
   'tour.hazard.body': 'Tsunami o terremoto. El mapa y las indicaciones se adaptan a lo que elijas.',
-  'tour.map.title': 'Lee el mapa',
+  'tour.map.title': 'Este es tu mapa',
   'tour.map.body':
-    'Lo rayado es el área a evacuar según SENAPRED. Lo que no tiene rayas es zona segura. Los puntos verdes son puntos de encuentro oficiales.',
-  'tour.route.title': 'Di dónde estás',
+    'La zona roja con rayas es el área a evacuar por tsunami (datos de SENAPRED). Los círculos verdes con una persona son los puntos de encuentro.',
+  'tour.route.title': 'Busca tu ruta',
   'tour.route.body':
-    'Usa el GPS, toca el mapa o prueba con un punto DEMO. Te mostramos el camino más corto para salir del peligro.',
-  'tour.tabs.title': 'Más información',
+    'Toca «Buscar mi ruta»: con tu GPS te mostramos el punto de encuentro más cercano y el camino más corto. ¿Sin GPS? Elige en el mapa o prueba un punto DEMO.',
+  'tour.tabs.title': 'Menú ≡',
   'tour.tabs.body':
     'Toca ≡ para abrir «Qué hacer» (las indicaciones oficiales), «Datos» (de dónde viene cada dato) y «Ajustes» (tu perfil e idioma).',
+  'tour.swipe.title': 'Desliza hacia arriba para ver más',
+  'tour.swipe.body':
+    'Con tu ruta lista, arrastra esta hoja hacia arriba (o toca «Ver cómo llegar y más») para ver cada calle, escuchar las indicaciones y leer lo que dice SENAPRED.',
+  'tour.buttons.title': 'Botones del mapa',
+  'tour.buttons.body':
+    'Capas: qué muestra el mapa y de dónde viene cada dato. 3D: los cerros en relieve. Flecha: vuelve a tu ubicación.',
   'tour.disclaimer.title': 'Siempre sigue a las autoridades',
   'tour.disclaimer.body':
     'Evacua es una herramienta de apoyo. Si SENAPRED, el SHOA o la Municipalidad indican otra cosa, hazles caso a ellos.',
@@ -252,15 +259,6 @@ export const esCL = {
   'route.time.slow': '(unos {slow} min a paso tranquilo)',
   'route.guardian': 'Busca a tu adulto o profesor y sigue el plan.',
   'route.moreOptions': 'Otras formas de ubicarte',
-
-  'drill.title': 'Modo simulacro',
-  'drill.body': 'Practica con tu adulto: caminen juntos hasta el punto de encuentro.',
-  'drill.start': 'Empezar simulacro',
-  'drill.running': 'Caminando… {seconds} s',
-  'drill.arrived': '¡Llegamos!',
-  'drill.result':
-    '¡Muy bien! Llegaron en {minutes} min {seconds} s. Practiquen otra vez para hacerlo más rápido.',
-  'drill.again': 'Repetir',
 
   'settings.profile': 'Tu perfil',
   'settings.profileHint': 'Se guarda solo en este teléfono.',

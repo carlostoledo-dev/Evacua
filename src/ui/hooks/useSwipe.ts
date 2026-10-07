@@ -17,7 +17,7 @@ interface SwipeOptions {
  * back; a long enough drag up or down calls the matching action. A tap is still a tap (buttons
  * keep working, and keyboard users have the same actions on real buttons).
  */
-export function useSwipe({ onSwipeUp, onSwipeDown, maxUp = 40 }: SwipeOptions) {
+export function useSwipe({ onSwipeUp, onSwipeDown, maxUp = 120 }: SwipeOptions) {
   const startRef = useRef<{ y: number; moved: boolean } | null>(null);
   // Set after a swipe, so the click that the browser fires on release is ignored.
   const swallowClickRef = useRef(false);
@@ -43,7 +43,8 @@ export function useSwipe({ onSwipeUp, onSwipeDown, maxUp = 40 }: SwipeOptions) {
         // Keep receiving the moves even if the finger leaves the sheet.
         (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
       }
-      setOffset(Math.max(-maxUp, dy));
+      // Follows the finger (a little stiffer upwards, like a rubber band) so the move is felt.
+      setOffset(dy < 0 ? Math.max(-maxUp, dy * 0.6) : dy);
     },
     onPointerUp(event: PointerEvent) {
       const drag = startRef.current;
