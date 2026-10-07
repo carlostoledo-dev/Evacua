@@ -167,3 +167,8 @@ visibly labeled DEMO. See `DATA_SOURCES.md`.
   dirt tracks, measured which kinds of OpenStreetMap ways the routes used on a grid of starting
   points, rebuilt the walking network without tracks and trails, and drew the off-street ends of
   a route as a dashed line.
+- Navigation from a picked point (2026-10-07, owner report): AI found that "Iniciar evacuación"
+  from a point picked on the map switched to the GPS and dropped the point (on a computer the
+  network position fell outside the pilot area, leaving "Buscando tu posición…" forever), made
+  it walk the route as a labeled DEMO instead, explained the missing route while navigating and
+  added a "leave" button there.

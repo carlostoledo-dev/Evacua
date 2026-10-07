@@ -98,6 +98,7 @@ export const en: Dictionary = {
   'location.source.gps': 'GPS location (accuracy ± {meters})',
   'location.source.manual': 'Location picked on the map',
   'location.source.demo': 'Simulated: {label}',
+  'location.source.demoWalk': 'Simulated: walk from the point picked on the map',
   'location.privacy': 'Your location is never stored or sent.',
   'location.lowAccuracy':
     'Low accuracy (± {meters}): your position may be wrong. For a reliable result, pick your location on the map.',

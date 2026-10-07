@@ -358,7 +358,9 @@ export function RoutePanel({
       {location.kind === 'gps' &&
         t('location.source.gps', { meters: formatDistance(location.accuracyMeters, locale) })}
       {location.kind === 'manual' && t('location.source.manual')}
+      {location.kind === 'demo' && location.demoId === null && t('location.source.demoWalk')}
       {location.kind === 'demo' &&
+        location.demoId !== null &&
         t('location.source.demo', {
           // The label's "(inside the evacuation area)" note only helps when choosing a test
           // point; the plan already says it.
@@ -442,8 +444,17 @@ export function RoutePanel({
                 </button>
               </div>
             </div>
+          ) : description ? (
+            // No route from here (e.g. a GPS reading outside the pilot area): say why.
+            <PlanView description={description} />
           ) : (
             <p role="status">{t('nav.waiting')}</p>
+          )}
+          {!route && (
+            // Without a route the card above (and its "leave" button) is not shown.
+            <button type="button" className="button button--block" onClick={navigation.stop}>
+              {t('nav.stop')}
+            </button>
           )}
           {route && (
             <div

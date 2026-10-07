@@ -13,7 +13,8 @@ export type LocationState =
   | { kind: 'picking' }
   | { kind: 'gps'; position: [number, number]; accuracyMeters: number }
   | { kind: 'manual'; position: [number, number] }
-  | { kind: 'demo'; position: [number, number]; demoId: string };
+  /** Simulated: a preset DEMO point (`demoId`), or a DEMO walk from a picked point (null). */
+  | { kind: 'demo'; position: [number, number]; demoId: string | null };
 
 export function locationPosition(state: LocationState): [number, number] | null {
   return 'position' in state ? state.position : null;
@@ -61,7 +62,7 @@ export function useLocation() {
   }, [stopTracking]);
 
   const simulate = useCallback(
-    (demoId: string, position: [number, number]) => {
+    (demoId: string | null, position: [number, number]) => {
       stopTracking();
       requestRef.current++;
       setState({ kind: 'demo', demoId, position });

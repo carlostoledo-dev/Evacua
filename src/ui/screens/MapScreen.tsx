@@ -31,7 +31,7 @@ export interface LocationActions {
   locateWithGps: () => void;
   track: () => void;
   stopTracking: () => void;
-  simulate: (demoId: string, position: [number, number]) => void;
+  simulate: (demoId: string | null, position: [number, number]) => void;
   startPicking: () => void;
   pick: (position: [number, number]) => void;
   clear: () => void;

@@ -101,6 +101,7 @@ export const esCL = {
   'location.source.gps': 'Ubicación del GPS (precisión ± {meters})',
   'location.source.manual': 'Ubicación elegida en el mapa',
   'location.source.demo': 'Simulada: {label}',
+  'location.source.demoWalk': 'Simulada: recorrido desde el punto elegido en el mapa',
   'location.privacy': 'Tu ubicación no se guarda ni se envía.',
   'location.lowAccuracy':
     'Precisión baja (± {meters}): tu posición podría estar equivocada. Para un resultado confiable, elige tu ubicación en el mapa.',

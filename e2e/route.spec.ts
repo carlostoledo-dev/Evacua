@@ -150,6 +150,15 @@ test('a position can be picked on the map when there is no GPS', async ({ page }
   await expect(panel(page)).toContainText('Ubicación elegida en el mapa');
   await expect(panel(page).getByTestId('plan-summary')).toBeVisible();
   await expect(page.getByTestId('map-demo')).toHaveCount(0);
+
+  // Starting from a picked point walks the route as a labeled DEMO; it never switches to the
+  // GPS (which would drop the point: the test browser has no position at all).
+  await panel(page).getByRole('button', { name: 'Iniciar evacuación' }).click();
+  const navPanel = panel(page).getByTestId('nav-panel');
+  await expect(navPanel).toContainText('Recorrido simulado, 10 veces más rápido');
+  await expect(navPanel.getByRole('progressbar', { name: 'Avance de la ruta' })).toBeVisible();
+  await expect(page.getByTestId('map-demo')).toBeVisible();
+  await expect(navPanel).not.toContainText('Buscando tu posición');
 });
 
 test('the location is never stored on the device', async ({ page }) => {

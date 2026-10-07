@@ -11,7 +11,7 @@ const DEMO_TICK_MS = 500;
 export type NavigationMode = 'gps' | 'demo';
 
 interface DemoWalk {
-  demoId: string;
+  demoId: string | null;
   path: [number, number][];
   length: number;
 }
@@ -19,7 +19,7 @@ interface DemoWalk {
 interface NavigationActions {
   track: () => void;
   stopTracking: () => void;
-  simulate: (demoId: string, position: [number, number]) => void;
+  simulate: (demoId: string | null, position: [number, number]) => void;
 }
 
 export interface Navigation {
@@ -34,8 +34,10 @@ export interface Navigation {
 }
 
 /**
- * Turn-by-turn session. With real GPS it follows the position until stopped; with a DEMO point
- * it walks the planned route at a labeled, accelerated pace. Either way the plan is recomputed
+ * Turn-by-turn session. With real GPS it follows the position until stopped; from a DEMO point or
+ * a point picked on the map it walks the planned route at a labeled, accelerated pace (a picked
+ * point is not a GPS reading: following the GPS from there would drop it, and on a computer the
+ * network position is usually far from the pilot area). Either way the plan is recomputed
  * from every new position, so leaving the route simply re-plans from where the user is.
  */
 export function useNavigation(
@@ -51,9 +53,9 @@ export function useNavigation(
 
   const start = useCallback(() => {
     if (!route) return;
-    if (location.kind === 'demo') {
+    if (location.kind === 'demo' || location.kind === 'manual') {
       walkRef.current = {
-        demoId: location.demoId,
+        demoId: location.kind === 'demo' ? location.demoId : null,
         path: route.path,
         length: pathMeters(route.path),
       };
