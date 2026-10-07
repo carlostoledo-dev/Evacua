@@ -24,8 +24,10 @@ import { describeManeuver } from '../navigationText.ts';
 import type { Theme } from '../theme.ts';
 import type { View } from '../views.ts';
 
-// MapLibre is large; it is only downloaded once there is data to draw.
-const MapView = lazy(() => import('../map/MapView.tsx'));
+// MapLibre is large: it is a separate chunk, but its download starts as soon as this screen's
+// module loads, in parallel with the sector data, instead of after it.
+const mapViewModule = import('../map/MapView.tsx');
+const MapView = lazy(() => mapViewModule);
 
 export interface LocationActions {
   locateWithGps: () => void;
