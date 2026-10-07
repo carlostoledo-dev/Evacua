@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { manifest, meetingPoints, meta } from './__fixtures__/commune.ts';
-import { layerSchemas, manifestSchema, registrySchema } from './schema.ts';
+import { graphFileSchema, layerSchemas, manifestSchema, registrySchema } from './schema.ts';
 
 const META_FIELDS = ['source', 'sourceUrl', 'retrievedAt', 'license', 'verified'] as const;
 
@@ -141,5 +141,29 @@ describe('registry', () => {
       communes: [{ id: 'a', manifest: 'a/manifest.json' }],
     };
     expect(registrySchema.safeParse(data).success).toBe(false);
+  });
+});
+
+describe('walking graph', () => {
+  const graph = {
+    schemaVersion: 1,
+    nodes: [-73.15, -37.02, -73.149, -37.02],
+    edges: [0, 1, 89],
+    names: ['Freire'],
+    edgeNames: [0],
+  };
+
+  it('accepts a valid graph', () => {
+    expect(graphFileSchema.safeParse(graph).success).toBe(true);
+  });
+
+  it.each([
+    ['a string among the nodes', { nodes: [-73.15, '-37.02', -73.149, -37.02] }],
+    ['an infinite number', { edges: [0, 1, Infinity] }],
+    ['a non-integer street index', { edgeNames: [0.5] }],
+    ['fewer than one node', { nodes: [-73.15] }],
+    ['a node index out of range', { edges: [0, 7, 89] }],
+  ])('rejects %s', (_label, change) => {
+    expect(graphFileSchema.safeParse({ ...graph, ...change }).success).toBe(false);
   });
 });
