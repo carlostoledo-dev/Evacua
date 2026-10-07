@@ -11,7 +11,7 @@ explicit owner approval before the next one starts.
 | 3. Offline map + hazard layers and selector     | Done — approved 2026-10-02 |
 | 4. Evacuation guidance: safe point, route, time | Done — approved 2026-10-04 |
 | 5. Profiles + accessibility                     | Done — approved 2026-10-05 |
-| 6. Security, tests, Lighthouse                  | Not started                |
+| 6. Security, tests, Lighthouse                  | Done — awaiting approval   |
 | 7. Docs, screenshots, demo script               | Not started                |
 
 ---
@@ -104,7 +104,7 @@ explicit owner approval before the next one starts.
 **Acceptance criteria**
 
 - [x] Offline after the first visit, the sector map renders fully (Playwright: offline reload,
-      map `ready`, zero failed requests). Manual phone test in airplane mode: pending (owner).
+      map `ready`, zero failed requests). Manual phone test in airplane mode: done by the owner (2026-10-07).
 - [x] Switching hazard changes guidance and layer visibility; each layer shows its badge in the
       legend (tsunami and earthquake both use the tsunami layers by design).
 - [x] App shell JS 104 KB gzip (MapLibre chunk 279 KB gzip, lazy). Offline precache ≈ 3.5 MB
@@ -346,10 +346,27 @@ explicit owner approval before the next one starts.
 
 **Acceptance criteria**
 
-- [ ] Lighthouse Accessibility ≥ 90 and Best Practices ≥ 90 (mobile).
-- [ ] Installability verified (DevTools Application panel / Playwright SW + manifest checks).
-- [ ] All security headers present on the deployed URL.
-- [ ] `domain/` coverage ≥ 80%.
+- [x] Lighthouse Accessibility ≥ 90 and Best Practices ≥ 90 (mobile). Lighthouse 12.8.2, mobile,
+      2026-10-07, production build with the real headers: welcome screen A11y 100 / BP 100 /
+      SEO 100 (with robots.txt) / Perf 83; map screen (adult and older-adult profiles) A11y 100 /
+      BP 100 / Perf 69. Perf on the map is dominated by WebGL drawn in software (headless
+      Chromium has no GPU, plus 4× CPU throttling): 6.1 s of "Other" work vs 1.3 s of MapLibre
+      script; a real phone draws with its GPU. Not gated in CI for that reason.
+- [x] Installability verified: `e2e/install.spec.ts` asks Chrome (`Page.getInstallabilityErrors`,
+      what DevTools' Application panel uses) and gets no errors; manifest name, standalone,
+      start URL, 192/512 and maskable icons checked. Owner installed it on an iPhone (phase 3).
+- [x] All security headers present on the deployed URL: `npm run check:headers` compares
+      https://evacua-phi.vercel.app with vercel.json (8/8 match).
+- [x] `domain/` coverage ≥ 80%: 99 % statements, 80 % branches, 100 % functions, 100 % lines;
+      CI now fails below 95 / 80 / 95 / 95 (vite.config.ts thresholds).
+
+**Found and fixed in this phase**
+
+- zod 4 probed `new Function` while creating schemas; the CSP blocked it (correct), but the
+  attempt was reported as a CSP violation (Lighthouse "Issues": Best Practices 96). Fixed with
+  `z.config({ jitless: true })` loaded before any schema (`src/zodConfig.ts`); the e2e CSP
+  test now listens to `securitypolicyviolation` events, so a blocked attempt fails it too.
+- `npm audit`: 0 vulnerabilities (CI already runs `npm audit --audit-level=high`).
 
 ## Phase 7 — Documentation, screenshots, demo script
 

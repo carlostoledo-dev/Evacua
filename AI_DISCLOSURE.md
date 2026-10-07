@@ -144,3 +144,7 @@ visibly labeled DEMO. See `DATA_SOURCES.md`.
   violet chip, made "Iniciar evacuación" vivid green and the danger red more intense, gave the
   child profile its map buttons back (a separate `mapButtons` profile setting; older adults
   keep none), and added a third, minimized sheet level (a slim bar) reached by swiping down.
+- Phase 6 (2026-10-07): AI ran npm audit, measured coverage and added domain tests plus CI
+  thresholds, wrote `npm run check:headers` and checked production headers, ran Lighthouse
+  (mobile) on the welcome and map screens, found and fixed zod's eval probe that the CSP
+  reported, hardened the CSP e2e test, added robots.txt and an installability e2e test.
