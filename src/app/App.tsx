@@ -3,7 +3,7 @@ import { DEFAULT_HAZARD, layersForHazard, type HazardId } from '../domain/hazard
 import { useI18n } from '../i18n/I18nContext.ts';
 import { ConnectionPill } from '../ui/components/ConnectionPill.tsx';
 import { Disclaimer } from '../ui/components/Disclaimer.tsx';
-import { TabBar, type View } from '../ui/components/TabBar.tsx';
+import { ChevronLeftIcon } from '../ui/components/icons.tsx';
 import { UpdatePrompt } from '../ui/components/UpdatePrompt.tsx';
 import { useCommuneData } from '../ui/hooks/useCommuneData.ts';
 import { useElementHeight } from '../ui/hooks/useElementHeight.ts';
@@ -19,6 +19,7 @@ import { DataScreen } from '../ui/screens/DataScreen.tsx';
 import { GuideScreen } from '../ui/screens/GuideScreen.tsx';
 import { MapScreen } from '../ui/screens/MapScreen.tsx';
 import { SettingsScreen } from '../ui/screens/SettingsScreen.tsx';
+import type { View } from '../ui/views.ts';
 
 const VIEW_TITLE_ID: Record<View, string> = {
   map: 'view-title-map',
@@ -37,12 +38,10 @@ export function App() {
   const [view, setView] = useState<View>('map');
   const profile = useUserProfile();
   const [tourRequested, setTourRequested] = useState(false);
-  // The app bar and the tab bar float over the content (translucent, as on iOS): screens keep
-  // their content clear of them with these heights.
+  // The app bar floats over the content (as on iOS); screens keep clear of it with its height.
   const [headerRef, headerHeight] = useElementHeight();
-  const [footerRef, footerHeight] = useElementHeight();
 
-  // After a tab change, move focus to the new screen's title so screen readers announce it.
+  // After a screen change, move focus to the new screen's title so screen readers announce it.
   const firstRenderRef = useRef(true);
   useEffect(() => {
     if (firstRenderRef.current) {
@@ -86,7 +85,6 @@ export function App() {
       style={
         {
           '--chrome-top': `${String(headerHeight)}px`,
-          '--chrome-bottom': `${String(footerHeight)}px`,
         } as CSSProperties
       }
     >
@@ -94,21 +92,30 @@ export function App() {
         {t('nav.skipToContent')}
       </a>
 
-      {/* One compact band: brand, offline status and the permanent notice under them. */}
-      <header className="app-bar" ref={headerRef}>
+      {/* Map: only the permanent notice and the offline status float over it (iOS Maps style).
+          Other screens: a way back to the map, the status, and the same notice. */}
+      <header className={view === 'map' ? 'app-bar app-bar--map' : 'app-bar'} ref={headerRef}>
         <div className="app-bar__row">
-          <div className="brand">
-            <img className="brand__logo" src="/logo.png" alt="" width="40" height="40" />
-            <p className="brand__name">{t('app.name')}</p>
-            {data && (
-              <p className="brand__place">{t('app.place', { commune: data.manifest.name })}</p>
-            )}
-          </div>
+          {view === 'map' ? (
+            <div className="app-bar__notice" data-tour="disclaimer">
+              <Disclaimer />
+            </div>
+          ) : (
+            <button
+              type="button"
+              className="back-button"
+              aria-label={t('nav.backToMap')}
+              onClick={() => {
+                setView('map');
+              }}
+            >
+              <ChevronLeftIcon className="icon" />
+              <span>{t('nav.map')}</span>
+            </button>
+          )}
           <ConnectionPill offline={serviceWorker.offline} online={online} />
         </div>
-        <div data-tour="disclaimer">
-          <Disclaimer />
-        </div>
+        {view !== 'map' && <Disclaimer />}
         {serviceWorker.updateAvailable && (
           <UpdatePrompt
             onApply={serviceWorker.applyUpdate}
@@ -132,7 +139,8 @@ export function App() {
           locationActions={location}
           plan={plan}
           profile={profile.config}
-          chrome={{ top: headerHeight, bottom: footerHeight }}
+          chrome={{ top: headerHeight, bottom: 0 }}
+          onNavigate={setView}
         />
         {view === 'guide' && (
           <GuideScreen
@@ -161,12 +169,6 @@ export function App() {
           />
         )}
       </main>
-
-      <footer className="app-footer" ref={footerRef}>
-        <div data-tour="tabs">
-          <TabBar value={view} onChange={setView} />
-        </div>
-      </footer>
 
       {showTour && (
         <Tour

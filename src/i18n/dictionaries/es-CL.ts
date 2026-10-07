@@ -13,6 +13,8 @@ export const esCL = {
   'nav.guide': 'Qué hacer',
   'nav.data': 'Datos',
   'nav.settings': 'Ajustes',
+  'nav.menu': 'Menú',
+  'nav.backToMap': 'Volver al mapa',
 
   'settings.title': 'Ajustes',
   'settings.status': 'Estado de la app',
@@ -64,6 +66,7 @@ export const esCL = {
   'map.showData': 'Ver detalles',
   'map.legend': 'Leyenda',
   'map.view3d': 'Vista 3D',
+  'map.view3dShort': '3D',
   'map.reliefNote': 'Relieve exagerado ×{factor} (aprox.)',
   'map.resetNorth': 'Apuntar al norte',
   'map.locate': 'Usar mi ubicación (GPS)',
@@ -214,7 +217,7 @@ export const esCL = {
     'Usa el GPS, toca el mapa o prueba con un punto DEMO. Te mostramos el camino más corto para salir del peligro.',
   'tour.tabs.title': 'Más información',
   'tour.tabs.body':
-    '«Qué hacer» tiene las indicaciones oficiales; «Datos», de dónde viene cada dato; «Ajustes», tu perfil e idioma.',
+    'Toca ≡ para abrir «Qué hacer» (las indicaciones oficiales), «Datos» (de dónde viene cada dato) y «Ajustes» (tu perfil e idioma).',
   'tour.disclaimer.title': 'Siempre sigue a las autoridades',
   'tour.disclaimer.body':
     'Evacua es una herramienta de apoyo. Si SENAPRED, el SHOA o la Municipalidad indican otra cosa, hazles caso a ellos.',
