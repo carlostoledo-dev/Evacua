@@ -368,6 +368,21 @@ explicit owner approval before the next one starts.
   test now listens to `securitypolicyviolation` events, so a blocked attempt fails it too.
 - `npm audit`: 0 vulnerabilities (CI already runs `npm audit --audit-level=high`).
 
+**Performance pass (owner request 2026-10-07, no visible change)**
+
+- The 1 MB walking graph now downloads in parallel with the layers (it was fetched after them).
+- The map code (MapLibre chunk) starts downloading when the app starts, in parallel with the
+  data, instead of after it.
+- The graph's ≈ 170 000 numbers are validated in one plain loop (same rules): 12–39 ms → 4–17 ms.
+- Routing (graph + safe-node index) is prepared in a quiet moment 1.5 s after the data arrives,
+  or at once if a position comes first: not during the first render.
+- Map screen, Lighthouse mobile, local production build: Speed Index 3.2 s → 2.3 s, Time to
+  Interactive 10.0 s → 7.8 s, Total Blocking Time 6.2 s → 5.3 s. What remains is MapLibre
+  drawing the tiles in software (no GPU, 4× CPU throttling); the glass blur was measured and
+  does not matter (2.96 s vs 3.0 s of long tasks with and without it).
+- Found on the way: the profile step of the onboarding overflowed a 360 × 640 screen by 9 px
+  (longer child description); the cards are a bit more compact on short screens (still 58 px).
+
 ## Phase 7 — Documentation, screenshots, demo script
 
 **Build**

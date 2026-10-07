@@ -148,3 +148,7 @@ visibly labeled DEMO. See `DATA_SOURCES.md`.
   thresholds, wrote `npm run check:headers` and checked production headers, ran Lighthouse
   (mobile) on the welcome and map screens, found and fixed zod's eval probe that the CSP
   reported, hardened the CSP e2e test, added robots.txt and an installability e2e test.
+- Performance pass (2026-10-07, owner request): AI profiled the map screen (Lighthouse, CPU
+  profile, frame counts, a with/without-blur comparison), then loaded the graph in parallel,
+  prefetched the map chunk, sped up the graph validation, deferred routing preparation to a
+  quiet moment, fixed an onboarding overflow on small screens and a load-sensitive e2e wait.
