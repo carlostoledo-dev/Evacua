@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { headingAlong, maneuvers, nextManeuver, streetLegs } from './navigation.ts';
+import {
+  headingAlong,
+  maneuvers,
+  nextManeuver,
+  pathMeters,
+  positionAlong,
+  streetLegs,
+} from './navigation.ts';
 
 // Around Coronel: 0.001° of latitude ≈ 111 m, of longitude ≈ 89 m.
 const LON = -73.15;
@@ -104,5 +111,47 @@ describe('streetLegs', () => {
     expect(legs.map((l) => l.street)).toEqual(['Freire', 'Lautaro', 'Cousiño']);
     expect(legs.map((l) => l.turn)).toEqual([null, 'right', 'left']);
     expect(legs[0]?.meters).toBeGreaterThan(115);
+  });
+});
+
+describe('route geometry helpers', () => {
+  const path: [number, number][] = [
+    [LON, LAT],
+    [LON, north(100)],
+    [east(89), north(100)],
+  ];
+
+  it('measures a route and finds a point along it', () => {
+    expect(pathMeters(path)).toBeGreaterThan(185);
+    expect(pathMeters(path)).toBeLessThan(195);
+    const halfway = positionAlong(path, 50);
+    expect(halfway[0]).toBeCloseTo(LON, 6);
+    expect(halfway[1]).toBeCloseTo(north(50), 5);
+    // Past the end: the end of the route.
+    expect(positionAlong(path, 10_000)).toEqual(path[2]);
+    expect(positionAlong([], 10)).toEqual([0, 0]);
+  });
+
+  it('a turn back on itself is a sharp turn', () => {
+    // North, then back south-east at a sharp angle.
+    const sharp: [number, number][] = [
+      [LON, LAT],
+      [LON, north(5)],
+      [LON, north(100)],
+      [east(30), north(40)],
+    ];
+    expect(nextManeuver(sharp, [null, 'Freire', 'Lautaro'])?.kind).toBe('sharp-right');
+  });
+
+  it('a short last leg joins the leg before it', () => {
+    const shortEnd: [number, number][] = [
+      [LON, LAT],
+      [LON, north(150)],
+      [east(15), north(150)],
+    ];
+    const legs = streetLegs(shortEnd, ['Freire', 'Pasaje']);
+    expect(legs).toHaveLength(1);
+    expect(legs[0]?.street).toBe('Freire');
+    expect(legs[0]?.meters).toBeGreaterThan(160);
   });
 });

@@ -75,6 +75,10 @@ export default defineConfig({
       provider: 'v8',
       include: ['src/**/*.{ts,tsx}'],
       exclude: ['src/**/*.test.{ts,tsx}', 'src/**/__fixtures__/**', 'src/main.tsx'],
+      // The safety logic (routing, geo, navigation) must stay well tested: CI fails below this.
+      thresholds: {
+        'src/domain/**': { statements: 95, branches: 80, functions: 95, lines: 95 },
+      },
     },
   },
 });
