@@ -413,20 +413,22 @@ export default function MapView({
       data-route={path && path.length > 1 ? 'shown' : 'none'}
     >
       <div ref={containerRef} className="map-canvas" />
-      {/* Map buttons as on iOS: layers and 3D at the top right (the compass under them while
-          the map is turned), "find me" at the bottom right above the sheet. Zoom is pinch,
-          scroll or keyboard. */}
+      {/* Map buttons in one column at the bottom right, above the sheet, so they never pile up
+          on a short screen: layers (not while navigating), 3D, the compass while the map is
+          turned, and "find me". Zoom is pinch, scroll or keyboard. */}
       <div className="map-buttons">
-        <button
-          type="button"
-          className="map-button"
-          aria-label={t('map.layers')}
-          title={t('map.layers')}
-          data-testid="layers-button"
-          onClick={onOpenLayers}
-        >
-          <LayersIcon className="icon" />
-        </button>
+        {!follow && (
+          <button
+            type="button"
+            className="map-button"
+            aria-label={t('map.layers')}
+            title={t('map.layers')}
+            data-testid="layers-button"
+            onClick={onOpenLayers}
+          >
+            <LayersIcon className="icon" />
+          </button>
+        )}
         <button
           type="button"
           className="map-button map-3d"
@@ -458,18 +460,18 @@ export default function MapView({
             </span>
           </button>
         )}
+        <button
+          type="button"
+          className="map-button map-locate"
+          aria-label={t('map.locate')}
+          title={t('map.locate')}
+          onClick={() => {
+            onLocateRef.current();
+          }}
+        >
+          <LocateIcon className="icon" />
+        </button>
       </div>
-      <button
-        type="button"
-        className="map-button map-locate"
-        aria-label={t('map.locate')}
-        title={t('map.locate')}
-        onClick={() => {
-          onLocateRef.current();
-        }}
-      >
-        <LocateIcon className="icon" />
-      </button>
       <div className="map-chips">
         {demo && (
           <p className="map-chip map-chip--demo" data-testid="map-demo">

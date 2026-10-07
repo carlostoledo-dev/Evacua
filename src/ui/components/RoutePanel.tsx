@@ -377,27 +377,31 @@ export function RoutePanel({
             </p>
           ) : route ? (
             <div className="nav-card">
-              <span className="nav-card__icon">
-                <WalkIcon className="icon" />
-              </span>
               <p className="nav-card__left">
+                <WalkIcon className="icon nav-card__icon" />
                 <strong>{formatDistance(route.meters, locale)}</strong>
                 {routeTime && <span>{routeTime}</span>}
               </p>
-              {speech.supported && (
+              <div className="nav-card__actions">
+                {speech.supported && (
+                  <button
+                    type="button"
+                    className="nav-card__voice"
+                    aria-pressed={navigation.voice}
+                    aria-label={t('nav.voice')}
+                    onClick={navigation.toggleVoice}
+                  >
+                    <SpeakerIcon className="icon" />
+                  </button>
+                )}
                 <button
                   type="button"
-                  className="nav-card__voice"
-                  aria-pressed={navigation.voice}
-                  aria-label={t('nav.voice')}
-                  onClick={navigation.toggleVoice}
+                  className="button button--outline nav-card__leave"
+                  onClick={navigation.stop}
                 >
-                  <SpeakerIcon className="icon" />
+                  {t('nav.stop')}
                 </button>
-              )}
-              <button type="button" className="button button--outline" onClick={navigation.stop}>
-                {t('nav.stop')}
-              </button>
+              </div>
             </div>
           ) : (
             <p role="status">{t('nav.waiting')}</p>
