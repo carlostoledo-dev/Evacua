@@ -27,8 +27,9 @@ test('draws the offline map with credits, legend and badges, without CSP errors'
   await expect(map.getByText('© OpenStreetMap contributors')).toBeVisible();
   await expect(map).toContainText('SENAPRED');
 
+  // The layers sheet is also the legend: shapes, names and the source of every layer.
+  await page.getByTestId('layers-button').click();
   const legend = page.getByTestId('map-legend');
-  await legend.locator('summary').click();
   await expect(legend.getByRole('listitem')).toHaveCount(4);
   await expect(legend).toContainText('Puntos de encuentro');
   await expect(legend.getByText('Fuente oficial verificada')).toHaveCount(4);
@@ -45,7 +46,7 @@ test('the map has only its essential buttons, each at least 48 px', async ({ pag
   for (const control of [
     page.getByRole('button', { name: 'Usar mi ubicación (GPS)' }),
     page.getByRole('button', { name: 'Vista 3D' }),
-    page.getByTestId('map-legend').locator('summary'),
+    page.getByRole('button', { name: 'Capas' }),
   ]) {
     const box = await control.boundingBox();
     expect(box?.width ?? 0).toBeGreaterThanOrEqual(48);
@@ -60,8 +61,16 @@ test('tsunami only: no hazard to choose, official tsunami guidance and layers', 
   await waitForMap(page);
   // Owner decision 2026-10-04: a single hazard, so no selector anywhere.
   await expect(page.getByRole('radio', { name: /Tsunami|Terremoto|Incendio/ })).toHaveCount(0);
-  await page.getByTestId('map-legend').locator('summary').click();
+  await page.getByTestId('layers-button').click();
   await expect(page.getByTestId('map-legend').getByRole('listitem')).toHaveCount(4);
+  // Each layer can be switched off and on again (design screen 6).
+  const points = page.getByRole('switch', { name: /Puntos de encuentro/ });
+  await expect(points).toBeChecked();
+  await points.click();
+  await expect(points).not.toBeChecked();
+  await points.click();
+  await page.keyboard.press('Escape');
+  await expect(page.getByTestId('layers-sheet')).toBeHidden();
 
   await openTab(page, 'Qué hacer');
   const guidance = page.getByTestId('guidance');

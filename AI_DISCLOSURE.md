@@ -121,3 +121,13 @@ visibly labeled DEMO. See `DATA_SOURCES.md`.
   at the bottom right, turned the route sheet into a floating "find my route + ≡" bar whose ≡
   opens "Qué hacer", "Datos" and "Ajustes", added "‹ Mapa" to those screens, kept ≡ available
   when the sector data fails to load, and updated the tour and tests.
+- Redesign from the owner's 8-screen mockup (2026-10-06): AI rebuilt the map screen after it:
+  red "evacuation area" card, support notice card, round map buttons, route drawn with a casing
+  and direction chevrons and the destination code in a green pill, a summary sheet with one
+  "Iniciar evacuación" button and pull-up details ("Cómo llegar" by street, official SENAPRED
+  guidance), a blue turn card and a progress sheet while navigating, a full-screen green arrival
+  screen, and iOS-style sheets for layers (switches, relief, 2D/3D) and the quick menu, with
+  gentle motion that stops under reduced motion. Deviations from the mockup, for safety rules:
+  "Punto de encuentro" (SENAPRED's term) instead of "punto seguro"; the official SENAPRED
+  guidance instead of the mockup's unsourced recommendations; the permanent notice stays on
+  every screen; no satellite imagery (no offline source with a compatible license).

@@ -31,7 +31,6 @@ describe('buildStyle', () => {
     palette: LIGHT_PALETTE,
     origin: 'https://evacua.test',
     youLabel: 'Tú',
-    goHereLabel: 'Ve aquí',
   });
 
   it('only references same-origin tiles and glyphs', () => {
@@ -55,7 +54,6 @@ describe('buildStyle', () => {
       palette: LIGHT_PALETTE,
       origin: 'https://evacua.test',
       youLabel: 'Tú',
-      goHereLabel: 'Ve aquí',
       tileBounds: parsedManifest.bounds,
     });
     expect(bounded.sources.basemap).toMatchObject({ bounds: [...parsedManifest.bounds] });
@@ -80,7 +78,6 @@ describe('buildStyle', () => {
       palette: LIGHT_PALETTE,
       origin: 'https://evacua.test',
       youLabel: 'Tú',
-      goHereLabel: 'Ve aquí',
       tileBounds: parsedManifest.bounds,
       terrain,
     });
@@ -128,7 +125,6 @@ describe('buildStyle', () => {
       palette: DARK_PALETTE,
       origin: 'https://evacua.test',
       youLabel: 'Tú',
-      goHereLabel: 'Ve aquí',
     });
     const hatch = areaStyle.layers.find((l) => l.id.endsWith('-hatch'));
     expect(hatch?.paint).toMatchObject({ 'fill-pattern': HATCH_IMAGE_ID });

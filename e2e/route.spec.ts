@@ -7,6 +7,12 @@ function panel(page: Page) {
   return page.getByTestId('route-panel');
 }
 
+/** Pulls the route sheet up to its details (how to get there, listen, change location). */
+async function expand(page: Page) {
+  const toggle = panel(page).getByRole('button', { name: 'Mostrar u ocultar las opciones' });
+  if ((await toggle.getAttribute('aria-expanded')) !== 'true') await toggle.click();
+}
+
 async function simulate(page: Page, demoId: string) {
   await panel(page)
     .getByRole('combobox', { name: /Simular ubicación/ })
@@ -22,7 +28,15 @@ test('a DEMO location shows a labeled route: out of danger first, then a meeting
 
   await expect(page.getByTestId('map')).toHaveAttribute('data-route', 'shown');
   await expect(page.getByTestId('map-demo')).toHaveText('DEMO');
+  // The design's first screen: danger on top, the nearest meeting point and one big button.
+  await expect(page.getByTestId('danger-card')).toContainText('Estás en zona de evacuación');
+  await expect(panel(page).getByTestId('plan-summary')).toContainText(
+    /Punto de encuentro más cercano\s*PE0\d\d\s*[\d,]+ k?m · \d+–\d+ min/,
+  );
+  await expect(panel(page).getByRole('button', { name: 'Iniciar evacuación' })).toBeVisible();
+  await expand(page);
   await expect(panel(page)).toContainText('DEMO');
+  await expect(panel(page).getByRole('heading', { name: 'Cómo llegar' })).toBeVisible();
   await expect(panel(page)).toContainText('Simulada: Calle Yobilo');
   const plan = panel(page).getByTestId('plan');
   await expect(plan).toContainText('Estás dentro del área a evacuar por tsunami.');
@@ -67,6 +81,7 @@ test('the new pilot sectors get a route too: Lagunillas and Coronel Centro', asy
     await expect(plan).toContainText('Estás dentro del área a evacuar por tsunami.');
     await expect(plan).toContainText(/Punto de encuentro PE0\d\d/);
     await expect(page.getByTestId('map')).toHaveAttribute('data-route', 'shown');
+    await expand(page);
     await panel(page).getByRole('button', { name: 'Cambiar ubicación' }).click();
   }
 });
@@ -131,7 +146,7 @@ test('a position can be picked on the map when there is no GPS', async ({ page }
   await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
 
   await expect(panel(page)).toContainText('Ubicación elegida en el mapa');
-  await expect(panel(page).getByTestId('plan')).toBeVisible();
+  await expect(panel(page).getByTestId('plan-summary')).toBeVisible();
   await expect(page.getByTestId('map-demo')).toHaveCount(0);
 });
 
@@ -139,7 +154,7 @@ test('the location is never stored on the device', async ({ page }) => {
   await page.goto('/');
   await waitForMap(page);
   await simulate(page, 'yobilo-villa-mora');
-  await expect(panel(page).getByTestId('plan')).toBeVisible();
+  await expect(panel(page).getByTestId('plan-summary')).toBeVisible();
   const stored = await page.evaluate(() => JSON.stringify(Object.entries(localStorage)));
   expect(stored).not.toMatch(/-73\.15|-37\.01|yobilo/i);
   await openTab(page, 'Ajustes');
@@ -149,23 +164,20 @@ test('the location is never stored on the device', async ({ page }) => {
   await expect(panel(page).getByRole('button', { name: /Buscar mi ruta/ })).toBeVisible();
 });
 
-test.describe('with GPS, from a folded sheet', () => {
-  test.use({ geolocation: YOBILO, permissions: ['geolocation'] });
-
-  test('the sheet folds to show more map and unfolds for a new plan', async ({ page }) => {
-    await page.goto('/');
-    await waitForMap(page);
-    await simulate(page, 'lagunillas');
-    const toggle = panel(page).getByRole('button', { name: 'Mostrar u ocultar las opciones' });
-    await expect(toggle).toHaveAttribute('aria-expanded', 'true');
-    await toggle.click();
-    await expect(toggle).toHaveAttribute('aria-expanded', 'false');
-    await expect(panel(page).getByTestId('plan')).toBeHidden();
-    // The map's own "find me" button: the new (GPS) plan unfolds the sheet.
-    await page.getByTestId('map').getByRole('button', { name: 'Usar mi ubicación (GPS)' }).click();
-    await expect(toggle).toHaveAttribute('aria-expanded', 'true');
-    await expect(panel(page).getByTestId('plan')).toContainText('Estás dentro del área a evacuar');
-  });
+test('the sheet shows a summary first and pulls up for the details', async ({ page }) => {
+  await page.goto('/');
+  await waitForMap(page);
+  await simulate(page, 'lagunillas');
+  const toggle = panel(page).getByRole('button', { name: 'Mostrar u ocultar las opciones' });
+  await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+  await expect(panel(page).getByTestId('plan')).toBeHidden();
+  // The red card on top opens the details too.
+  await page.getByTestId('danger-card').click();
+  await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+  await expect(panel(page).getByTestId('plan')).toContainText('Sal del área de peligro');
+  await expect(panel(page).getByTestId('guidance-brief')).toBeVisible();
+  await toggle.click();
+  await expect(panel(page).getByTestId('plan')).toBeHidden();
 });
 
 test('navigation: a DEMO walk gives turn-by-turn directions and arrives', async ({ page }) => {
@@ -173,14 +185,18 @@ test('navigation: a DEMO walk gives turn-by-turn directions and arrives', async 
   await page.goto('/');
   await waitForMap(page);
   await simulate(page, 'nuevo-horizonte');
-  await panel(page).getByRole('button', { name: 'Navegar' }).click();
+  await panel(page).getByRole('button', { name: 'Iniciar evacuación' }).click();
   await expect(page.getByTestId('nav-banner')).toBeVisible();
   const navPanel = panel(page).getByTestId('nav-panel');
   await expect(navPanel).toContainText('Recorrido simulado, 10 veces más rápido');
-  await expect(navPanel).toContainText('Llegaste al punto de encuentro PE0', { timeout: 30_000 });
+  await expect(navPanel.getByRole('progressbar', { name: 'Avance de la ruta' })).toBeVisible();
+  // Arriving fills the screen (design screen 4), then "Terminar" goes back to the map.
+  const arrived = page.getByTestId('arrived');
+  await expect(arrived).toContainText('Llegaste al punto de encuentro PE0', { timeout: 30_000 });
   await expect(page.getByTestId('nav-banner')).toHaveCount(0);
-  await navPanel.getByRole('button', { name: 'Terminar' }).click();
+  await arrived.getByRole('button', { name: 'Terminar' }).click();
   await expect(panel(page).getByTestId('nav-panel')).toHaveCount(0);
+  await expect(arrived).toHaveCount(0);
   // Location is still never stored while navigating.
   expect(await page.evaluate(() => JSON.stringify(localStorage))).not.toContain('-37.0');
 });

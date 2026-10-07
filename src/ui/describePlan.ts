@@ -45,6 +45,23 @@ function tidy(sentence: string): string {
   return sentence.replace(/\s+([.,])/g, '$1').trim();
 }
 
+/** "30–60 min" or "unos 20 min", as the profile shows times; null when it hides them. */
+export function formatShortTime(
+  range: TimeRange,
+  profile: Pick<ProfileConfig, 'time'>,
+  t: Translate,
+): string | null {
+  if (profile.time === 'range') {
+    // "1–1 min" reads oddly: one number when both ends match.
+    if (range.fastestMinutes === range.slowestMinutes) {
+      return t('route.time.single', { minutes: range.fastestMinutes });
+    }
+    return t('route.time.rangeShort', { fast: range.fastestMinutes, slow: range.slowestMinutes });
+  }
+  if (profile.time === 'slow') return t('route.time.slowShort', { slow: range.slowestMinutes });
+  return null;
+}
+
 export function describePlan(
   plan: EvacuationPlan,
   options: {
@@ -64,13 +81,7 @@ export function describePlan(
     if (profile.time === 'slow') return t('route.time.slow', { slow: range.slowestMinutes });
     return '';
   };
-  const shortTime = (range: TimeRange) => {
-    if (profile.time === 'range') {
-      return t('route.time.rangeShort', { fast: range.fastestMinutes, slow: range.slowestMinutes });
-    }
-    if (profile.time === 'slow') return t('route.time.slowShort', { slow: range.slowestMinutes });
-    return null;
-  };
+  const shortTime = (range: TimeRange) => formatShortTime(range, profile, t);
   const base = { intro: null, steps: [], items: [], notes: [], straightLine: false };
 
   if (plan.kind === 'outside-service-area') {

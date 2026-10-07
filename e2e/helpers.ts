@@ -22,8 +22,9 @@ export async function openTab(page: Page, name: 'Mapa' | 'Qué hacer' | 'Datos' 
   const back = page.getByRole('button', { name: 'Volver al mapa' });
   if (await back.isVisible()) await back.click();
   if (name === 'Mapa') return;
-  const menu = page.getByRole('button', { name: 'Menú' });
-  if ((await menu.getAttribute('aria-expanded')) !== 'true') await menu.click();
+  if (!(await page.getByTestId('menu-sheet').isVisible())) {
+    await page.getByRole('button', { name: 'Menú' }).click();
+  }
   await page
     .getByRole('navigation', { name: 'Navegación principal' })
     .getByRole('button', { name })

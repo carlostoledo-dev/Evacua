@@ -81,3 +81,72 @@ export function navigationArrowIcon(
   ctx.fill();
   return { image: ctx.getImageData(0, 0, px, px), pixelRatio: PIXEL_RATIO };
 }
+
+/** Logical size (CSS px) of the direction chevron repeated along the user's route. */
+const CHEVRON_SIZE = 14;
+
+/**
+ * Direction chevron drawn along the route line ("this way"), pointing right; MapLibre turns it
+ * along the line. Null when the browser cannot draw on a canvas.
+ */
+export function routeChevronIcon(color: string): { image: ImageData; pixelRatio: number } | null {
+  const px = CHEVRON_SIZE * PIXEL_RATIO;
+  const canvas = document.createElement('canvas');
+  canvas.width = px;
+  canvas.height = px;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return null;
+  ctx.scale(PIXEL_RATIO, PIXEL_RATIO);
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 2.4;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.beginPath();
+  ctx.moveTo(5, 3.5);
+  ctx.lineTo(9, 7);
+  ctx.lineTo(5, 10.5);
+  ctx.stroke();
+  return { image: ctx.getImageData(0, 0, px, px), pixelRatio: PIXEL_RATIO };
+}
+
+/** Corner radius (CSS px) of the stretchable label pill. */
+const PILL_RADIUS = 9;
+
+/**
+ * A rounded pill that MapLibre stretches around a label (icon-text-fit), with a light ring:
+ * the destination's code, white on the meeting point green. Returns the stretch metadata too.
+ */
+export function labelPillIcon(
+  fill: string,
+  ring: string,
+): {
+  image: ImageData;
+  pixelRatio: number;
+  stretchX: [[number, number]];
+  stretchY: [[number, number]];
+  content: [number, number, number, number];
+} | null {
+  const size = PILL_RADIUS * 2 + 4;
+  const px = size * PIXEL_RATIO;
+  const canvas = document.createElement('canvas');
+  canvas.width = px;
+  canvas.height = px;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return null;
+  ctx.scale(PIXEL_RATIO, PIXEL_RATIO);
+  ctx.beginPath();
+  ctx.roundRect(1, 1, size - 2, size - 2, PILL_RADIUS);
+  ctx.fillStyle = fill;
+  ctx.fill();
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = ring;
+  ctx.stroke();
+  const r = PILL_RADIUS * PIXEL_RATIO;
+  return {
+    image: ctx.getImageData(0, 0, px, px),
+    pixelRatio: PIXEL_RATIO,
+    stretchX: [[r, px - r]],
+    stretchY: [[r, px - r]],
+    content: [r, r, px - r, px - r],
+  };
+}

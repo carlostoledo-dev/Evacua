@@ -10,7 +10,7 @@ import {
 import 'maplibre-gl/dist/maplibre-gl.css';
 // Bundled worker served from our own origin: no blob: workers, so the strict CSP holds.
 import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { CommuneData } from '../../data/loader.ts';
 import {
   MAP_3D_ZOOM,
@@ -19,20 +19,27 @@ import {
 } from '../../domain/constants.ts';
 import { layersForHazard, type HazardId } from '../../domain/hazards.ts';
 import { useI18n } from '../../i18n/I18nContext.ts';
-import { CompassIcon, LocateIcon } from '../components/icons.tsx';
+import { CompassIcon, LayersIcon, LocateIcon } from '../components/icons.tsx';
 import type { Theme } from '../theme.ts';
 import { diagonalHatch } from './hatch.ts';
-import { meetingPointIcon, navigationArrowIcon } from './meetingPointIcon.ts';
+import {
+  labelPillIcon,
+  meetingPointIcon,
+  navigationArrowIcon,
+  routeChevronIcon,
+} from './meetingPointIcon.ts';
 import {
   buildStyle,
   DARK_PALETTE,
   DESTINATION_SOURCE,
   HATCH_IMAGE_ID,
   HILLSHADE_LAYER_ID,
+  LABEL_PILL_ICON_ID,
   LIGHT_PALETTE,
   MEETING_POINT_ICON_ID,
   NAV_ARROW_ICON_ID,
   overlayLayerIds,
+  ROUTE_CHEVRON_ICON_ID,
   TERRAIN_SOURCE,
   USER_POSITION_SOURCE,
   USER_ROUTE_SOURCE,
@@ -50,6 +57,17 @@ export interface UserOverlay {
   destination: [number, number] | null;
   /** While navigating: direction to walk now, in degrees from north. */
   heading: number | null;
+  /** Shown in the green pill under the destination (its meeting point code). */
+  destinationLabel: string | null;
+}
+
+/** Camera moves glide (as on iOS) unless the system asks for reduced motion. */
+function motionMs(ms: number): number {
+  try {
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : ms;
+  } catch {
+    return 0;
+  }
 }
 
 /** Pads [w, s, e, n] by a fraction of its size, so the edges stay reachable when panning. */
@@ -64,7 +82,7 @@ function padBounds([w, s, e, n]: readonly number[], ratio: number): LngLatBounds
 
 function pointCollection(
   point: [number, number] | null,
-  properties: Record<string, number> = {},
+  properties: Record<string, number | string> = {},
 ): GeoJSON.FeatureCollection {
   return {
     type: 'FeatureCollection',
@@ -100,8 +118,15 @@ interface MapViewProps {
   onLocate: () => void;
   /** Navigation: keep the camera on the user instead of framing the whole route. */
   follow: boolean;
-  /** The legend button, first in the map's button capsule. */
-  legend?: ReactNode;
+  /** 3D view (tilted camera over the exaggerated relief), switched from the layers sheet too. */
+  threeD: boolean;
+  onThreeDChange: (on: boolean) => void;
+  /** Official layers the user switched off in the layers sheet. */
+  hiddenLayers: ReadonlySet<string>;
+  /** Hill shading on the flat map too (always on in 3D). */
+  relief: boolean;
+  /** Opens the layers sheet. */
+  onOpenLayers: () => void;
 }
 
 /** Highest device pixel ratio we render at: 3× screens cost ~2× the GPU work for little gain. */
@@ -127,7 +152,11 @@ export default function MapView({
   insets,
   onLocate,
   follow,
-  legend,
+  threeD,
+  onThreeDChange,
+  hiddenLayers,
+  relief,
+  onOpenLayers,
 }: MapViewProps) {
   const { t } = useI18n();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -139,8 +168,6 @@ export default function MapView({
   const pickingRef = useRef(picking);
   const onPickRef = useRef(onPick);
   const onLocateRef = useRef(onLocate);
-  // 3D view: tilted camera and extruded buildings. Kept across map rebuilds (theme, language).
-  const [threeD, setThreeD] = useState(false);
   // Whole degrees the map is turned from north (3D view only); shows the compass when not 0.
   const [bearing, setBearing] = useState(0);
   useEffect(() => {
@@ -165,7 +192,6 @@ export default function MapView({
           palette,
           origin: window.location.origin,
           youLabel: t('route.you'),
-          goHereLabel: t('route.goHere'),
           tileBounds: manifest.bounds,
           terrain: manifest.terrain,
         }),
@@ -211,6 +237,18 @@ export default function MapView({
         const icon = navigationArrowIcon(palette.userRoute, palette.userRouteCasing);
         if (icon) map.addImage(id, icon.image, { pixelRatio: icon.pixelRatio });
       }
+      if (id === ROUTE_CHEVRON_ICON_ID && !map.hasImage(id)) {
+        const icon = routeChevronIcon(palette.userRouteCasing);
+        if (icon) map.addImage(id, icon.image, { pixelRatio: icon.pixelRatio });
+      }
+      if (id === LABEL_PILL_ICON_ID && !map.hasImage(id)) {
+        // Dark green in both themes: white text on it stays above 4.5:1.
+        const pill = labelPillIcon('#0b6e3a', '#ffffff');
+        if (pill) {
+          const { image, ...options } = pill;
+          map.addImage(id, image, options);
+        }
+      }
       if (id === MEETING_POINT_ICON_ID && !map.hasImage(id)) {
         const icon = meetingPointIcon(palette.meetingPoint, palette.meetingPointStroke);
         if (icon) map.addImage(id, icon.image, { pixelRatio: icon.pixelRatio });
@@ -238,7 +276,7 @@ export default function MapView({
     // eslint-disable-next-line react-hooks/exhaustive-deps, @eslint-react/exhaustive-deps
   }, [commune, t, theme]);
 
-  // Show only the layers relevant to the selected hazard.
+  // Show only the layers relevant to the selected hazard, minus those switched off by the user.
   useEffect(() => {
     const map = mapRef.current;
     if (!map || mapVersion === 0) return;
@@ -251,11 +289,19 @@ export default function MapView({
     for (const layer of commune.layers) {
       for (const id of overlayLayerIds(layer)) {
         if (map.getLayer(id)) {
-          map.setLayoutProperty(id, 'visibility', visible.has(layer.entry.id) ? 'visible' : 'none');
+          const shown = visible.has(layer.entry.id) && !hiddenLayers.has(layer.entry.id);
+          map.setLayoutProperty(id, 'visibility', shown ? 'visible' : 'none');
         }
       }
     }
-  }, [hazard, commune, mapVersion]);
+  }, [hazard, commune, mapVersion, hiddenLayers]);
+
+  // Hill shading: with the 3D relief, or on the flat map when "Relieve" is on.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || mapVersion === 0 || !map.getLayer(HILLSHADE_LAYER_ID)) return;
+    map.setLayoutProperty(HILLSHADE_LAYER_ID, 'visibility', threeD || relief ? 'visible' : 'none');
+  }, [threeD, relief, mapVersion]);
 
   // Read by the 3D toggle without re-running it on every position update.
   const viewRef = useRef({ position: overlay.position, insets, threeD });
@@ -268,9 +314,6 @@ export default function MapView({
   useEffect(() => {
     const map = mapRef.current;
     if (!map || mapVersion === 0) return;
-    if (map.getLayer(HILLSHADE_LAYER_ID)) {
-      map.setLayoutProperty(HILLSHADE_LAYER_ID, 'visibility', threeD ? 'visible' : 'none');
-    }
     if (map.getSource(TERRAIN_SOURCE)) {
       map.setTerrain(
         threeD ? { source: TERRAIN_SOURCE, exaggeration: MAP_3D_TERRAIN_EXAGGERATION } : null,
@@ -284,22 +327,23 @@ export default function MapView({
       map.dragRotate.disable();
       map.touchZoomRotate.disableRotation();
       map.keyboard.disableRotation();
-      map.jumpTo({ pitch: 0, bearing: 0 });
+      map.easeTo({ pitch: 0, bearing: 0, duration: motionMs(600) });
       return;
     }
     const { position, insets: clear } = viewRef.current;
-    map.jumpTo({
+    map.easeTo({
       center: position ?? map.getCenter(),
       zoom: Math.min(Math.max(map.getZoom(), MAP_3D_ZOOM.min), MAP_3D_ZOOM.max),
       pitch: MAP_3D_PITCH_DEG,
+      // That point sits in the middle of the part the panels leave clear (a camera offset,
+      // not map padding, so later route framing is unaffected).
+      offset: position ? [0, (clear.top - clear.bottom) / 2] : [0, 0],
+      duration: motionMs(700),
     });
-    // Lift that point from the screen's middle to the middle of the part the panels leave
-    // clear (a camera offset, not map padding, so later route framing is unaffected).
-    if (position) map.panBy([0, (clear.bottom - clear.top) / 2], { duration: 0 });
   }, [threeD, mapVersion]);
 
-  // Draw the user's position, route and destination; frame them without animation (battery).
-  const { position, path, destination, heading } = overlay;
+  // Draw the user's position, route and destination, and glide the camera to frame them.
+  const { position, path, destination, heading, destinationLabel } = overlay;
   useEffect(() => {
     const map = mapRef.current;
     if (!map || mapVersion === 0) return;
@@ -307,17 +351,20 @@ export default function MapView({
     void map
       .getSource<GeoJSONSource>(USER_POSITION_SOURCE)
       ?.setData(pointCollection(position, heading === null ? {} : { bearing: heading }));
-    void map.getSource<GeoJSONSource>(DESTINATION_SOURCE)?.setData(pointCollection(destination));
-    // Navigating: follow the walker at street level, without animation (battery). Flat map:
+    void map
+      .getSource<GeoJSONSource>(DESTINATION_SOURCE)
+      ?.setData(pointCollection(destination, { label: destinationLabel ?? '' }));
+    // Navigating: follow the walker at street level, gliding between positions. Flat map:
     // north up. 3D view: the map turns with the walker, like a car navigator.
     if (follow && position) {
       const courseUp = viewRef.current.threeD && heading !== null;
       // Padding keeps the walker in the visible part of the map, above the route sheet.
-      map.jumpTo({
+      map.easeTo({
         center: position,
         zoom: Math.max(map.getZoom(), 17),
         padding: { top: insets.top, bottom: insets.bottom, left: 0, right: 0 },
         ...(courseUp ? { bearing: heading } : {}),
+        duration: motionMs(450),
       });
       return;
     }
@@ -325,7 +372,7 @@ export default function MapView({
     const first = points[0];
     if (!first) return;
     if (points.length === 1) {
-      map.jumpTo({ center: first, zoom: Math.max(map.getZoom(), 15) });
+      map.easeTo({ center: first, zoom: Math.max(map.getZoom(), 15), duration: motionMs(600) });
     } else {
       const bounds = points.reduce((b, p) => b.extend(p), new LngLatBounds(first, first));
       // Keep the route clear of the floating panels, the controls, the DEMO label and the
@@ -340,11 +387,21 @@ export default function MapView({
           bottom: insets.bottom + Math.min(40, room * 0.1),
           left: Math.min(56, width * 0.12),
         },
-        animate: false,
+        duration: motionMs(700),
         maxZoom: 17,
       });
     }
-  }, [position, path, destination, heading, follow, mapVersion, insets.top, insets.bottom]);
+  }, [
+    position,
+    path,
+    destination,
+    destinationLabel,
+    heading,
+    follow,
+    mapVersion,
+    insets.top,
+    insets.bottom,
+  ]);
 
   return (
     <div
@@ -356,18 +413,28 @@ export default function MapView({
       data-route={path && path.length > 1 ? 'shown' : 'none'}
     >
       <div ref={containerRef} className="map-canvas" />
-      {/* The map's only buttons, in one capsule above the sheet (iOS Maps style). Zoom is
-          pinch / scroll / keyboard; the compass shows only while the map is turned. */}
-      <div className="map-controls">
-        {legend}
+      {/* Map buttons as on iOS: layers and 3D at the top right (the compass under them while
+          the map is turned), "find me" at the bottom right above the sheet. Zoom is pinch,
+          scroll or keyboard. */}
+      <div className="map-buttons">
         <button
           type="button"
-          className="map-control map-3d"
+          className="map-button"
+          aria-label={t('map.layers')}
+          title={t('map.layers')}
+          data-testid="layers-button"
+          onClick={onOpenLayers}
+        >
+          <LayersIcon className="icon" />
+        </button>
+        <button
+          type="button"
+          className="map-button map-3d"
           aria-pressed={threeD}
           aria-label={t('map.view3d')}
           title={t('map.view3d')}
           onClick={() => {
-            setThreeD((on) => !on);
+            onThreeDChange(!threeD);
           }}
         >
           {t('map.view3dShort')}
@@ -375,11 +442,11 @@ export default function MapView({
         {bearing !== 0 && (
           <button
             type="button"
-            className="map-control map-compass"
+            className="map-button map-compass"
             aria-label={t('map.resetNorth')}
             title={t('map.resetNorth')}
             onClick={() => {
-              mapRef.current?.jumpTo({ bearing: 0 });
+              mapRef.current?.easeTo({ bearing: 0, duration: motionMs(400) });
             }}
           >
             {/* The needle keeps pointing north while the map turns. */}
@@ -391,18 +458,18 @@ export default function MapView({
             </span>
           </button>
         )}
-        <button
-          type="button"
-          className="map-control map-locate"
-          aria-label={t('map.locate')}
-          title={t('map.locate')}
-          onClick={() => {
-            onLocateRef.current();
-          }}
-        >
-          <LocateIcon className="icon" />
-        </button>
       </div>
+      <button
+        type="button"
+        className="map-button map-locate"
+        aria-label={t('map.locate')}
+        title={t('map.locate')}
+        onClick={() => {
+          onLocateRef.current();
+        }}
+      >
+        <LocateIcon className="icon" />
+      </button>
       <div className="map-chips">
         {demo && (
           <p className="map-chip map-chip--demo" data-testid="map-demo">
