@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { headingAlong, nextManeuver } from './navigation.ts';
+import { headingAlong, maneuvers, nextManeuver, streetLegs } from './navigation.ts';
 
 // Around Coronel: 0.001° of latitude ≈ 111 m, of longitude ≈ 89 m.
 const LON = -73.15;
@@ -64,5 +64,45 @@ describe('headingAlong', () => {
     ]);
     expect(heading).toBeGreaterThan(85);
     expect(heading).toBeLessThan(95);
+  });
+});
+
+describe('maneuvers', () => {
+  it('lists every turn in order, then the arrival on the last street', () => {
+    // North on Freire, right onto Lautaro, left onto Cousiño, then the destination.
+    const path: [number, number][] = [
+      [LON, LAT],
+      [LON, north(5)],
+      [LON, north(100)],
+      [east(80), north(100)],
+      [east(80), north(200)],
+    ];
+    const list = maneuvers(path, [null, 'Freire', 'Lautaro', 'Cousiño']);
+    expect(list.map((m) => m.kind)).toEqual(['right', 'left', 'arrive']);
+    expect(list.map((m) => m.street)).toEqual(['Lautaro', 'Cousiño', 'Cousiño']);
+    expect(list[1]?.meters).toBeGreaterThan(175);
+    expect(list[2]?.meters).toBeGreaterThan(list[1]?.meters ?? Infinity);
+  });
+
+  it('is empty without a path to walk', () => {
+    expect(maneuvers([[LON, LAT]], [])).toEqual([]);
+  });
+});
+
+describe('streetLegs', () => {
+  it('gives one leg per street, with the turn onto it, ignoring bends and short connectors', () => {
+    const path: [number, number][] = [
+      [LON, LAT],
+      [LON, north(5)], // snap to the network (unnamed)
+      [east(2), north(60)], // a bend on Freire
+      [LON, north(120)],
+      [east(10), north(120)], // 10 m connector
+      [east(90), north(120)],
+      [east(90), north(220)],
+    ];
+    const legs = streetLegs(path, [null, 'Freire', 'Freire', 'Paso', 'Lautaro', 'Cousiño']);
+    expect(legs.map((l) => l.street)).toEqual(['Freire', 'Lautaro', 'Cousiño']);
+    expect(legs.map((l) => l.turn)).toEqual([null, 'right', 'left']);
+    expect(legs[0]?.meters).toBeGreaterThan(115);
   });
 });
