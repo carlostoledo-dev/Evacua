@@ -46,11 +46,17 @@ interface Rect {
   height: number;
 }
 
-function targetRect(target: string): Rect | null {
+/** The target's box relative to `host` (the tour overlay: the window, or the phone frame). */
+function targetRect(target: string, host: DOMRect | undefined): Rect | null {
   const element = document.querySelector(`[data-tour="${target}"]`);
   if (!element) return null;
   const r = element.getBoundingClientRect();
-  return { top: r.top, left: r.left, width: r.width, height: r.height };
+  return {
+    top: r.top - (host?.top ?? 0),
+    left: r.left - (host?.left ?? 0),
+    width: r.width,
+    height: r.height,
+  };
 }
 
 // The map buttons step only exists when the profile shows them (simple mode has none).
@@ -69,12 +75,17 @@ export function Tour({ onClose, simple }: TourProps) {
   const STEPS = simple ? SIMPLE_STEPS : FULL_STEPS;
   const [index, setIndex] = useState(0);
   const [rect, setRect] = useState<Rect | null>(null);
+  // Height of the area the tour covers: the window on a phone, the phone frame on a computer.
+  const [screenHeight, setScreenHeight] = useState(() => window.innerHeight);
+  const overlayRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const step = STEPS[index] ?? STEPS[0];
   const last = index === STEPS.length - 1;
 
   const measure = useCallback(() => {
-    if (step) setRect(targetRect(step.target));
+    const host = overlayRef.current?.getBoundingClientRect();
+    setScreenHeight(host?.height ?? window.innerHeight);
+    if (step) setRect(targetRect(step.target, host));
   }, [step]);
 
   // Measure after the frame is painted, so freshly rendered targets exist and have a size.
@@ -114,21 +125,27 @@ export function Tour({ onClose, simple }: TourProps) {
   let cardStyle: { top?: number; bottom?: number; maxHeight: number };
   if (rect) {
     const above = rect.top - pad - margin;
-    const below = window.innerHeight - (rect.top + rect.height) - pad - margin;
+    const below = screenHeight - (rect.top + rect.height) - pad - margin;
     if (Math.max(above, below) >= minCard) {
       cardStyle =
         below >= above
           ? { top: rect.top + rect.height + pad + margin / 2, maxHeight: below }
-          : { bottom: window.innerHeight - rect.top + pad + margin / 2, maxHeight: above };
+          : { bottom: screenHeight - rect.top + pad + margin / 2, maxHeight: above };
     } else {
-      cardStyle = { bottom: margin, maxHeight: window.innerHeight * 0.5 };
+      cardStyle = { bottom: margin, maxHeight: screenHeight * 0.5 };
     }
   } else {
-    cardStyle = { bottom: margin, maxHeight: window.innerHeight * 0.5 };
+    cardStyle = { bottom: margin, maxHeight: screenHeight * 0.5 };
   }
 
   return (
-    <div className="tour" role="dialog" aria-modal="true" aria-labelledby="tour-title">
+    <div
+      className="tour"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="tour-title"
+      ref={overlayRef}
+    >
       {rect && (
         <div
           className="tour__spotlight"

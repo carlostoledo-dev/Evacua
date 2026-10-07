@@ -350,7 +350,8 @@ button svg.icon {
   position: relative;
   display: flex;
   flex-direction: column;
-  height: 100dvh;
+  /* The phone screen: the window on a phone, the phone frame on a computer (see the end). */
+  height: var(--screen-height, 100dvh);
 }
 
 .skip-link {
@@ -2244,7 +2245,7 @@ button svg.icon {
 .onboarding {
   display: flex;
   flex-direction: column;
-  min-height: 100dvh;
+  min-height: var(--screen-height, 100dvh);
   background: var(--color-surface);
 }
 
@@ -2494,7 +2495,7 @@ button svg.icon {
 
 .onboarding__page h1 {
   margin: 0.25rem 0 0;
-  font-size: clamp(1.75rem, 8vw, 2.5rem);
+  font-size: clamp(1.75rem, 8cqi, 2.5rem);
   font-weight: 900;
   line-height: 1.05;
   letter-spacing: -0.035em;
@@ -2875,6 +2876,138 @@ button svg.icon {
   /* The tutorial card is fixed to the window: keep it as narrow as the phone column. */
   .tour__card {
     max-width: 24.875rem;
+  }
+}
+
+/* The QR panel only appears beside the phone frame (below). */
+.showcase {
+  display: none;
+}
+
+/* On a computer (wide window, mouse, in the browser), Evacua is shown inside a phone frame the
+   size of an iPhone 15, so it looks as it does on a phone. Phones, tablets and the installed app
+   never match this query. #root is the phone screen: its transform makes it the containing block
+   of the fixed overlays (tutorial), and the bottom sheets (<dialog>, drawn above the page) are
+   aligned to it with the same sizes. */
+@media (min-width: 56rem) and (min-height: 40rem) and (hover: hover) and (pointer: fine) and (display-mode: browser) {
+  :root {
+    --device-w: 393px;
+    /* Horizontal shift of the phone from the centre (to make room for the QR panel). */
+    --device-x: 0px;
+    --device-h: min(852px, calc(100dvh - 3rem));
+    --bezel: 12px;
+    --device-radius: 56px;
+    --screen-height: calc(var(--device-h) - 2 * var(--bezel));
+    --screen-radius: calc(var(--device-radius) - var(--bezel));
+  }
+
+  body {
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 70% 20%, var(--color-primary-soft), transparent 55%),
+      var(--color-desktop);
+  }
+
+  #root {
+    position: fixed;
+    top: 50%;
+    left: calc(50% + var(--device-x));
+    width: var(--device-w);
+    max-width: none;
+    height: var(--device-h);
+    margin: 0;
+    transform: translate(-50%, -50%);
+    container-type: inline-size;
+    border: var(--bezel) solid #0b0d12;
+    border-radius: var(--device-radius);
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.14),
+      0 0 0 3px #2b303b,
+      0 40px 90px rgba(10, 26, 63, 0.35);
+  }
+
+  /* #root: these rules must win over the base sheet rules further down. */
+  #root .sheet-dialog {
+    inset: auto auto calc((100dvh - var(--device-h)) / 2 + var(--bezel))
+      calc(50% + var(--device-x) - var(--device-w) / 2 + var(--bezel));
+    width: calc(var(--device-w) - 2 * var(--bezel));
+    margin: 0;
+    max-height: calc(var(--screen-height) * 0.88);
+  }
+
+  #root .sheet-dialog__body {
+    max-height: calc(var(--screen-height) * 0.88);
+    border-radius: 1.5rem 1.5rem var(--screen-radius) var(--screen-radius);
+  }
+}
+
+/* With room for it, the panel with the QR code sits to the left of the phone. */
+@media (min-width: 72rem) and (min-height: 40rem) and (hover: hover) and (pointer: fine) and (display-mode: browser) {
+  /* Panel (352 px) + gap (64 px) + phone, centred as one group. Pixels, not rem: the panel
+     keeps its size whatever text scale the profile sets. */
+  :root {
+    --device-x: 208px;
+  }
+
+  .showcase {
+    position: fixed;
+    top: 50%;
+    right: calc(50% - var(--device-x) + var(--device-w) / 2 + 64px);
+    display: grid;
+    gap: 16px;
+    justify-items: start;
+    width: 352px;
+    transform: translateY(-50%);
+    color: var(--color-text);
+    font-size: 16px;
+  }
+
+  .showcase__brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+    font-size: 24px;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+  }
+
+  .showcase__brand img {
+    border-radius: 12px;
+  }
+
+  .showcase__title {
+    margin: 0;
+    font-size: 36px;
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -0.035em;
+  }
+
+  .showcase__body,
+  .showcase__here {
+    margin: 0;
+    color: var(--color-text-muted);
+  }
+
+  .showcase__qr {
+    display: grid;
+    justify-items: center;
+    gap: 8px;
+    margin: 8px 0;
+    padding: 16px 16px 12px;
+    color: #0a1a3f;
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 16px 40px rgba(10, 26, 63, 0.18);
+  }
+
+  .showcase__qr img {
+    display: block;
+  }
+
+  .showcase__qr figcaption {
+    font-weight: 800;
   }
 }
 

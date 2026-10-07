@@ -332,4 +332,11 @@ export const en: Dictionary = {
   'menu.title': 'Menu',
 
   'footer.version': 'Version {version}',
+
+  'showcase.label': 'Evacua on your phone',
+  'showcase.title': 'Made for your phone',
+  'showcase.body':
+    'Scan the code with your phone camera to open and install it. After that it works with no internet.',
+  'showcase.qrAlt': 'QR code that opens {url}',
+  'showcase.here': 'You can also try it here, on the phone next to this.',
 };

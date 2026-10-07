@@ -339,4 +339,11 @@ export const esCL = {
   'menu.title': 'Menú',
 
   'footer.version': 'Versión {version}',
+
+  'showcase.label': 'Evacua en tu teléfono',
+  'showcase.title': 'Hecha para tu teléfono',
+  'showcase.body':
+    'Escanea el código con la cámara de tu celular para abrirla e instalarla. Después funciona sin internet.',
+  'showcase.qrAlt': 'Código QR que abre {url}',
+  'showcase.here': 'También puedes probarla aquí, en el teléfono de al lado.',
 } as const;

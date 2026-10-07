@@ -159,3 +159,7 @@ visibly labeled DEMO. See `DATA_SOURCES.md`.
 - Tsunami only, final (2026-10-07, owner decision): AI removed every other hazard from the code
   (hazard selector, guidance, icons, texts, tests) and from the documentation, and stopped
   Dependabot from opening major-version upgrade pull requests during the hackathon.
+- Phone frame on computers (2026-10-07, owner request): AI showed the app inside a phone frame
+  on wide screens with a mouse, added a side panel with a QR code to open the demo on a phone
+  (generated once by `npm run qr`), kept the tutorial and the bottom sheets inside the frame, and
+  added end-to-end tests for the computer and phone layouts.
