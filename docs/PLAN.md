@@ -11,8 +11,8 @@ explicit owner approval before the next one starts.
 | 3. Offline map + hazard layers and selector     | Done — approved 2026-10-02 |
 | 4. Evacuation guidance: safe point, route, time | Done — approved 2026-10-04 |
 | 5. Profiles + accessibility                     | Done — approved 2026-10-05 |
-| 6. Security, tests, Lighthouse                  | Done — awaiting approval   |
-| 7. Docs, screenshots, demo script               | Not started                |
+| 6. Security, tests, Lighthouse                  | Done — approved 2026-10-07 |
+| 7. Docs, screenshots, demo script               | Done — awaiting approval   |
 
 ---
 
@@ -392,10 +392,25 @@ explicit owner approval before the next one starts.
 
 **Acceptance criteria**
 
-- [ ] A fresh clone can install, run, test and regenerate data following only the README.
-- [ ] Demo script ≤ 3 min covers: install, airplane mode, two hazards at the same spot,
-      profile switch, layer badges.
-- [ ] Every library, dataset, font and icon is attributed with its license.
+- [x] A fresh clone can install, run, test and regenerate data following only the README
+      (Node 24, `npm install`, Playwright browser, `npm run check`, `npm run test:e2e`, the
+      `data:*` scripts).
+- [x] Demo script ≤ 3 min (≈ 2:40, `docs/DEMO_SCRIPT.md`) covers: install, airplane mode,
+      layer badges, route and navigation, profile switch. "Two hazards at the same spot" no
+      longer applies: tsunami only (owner decision 2026-10-04).
+- [x] Every library, dataset, font and icon is attributed with its license (README "Credits and
+      licenses", DATA_SOURCES.md).
+
+**Phase 7 notes (2026-10-07)**
+
+- New: ARCHITECTURE.md (Mermaid), SECURITY.md, PRIVACY.md, CONTRIBUTING.md,
+  docs/DEMO_SCRIPT.md, nine phone-size screenshots in `docs/screenshots/`
+  (`scripts/screenshots.ts`), README rewritten.
+- Found while writing PRIVACY.md: some browsers offer cloud speech voices (e.g. "Google
+  español" in desktop Chrome) that send the text, which names nearby streets, to a server.
+  Speech now uses only on-device voices (`localService`); with none, the text stays on screen.
+- Owner to do: enable GitHub private vulnerability reporting (SECURITY.md points to it), record
+  the video, fill in Devpost and the track selection form.
 
 ---
 

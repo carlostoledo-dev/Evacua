@@ -152,3 +152,7 @@ visibly labeled DEMO. See `DATA_SOURCES.md`.
   profile, frame counts, a with/without-blur comparison), then loaded the graph in parallel,
   prefetched the map chunk, sped up the graph validation, deferred routing preparation to a
   quiet moment, fixed an onboarding overflow on small screens and a load-sensitive e2e wait.
+- Phase 7 (2026-10-07): AI wrote the README, ARCHITECTURE.md, SECURITY.md, PRIVACY.md,
+  CONTRIBUTING.md and the demo script, wrote a script that takes the screenshots from the app
+  with DEMO points, and, while documenting privacy, found that cloud speech voices could send
+  street names to a server and restricted speech to on-device voices.
