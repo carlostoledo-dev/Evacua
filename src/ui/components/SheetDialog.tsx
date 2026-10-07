@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef, type ReactNode } from 'react';
 import { useI18n } from '../../i18n/I18nContext.ts';
+import { useSwipe } from '../hooks/useSwipe.ts';
 import { CrossIcon } from './icons.tsx';
 
 interface SheetDialogProps {
@@ -30,6 +31,8 @@ export function SheetDialog({
   const { t } = useI18n();
   const ref = useRef<HTMLDialogElement>(null);
   const titleId = useId();
+  // Swipe down on the top of the sheet to close it, as on iOS.
+  const swipe = useSwipe({ onSwipeDown: onClose, maxUp: 0 });
 
   useEffect(() => {
     const dialog = ref.current;
@@ -46,9 +49,11 @@ export function SheetDialog({
       data-testid={testId}
       onClose={onClose}
     >
-      <div className="sheet-dialog__body">
-        <div className="sheet-grabber" aria-hidden="true" />
-        <header className="sheet-dialog__head">
+      <div className="sheet-dialog__body" style={swipe.style}>
+        <div className="sheet-drag" {...swipe.handlers}>
+          <div className="sheet-grabber" aria-hidden="true" />
+        </div>
+        <header className="sheet-dialog__head sheet-drag" {...swipe.handlers}>
           {icon}
           <div className="sheet-dialog__titles">
             <h2 id={titleId}>{title}</h2>

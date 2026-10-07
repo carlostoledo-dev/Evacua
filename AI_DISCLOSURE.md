@@ -131,3 +131,7 @@ visibly labeled DEMO. See `DATA_SOURCES.md`.
   "Punto de encuentro" (SENAPRED's term) instead of "punto seguro"; the official SENAPRED
   guidance instead of the mockup's unsourced recommendations; the permanent notice stays on
   every screen; no satellite imagery (no offline source with a compatible license).
+- Swipe and simpler older-adult mode (2026-10-06, owner request): AI added a swipe gesture to
+  the route sheet (up for details, down to fold) and to the layers / menu sheets (down to
+  close), and hid the map buttons in simple mode (older adults, children) so the sheet's one
+  big button is the only thing to press.

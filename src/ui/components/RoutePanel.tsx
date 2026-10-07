@@ -28,6 +28,7 @@ import { formatDistance } from '../format.ts';
 import type { LocationState } from '../hooks/useLocation.ts';
 import type { Navigation } from '../hooks/useNavigation.ts';
 import { useSpeech } from '../hooks/useSpeech.ts';
+import { useSwipe } from '../hooks/useSwipe.ts';
 import type { ManeuverText } from '../navigationText.ts';
 import { DrillMode } from './DrillMode.tsx';
 import { HazardGuidance } from './HazardGuidance.tsx';
@@ -220,6 +221,16 @@ export function RoutePanel({
     panelRef.current?.scrollTo({ top: 0 });
   }, [location.kind, plan]);
 
+  // Swipe the sheet up for the details and down for the summary only (as on iOS).
+  const swipe = useSwipe({
+    onSwipeUp: () => {
+      onExpandedChange(true);
+    },
+    onSwipeDown: () => {
+      onExpandedChange(false);
+    },
+  });
+
   // Older-adult profile: read new instructions aloud right away (the user just acted).
   const spokenRef = useRef<string | null>(null);
   const { say } = speech;
@@ -330,14 +341,17 @@ export function RoutePanel({
       aria-labelledby="route-title"
       data-testid="route-panel"
       data-tour="route"
+      style={swipe.style}
     >
       <h2 id="route-title" className="visually-hidden">
         {t('route.title')}
       </h2>
 
-      {/* Pulled up / down like an iOS sheet; a real button, so it works without a swipe. */}
+      {/* Swiped or tapped up / down like an iOS sheet; a real button, so it also works with a
+          keyboard or a screen reader. */}
       {route && !navigation.active ? (
         <button
+          {...swipe.handlers}
           type="button"
           className="sheet-toggle"
           aria-expanded={expanded}
@@ -481,7 +495,11 @@ export function RoutePanel({
           {route ? (
             <>
               {/* Summary: where to, how far, how long, and one big button. */}
-              <div className="plan-summary" data-testid="plan-summary">
+              <div
+                className="plan-summary sheet-drag"
+                data-testid="plan-summary"
+                {...swipe.handlers}
+              >
                 <span className="plan-summary__icon">
                   <WalkIcon className="icon" />
                 </span>

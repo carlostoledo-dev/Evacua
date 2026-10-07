@@ -197,6 +197,7 @@ export function MapScreen({
               onOpenLayers={() => {
                 setLayersOpen(true);
               }}
+              simple={profile.simpleMode}
             />
           </Suspense>
         )}

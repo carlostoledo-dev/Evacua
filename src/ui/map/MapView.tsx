@@ -127,6 +127,11 @@ interface MapViewProps {
   relief: boolean;
   /** Opens the layers sheet. */
   onOpenLayers: () => void;
+  /**
+   * Simple mode (older adults, children): no buttons over the map, so the sheet's one big
+   * button is the only thing to press. The map still pans and zooms with the fingers.
+   */
+  simple: boolean;
 }
 
 /** Highest device pixel ratio we render at: 3× screens cost ~2× the GPU work for little gain. */
@@ -157,6 +162,7 @@ export default function MapView({
   hiddenLayers,
   relief,
   onOpenLayers,
+  simple,
 }: MapViewProps) {
   const { t } = useI18n();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -416,62 +422,64 @@ export default function MapView({
       {/* Map buttons in one column at the bottom right, above the sheet, so they never pile up
           on a short screen: layers (not while navigating), 3D, the compass while the map is
           turned, and "find me". Zoom is pinch, scroll or keyboard. */}
-      <div className="map-buttons">
-        {!follow && (
+      {!simple && (
+        <div className="map-buttons">
+          {!follow && (
+            <button
+              type="button"
+              className="map-button"
+              aria-label={t('map.layers')}
+              title={t('map.layers')}
+              data-testid="layers-button"
+              onClick={onOpenLayers}
+            >
+              <LayersIcon className="icon" />
+            </button>
+          )}
           <button
             type="button"
-            className="map-button"
-            aria-label={t('map.layers')}
-            title={t('map.layers')}
-            data-testid="layers-button"
-            onClick={onOpenLayers}
-          >
-            <LayersIcon className="icon" />
-          </button>
-        )}
-        <button
-          type="button"
-          className="map-button map-3d"
-          aria-pressed={threeD}
-          aria-label={t('map.view3d')}
-          title={t('map.view3d')}
-          onClick={() => {
-            onThreeDChange(!threeD);
-          }}
-        >
-          {t('map.view3dShort')}
-        </button>
-        {bearing !== 0 && (
-          <button
-            type="button"
-            className="map-button map-compass"
-            aria-label={t('map.resetNorth')}
-            title={t('map.resetNorth')}
+            className="map-button map-3d"
+            aria-pressed={threeD}
+            aria-label={t('map.view3d')}
+            title={t('map.view3d')}
             onClick={() => {
-              mapRef.current?.easeTo({ bearing: 0, duration: motionMs(400) });
+              onThreeDChange(!threeD);
             }}
           >
-            {/* The needle keeps pointing north while the map turns. */}
-            <span
-              className="map-compass__needle"
-              style={{ transform: `rotate(${String(-bearing)}deg)` }}
-            >
-              <CompassIcon className="icon" />
-            </span>
+            {t('map.view3dShort')}
           </button>
-        )}
-        <button
-          type="button"
-          className="map-button map-locate"
-          aria-label={t('map.locate')}
-          title={t('map.locate')}
-          onClick={() => {
-            onLocateRef.current();
-          }}
-        >
-          <LocateIcon className="icon" />
-        </button>
-      </div>
+          {bearing !== 0 && (
+            <button
+              type="button"
+              className="map-button map-compass"
+              aria-label={t('map.resetNorth')}
+              title={t('map.resetNorth')}
+              onClick={() => {
+                mapRef.current?.easeTo({ bearing: 0, duration: motionMs(400) });
+              }}
+            >
+              {/* The needle keeps pointing north while the map turns. */}
+              <span
+                className="map-compass__needle"
+                style={{ transform: `rotate(${String(-bearing)}deg)` }}
+              >
+                <CompassIcon className="icon" />
+              </span>
+            </button>
+          )}
+          <button
+            type="button"
+            className="map-button map-locate"
+            aria-label={t('map.locate')}
+            title={t('map.locate')}
+            onClick={() => {
+              onLocateRef.current();
+            }}
+          >
+            <LocateIcon className="icon" />
+          </button>
+        </div>
+      )}
       <div className="map-chips">
         {demo && (
           <p className="map-chip map-chip--demo" data-testid="map-demo">

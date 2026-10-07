@@ -1322,6 +1322,18 @@ button svg.icon {
 }
 
 /* Down = fold the sheet; up = unfold it. */
+/* Swipe areas: the finger drags the sheet instead of scrolling the page. */
+.sheet-drag,
+.sheet-toggle {
+  touch-action: none;
+  user-select: none;
+}
+
+.route-panel,
+.sheet-dialog__body {
+  transition: transform 0.25s ease-out;
+}
+
 .sheet-toggle .sheet-grabber {
   margin: 0;
   transition: width 0.2s;

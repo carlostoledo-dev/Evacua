@@ -180,6 +180,71 @@ test('the sheet shows a summary first and pulls up for the details', async ({ pa
   await expect(panel(page).getByTestId('plan')).toBeHidden();
 });
 
+/** A finger flick on `selector` from `from` to `to` (viewport y), as pointer events. */
+async function flick(page: Page, selector: string, from: number, to: number) {
+  await page.evaluate(
+    ({ selector, from, to }) => {
+      const element = document.querySelector(selector);
+      if (!element) throw new Error(`no ${selector}`);
+      const at = (y: number, buttons: number) => ({
+        bubbles: true,
+        cancelable: true,
+        pointerId: 7,
+        pointerType: 'touch',
+        isPrimary: true,
+        button: 0,
+        buttons,
+        clientX: 200,
+        clientY: y,
+      });
+      element.dispatchEvent(new PointerEvent('pointerdown', at(from, 1)));
+      element.dispatchEvent(new PointerEvent('pointermove', at((from + to) / 2, 1)));
+      element.dispatchEvent(new PointerEvent('pointerup', at(to, 0)));
+    },
+    { selector, from, to },
+  );
+}
+
+test('the sheets follow the finger: swipe up for details, down to fold or close', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await waitForMap(page);
+  await simulate(page, 'yobilo-villa-mora');
+  const toggle = panel(page).getByRole('button', { name: 'Mostrar u ocultar las opciones' });
+  await flick(page, '[data-testid="plan-summary"]', 500, 340);
+  await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+  await flick(page, '[data-testid="plan-summary"]', 300, 480);
+  await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+  // A tap right after a swipe still works.
+  await panel(page).getByRole('button', { name: 'Menú' }).click();
+  await expect(page.getByTestId('menu-sheet')).toBeVisible();
+  await flick(page, '[data-testid="menu-sheet"] .sheet-dialog__head', 300, 460);
+  await expect(page.getByTestId('menu-sheet')).toBeHidden();
+});
+
+test.describe('older-adult profile', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.addInitScript(() => {
+      localStorage.setItem(
+        'evacua:user',
+        JSON.stringify({ version: 1, profile: 'senior', tourDone: true }),
+      );
+    });
+  });
+
+  test('simple mode: no buttons over the map, one big button in the sheet', async ({ page }) => {
+    await page.goto('/');
+    await waitForMap(page);
+    await expect(page.getByRole('button', { name: 'Capas' })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Vista 3D' })).toHaveCount(0);
+    await expect(
+      page.getByTestId('map').getByRole('button', { name: 'Usar mi ubicación (GPS)' }),
+    ).toHaveCount(0);
+    await expect(panel(page).getByRole('button', { name: /Buscar mi ruta/ })).toBeVisible();
+  });
+});
+
 test('navigation: a DEMO walk gives turn-by-turn directions and arrives', async ({ page }) => {
   test.slow();
   await page.goto('/');
