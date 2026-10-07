@@ -13,21 +13,23 @@ function watchPage(page: Page) {
   return { requests, problems };
 }
 
-test('opens on the map with the tab bar and the permanent disclaimer', async ({ page }) => {
+test('opens on a full-screen map with a menu and the permanent disclaimer', async ({ page }) => {
   await page.goto('/');
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Mapa del sector');
+  // iOS Maps style: no tab bar; the other screens are behind ≡ in the route sheet.
+  const menu = page.getByRole('button', { name: 'Menú' });
+  await expect(menu).toHaveAttribute('aria-expanded', 'false');
+  await menu.click();
+  await expect(menu).toHaveAttribute('aria-expanded', 'true');
   const nav = page.getByRole('navigation', { name: 'Navegación principal' });
-  await expect(nav.getByRole('button')).toHaveCount(4);
-  await expect(nav.getByRole('button', { name: 'Mapa' })).toHaveAttribute('aria-current', 'page');
+  await expect(nav.getByRole('button')).toHaveText(['Qué hacer', 'Datos', 'Ajustes']);
   const disclaimer = page.getByRole('complementary', { name: 'Importante' });
   await expect(disclaimer).toBeVisible();
   await expect(disclaimer).toContainText('SENAPRED');
   await expect(disclaimer).toContainText('SHOA');
 });
 
-test('every tab keeps the disclaimer visible and moves focus to the screen title', async ({
-  page,
-}) => {
+test('every screen keeps the disclaimer visible and moves focus to its title', async ({ page }) => {
   await page.goto('/');
   for (const [tab, title] of [
     ['Qué hacer', '¿Hacia dónde evacuar?'],

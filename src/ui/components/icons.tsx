@@ -260,6 +260,42 @@ export function ArrowLeftIcon(props: IconProps) {
   );
 }
 
+export function ChevronLeftIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="m15 5-7 7 7 7" />
+    </Svg>
+  );
+}
+
+/** Three lines: opens the main menu. */
+export function MenuIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M4 7h16M4 12h16M4 17h16" />
+    </Svg>
+  );
+}
+
+/** "Find me" arrow, as on iOS maps. */
+export function LocateIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M20 4 4 11l7 2 2 7 7-16Z" />
+    </Svg>
+  );
+}
+
+/** Compass needle; the filled half points north. */
+export function CompassIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M12 3 8 12h8L12 3Z" fill="currentColor" />
+      <path d="M8 12l4 9 4-9" />
+    </Svg>
+  );
+}
+
 export function ChevronRightIcon(props: IconProps) {
   return (
     <Svg {...props}>

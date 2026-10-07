@@ -1,4 +1,4 @@
-import { useId, type ComponentType } from 'react';
+import { useId, type ComponentType, type ReactNode } from 'react';
 import type { DemoLocation } from '../../data/schema.ts';
 import { useI18n } from '../../i18n/I18nContext.ts';
 import { ChevronRightIcon, PinIcon, WalkIcon } from './icons.tsx';
@@ -44,6 +44,8 @@ interface LocationChooserProps {
   onGps: () => void;
   onPick: () => void;
   onSimulate: (demo: DemoLocation) => void;
+  /** Shown right of the main button, in the same row (the sheet's ≡ menu button). */
+  trailing?: ReactNode;
 }
 
 /** The three ways to say where you are: GPS, a tap on the map, or a labeled DEMO point. */
@@ -53,6 +55,7 @@ export function LocationChooser({
   onGps,
   onPick,
   onSimulate,
+  trailing,
 }: LocationChooserProps) {
   const { t, locale } = useI18n();
   const selectId = useId();
@@ -90,13 +93,16 @@ export function LocationChooser({
 
   return (
     <div className={simple ? 'location-chooser location-chooser--simple' : 'location-chooser'}>
-      <ActionCard
-        icon={WalkIcon}
-        title={t('location.findRoute')}
-        hint={t('location.useGps')}
-        primary
-        onClick={onGps}
-      />
+      <div className="location-chooser__main">
+        <ActionCard
+          icon={WalkIcon}
+          title={t('location.findRoute')}
+          hint={t('location.useGps')}
+          primary
+          onClick={onGps}
+        />
+        {trailing}
+      </div>
       {simple ? (
         <details className="more-options">
           <summary>{t('route.moreOptions')}</summary>

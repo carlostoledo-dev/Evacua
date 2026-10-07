@@ -115,3 +115,9 @@ visibly labeled DEMO. See `DATA_SOURCES.md`.
   capsule (3D, a compass shown only while the map is turned, find me), removed the zoom buttons
   and the scale bar, made the offline status icon-only, shortened the 3D note and lowered the
   route sheet.
+- iOS Maps-style layout (2026-10-06, owner request with an Apple Maps screenshot; owner chose to
+  drop the tab bar): AI made the map full screen with only the permanent notice and the offline
+  status floating on top, moved the map buttons (legend, 3D, compass, find me) into one capsule
+  at the bottom right, turned the route sheet into a floating "find my route + ≡" bar whose ≡
+  opens "Qué hacer", "Datos" and "Ajustes", added "‹ Mapa" to those screens, kept ≡ available
+  when the sector data fails to load, and updated the tour and tests.

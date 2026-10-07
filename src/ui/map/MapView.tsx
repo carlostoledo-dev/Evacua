@@ -5,13 +5,12 @@ import {
   Map as MapLibreMap,
   setWorkerUrl,
   type GeoJSONSource,
-  type IControl,
   type LngLatBoundsLike,
 } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 // Bundled worker served from our own origin: no blob: workers, so the strict CSP holds.
 import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import type { CommuneData } from '../../data/loader.ts';
 import {
   MAP_3D_ZOOM,
@@ -20,6 +19,7 @@ import {
 } from '../../domain/constants.ts';
 import { layersForHazard, type HazardId } from '../../domain/hazards.ts';
 import { useI18n } from '../../i18n/I18nContext.ts';
+import { CompassIcon, LocateIcon } from '../components/icons.tsx';
 import type { Theme } from '../theme.ts';
 import { diagonalHatch } from './hatch.ts';
 import { meetingPointIcon, navigationArrowIcon } from './meetingPointIcon.ts';
@@ -84,102 +84,6 @@ function lineCollection(path: [number, number][] | null): GeoJSON.FeatureCollect
   };
 }
 
-const SVG_NS = 'http://www.w3.org/2000/svg';
-
-function svgIcon(path: string): SVGSVGElement {
-  const svg = document.createElementNS(SVG_NS, 'svg');
-  svg.setAttribute('viewBox', '0 0 24 24');
-  svg.setAttribute('aria-hidden', 'true');
-  svg.setAttribute('focusable', 'false');
-  const shape = document.createElementNS(SVG_NS, 'path');
-  shape.setAttribute('d', path);
-  svg.append(shape);
-  return svg;
-}
-
-function mapButton(className: string, label: string, onClick: () => void): HTMLButtonElement {
-  const button = document.createElement('button');
-  button.type = 'button';
-  button.className = className;
-  button.title = label;
-  button.setAttribute('aria-label', label);
-  button.addEventListener('click', onClick);
-  return button;
-}
-
-interface MapButtonLabels {
-  view3d: string;
-  resetNorth: string;
-  locate: string;
-}
-
-/**
- * The map's only buttons, in one capsule: "3D", a compass (only while the map is turned away
- * from north, as on iOS) and "find me" (one GPS reading, same as the sheet's card). Zoom is
- * pinch / scroll / keyboard: no +/- buttons on a phone screen.
- */
-class MapButtonsControl implements IControl {
-  private container: HTMLDivElement | null = null;
-  private threeD: HTMLButtonElement | null = null;
-  private compass: HTMLButtonElement | null = null;
-  private map: MapLibreMap | null = null;
-  private readonly labels: MapButtonLabels;
-  private readonly onToggle3d: () => void;
-  private readonly onLocate: () => void;
-  private readonly onRotate = () => {
-    this.syncCompass();
-  };
-
-  constructor(labels: MapButtonLabels, onToggle3d: () => void, onLocate: () => void) {
-    this.labels = labels;
-    this.onToggle3d = onToggle3d;
-    this.onLocate = onLocate;
-  }
-
-  onAdd(map: MapLibreMap): HTMLElement {
-    this.map = map;
-    const container = document.createElement('div');
-    container.className = 'maplibregl-ctrl maplibregl-ctrl-group';
-    const threeD = mapButton('map-3d', this.labels.view3d, this.onToggle3d);
-    threeD.setAttribute('aria-pressed', 'false');
-    threeD.textContent = '3D';
-    const compass = mapButton('map-compass', this.labels.resetNorth, () => {
-      map.jumpTo({ bearing: 0 });
-    });
-    compass.append(svgIcon('M12 3 7 13h10L12 3Z M7 13l5 8 5-8'));
-    compass.hidden = true;
-    const locate = mapButton('map-locate', this.labels.locate, this.onLocate);
-    locate.append(svgIcon('M20 4 4 11l7 2 2 7 7-16Z'));
-    container.append(threeD, compass, locate);
-    map.on('rotate', this.onRotate);
-    this.container = container;
-    this.threeD = threeD;
-    this.compass = compass;
-    return container;
-  }
-
-  setThreeD(on: boolean): void {
-    this.threeD?.setAttribute('aria-pressed', String(on));
-  }
-
-  private syncCompass(): void {
-    if (!this.map || !this.compass) return;
-    const bearing = this.map.getBearing();
-    this.compass.hidden = Math.abs(bearing) < 0.5;
-    // The needle keeps pointing north while the map turns.
-    this.compass.style.setProperty('--bearing', `${String(-bearing)}deg`);
-  }
-
-  onRemove(): void {
-    this.map?.off('rotate', this.onRotate);
-    this.container?.remove();
-    this.container = null;
-    this.threeD = null;
-    this.compass = null;
-    this.map = null;
-  }
-}
-
 interface MapViewProps {
   commune: CommuneData;
   hazard: HazardId;
@@ -196,6 +100,8 @@ interface MapViewProps {
   onLocate: () => void;
   /** Navigation: keep the camera on the user instead of framing the whole route. */
   follow: boolean;
+  /** The legend button, first in the map's button capsule. */
+  legend?: ReactNode;
 }
 
 /** Highest device pixel ratio we render at: 3× screens cost ~2× the GPU work for little gain. */
@@ -221,6 +127,7 @@ export default function MapView({
   insets,
   onLocate,
   follow,
+  legend,
 }: MapViewProps) {
   const { t } = useI18n();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -234,7 +141,8 @@ export default function MapView({
   const onLocateRef = useRef(onLocate);
   // 3D view: tilted camera and extruded buildings. Kept across map rebuilds (theme, language).
   const [threeD, setThreeD] = useState(false);
-  const buttonsRef = useRef<MapButtonsControl | null>(null);
+  // Whole degrees the map is turned from north (3D view only); shows the compass when not 0.
+  const [bearing, setBearing] = useState(0);
   useEffect(() => {
     pickingRef.current = picking;
     onPickRef.current = onPick;
@@ -287,17 +195,9 @@ export default function MapView({
       return;
     }
     mapRef.current = map;
-    const buttons = new MapButtonsControl(
-      { view3d: t('map.view3d'), resetNorth: t('map.resetNorth'), locate: t('map.locate') },
-      () => {
-        setThreeD((on) => !on);
-      },
-      () => {
-        onLocateRef.current();
-      },
-    );
-    buttonsRef.current = buttons;
-    map.addControl(buttons, 'top-right');
+    map.on('rotate', () => {
+      setBearing(Math.round(map.getBearing()));
+    });
     // Flat map: north always up (fewer ways to get lost). The 3D view allows turning.
     map.touchZoomRotate.disableRotation();
     map.keyboard.disableRotation();
@@ -332,7 +232,6 @@ export default function MapView({
     });
     return () => {
       mapRef.current = null;
-      buttonsRef.current = null;
       map.remove();
     };
     // `state` only gates creation; it must not trigger a rebuild when it changes.
@@ -368,7 +267,6 @@ export default function MapView({
   // Turning it on brings the user's position (if any) to the middle of the visible map.
   useEffect(() => {
     const map = mapRef.current;
-    buttonsRef.current?.setThreeD(threeD);
     if (!map || mapVersion === 0) return;
     if (map.getLayer(HILLSHADE_LAYER_ID)) {
       map.setLayoutProperty(HILLSHADE_LAYER_ID, 'visibility', threeD ? 'visible' : 'none');
@@ -458,6 +356,53 @@ export default function MapView({
       data-route={path && path.length > 1 ? 'shown' : 'none'}
     >
       <div ref={containerRef} className="map-canvas" />
+      {/* The map's only buttons, in one capsule above the sheet (iOS Maps style). Zoom is
+          pinch / scroll / keyboard; the compass shows only while the map is turned. */}
+      <div className="map-controls">
+        {legend}
+        <button
+          type="button"
+          className="map-control map-3d"
+          aria-pressed={threeD}
+          aria-label={t('map.view3d')}
+          title={t('map.view3d')}
+          onClick={() => {
+            setThreeD((on) => !on);
+          }}
+        >
+          {t('map.view3dShort')}
+        </button>
+        {bearing !== 0 && (
+          <button
+            type="button"
+            className="map-control map-compass"
+            aria-label={t('map.resetNorth')}
+            title={t('map.resetNorth')}
+            onClick={() => {
+              mapRef.current?.jumpTo({ bearing: 0 });
+            }}
+          >
+            {/* The needle keeps pointing north while the map turns. */}
+            <span
+              className="map-compass__needle"
+              style={{ transform: `rotate(${String(-bearing)}deg)` }}
+            >
+              <CompassIcon className="icon" />
+            </span>
+          </button>
+        )}
+        <button
+          type="button"
+          className="map-control map-locate"
+          aria-label={t('map.locate')}
+          title={t('map.locate')}
+          onClick={() => {
+            onLocateRef.current();
+          }}
+        >
+          <LocateIcon className="icon" />
+        </button>
+      </div>
       <div className="map-chips">
         {demo && (
           <p className="map-chip map-chip--demo" data-testid="map-demo">

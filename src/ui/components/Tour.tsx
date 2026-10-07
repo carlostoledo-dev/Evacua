@@ -8,7 +8,7 @@ const ALL_STEPS: readonly { target: string; title: MessageKey; body: MessageKey 
   { target: 'hazard', title: 'tour.hazard.title', body: 'tour.hazard.body' },
   { target: 'map', title: 'tour.map.title', body: 'tour.map.body' },
   { target: 'route', title: 'tour.route.title', body: 'tour.route.body' },
-  { target: 'tabs', title: 'tour.tabs.title', body: 'tour.tabs.body' },
+  { target: 'menu', title: 'tour.tabs.title', body: 'tour.tabs.body' },
   { target: 'disclaimer', title: 'tour.disclaimer.title', body: 'tour.disclaimer.body' },
 ];
 

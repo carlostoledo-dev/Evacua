@@ -8,6 +8,7 @@ import type { EvacuationPlan } from '../../domain/routing.ts';
 import { useI18n } from '../../i18n/I18nContext.ts';
 import { HazardSelector } from '../components/HazardSelector.tsx';
 import { MapLegend } from '../components/MapLegend.tsx';
+import { MenuSheet } from '../components/MainMenu.tsx';
 import { NavigationBanner } from '../components/NavigationBanner.tsx';
 import { RoutePanel } from '../components/RoutePanel.tsx';
 import type { CommuneState } from '../hooks/useCommuneData.ts';
@@ -16,6 +17,7 @@ import { useNavigation } from '../hooks/useNavigation.ts';
 import { describeManeuver } from '../navigationText.ts';
 import { locationPosition, type LocationState } from '../hooks/useLocation.ts';
 import type { Theme } from '../theme.ts';
+import type { View } from '../views.ts';
 
 // MapLibre is large; it is only downloaded once there is data to draw.
 const MapView = lazy(() => import('../map/MapView.tsx'));
@@ -44,6 +46,8 @@ interface MapScreenProps {
   profile: ProfileConfig;
   /** Heights (px) of the translucent app bar and tab bar floating over the map. */
   chrome: { top: number; bottom: number };
+  /** Opens one of the screens behind the map (from the sheet's menu). */
+  onNavigate: (view: Exclude<View, 'map'>) => void;
 }
 
 const NO_DEMO_LOCATIONS: readonly DemoLocation[] = [];
@@ -67,6 +71,7 @@ export function MapScreen({
   plan,
   profile,
   chrome,
+  onNavigate,
 }: MapScreenProps) {
   const { t, locale } = useI18n();
   const [topRef, topHeight] = useElementHeight();
@@ -113,29 +118,27 @@ export function MapScreen({
       </h1>
       <div className="map-area" data-tour="map">
         {commune.status === 'ready' && (
-          <>
-            <Suspense
-              fallback={
-                <p className="map-placeholder" role="status">
-                  {t('map.loading')}
-                </p>
-              }
-            >
-              <MapView
-                commune={commune.data}
-                hazard={hazard}
-                theme={theme}
-                overlay={overlay}
-                picking={location.kind === 'picking'}
-                onPick={locationActions.pick}
-                demo={location.kind === 'demo'}
-                insets={insets}
-                onLocate={locationActions.locateWithGps}
-                follow={navigation.active}
-              />
-            </Suspense>
-            <MapLegend layers={visibleLayers} />
-          </>
+          <Suspense
+            fallback={
+              <p className="map-placeholder" role="status">
+                {t('map.loading')}
+              </p>
+            }
+          >
+            <MapView
+              commune={commune.data}
+              hazard={hazard}
+              theme={theme}
+              overlay={overlay}
+              picking={location.kind === 'picking'}
+              onPick={locationActions.pick}
+              demo={location.kind === 'demo'}
+              insets={insets}
+              onLocate={locationActions.locateWithGps}
+              follow={navigation.active}
+              legend={<MapLegend layers={visibleLayers} />}
+            />
+          </Suspense>
         )}
         {commune.status === 'loading' && (
           <p className="map-placeholder" role="status">
@@ -180,7 +183,13 @@ export function MapScreen({
             }}
             navigation={navigation}
             maneuverText={maneuverText}
+            onNavigate={onNavigate}
           />
+        </div>
+      )}
+      {commune.status !== 'ready' && (
+        <div className="map-sheet">
+          <MenuSheet onOpen={onNavigate} />
         </div>
       )}
     </section>

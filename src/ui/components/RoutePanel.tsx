@@ -28,12 +28,15 @@ import type { LocationState } from '../hooks/useLocation.ts';
 import { useSpeech } from '../hooks/useSpeech.ts';
 import { DrillMode } from './DrillMode.tsx';
 import { LocationChooser } from './LocationChooser.tsx';
+import { MainMenu } from './MainMenu.tsx';
+import type { View } from '../views.ts';
 import { DEMO_WALK_SPEEDUP, LOW_ACCURACY_M } from '../../domain/constants.ts';
 import {
   CheckIcon,
   ChevronRightIcon,
   ChildIcon,
   LockIcon,
+  MenuIcon,
   PinIcon,
   ShieldCheckIcon,
   SpeakerIcon,
@@ -142,6 +145,8 @@ interface RoutePanelProps {
   navigation: Navigation;
   /** The next turn-by-turn instruction while navigating. */
   maneuverText: ManeuverText | null;
+  /** Opens one of the screens behind the map, from the sheet's ≡ menu. */
+  onNavigate: (view: Exclude<View, 'map'>) => void;
 }
 
 export function RoutePanel({
@@ -157,6 +162,7 @@ export function RoutePanel({
   onClear,
   navigation,
   maneuverText,
+  onNavigate,
 }: RoutePanelProps) {
   const { t, locale } = useI18n();
   const speech = useSpeech(locale);
@@ -220,6 +226,28 @@ export function RoutePanel({
   }, [navigation.active, navigation.voice, navKey, navWords, say]);
 
   const choosing = location.kind === 'none' || location.kind === 'gps-error';
+  // Choosing a location: the sheet is a single row, "find my route" + ≡ (like the iOS Maps
+  // search bar); the title stays for screen readers. With a plan it gets a visible title row.
+  const compact = choosing && !navigation.active;
+
+  // ≡: the other screens (what to do, data, settings), listed inside the sheet.
+  const menuId = useId();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuButton = (
+    <button
+      type="button"
+      className="menu-button"
+      aria-label={t('nav.menu')}
+      aria-expanded={menuOpen}
+      aria-controls={menuId}
+      data-tour="menu"
+      onClick={() => {
+        setMenuOpen((open) => !open);
+      }}
+    >
+      <MenuIcon className="icon" />
+    </button>
+  );
 
   return (
     <section
@@ -229,22 +257,42 @@ export function RoutePanel({
       data-testid="route-panel"
       data-tour="route"
     >
-      {/* Stays at the top while the sheet scrolls, so folding is always one tap away. */}
-      <div className="route-panel__head">
-        <h2 id="route-title">{t('route.title')}</h2>
-        <button
-          type="button"
-          className="sheet-toggle"
-          aria-expanded={!folded}
-          aria-controls={bodyId}
-          aria-label={t('route.toggle')}
-          onClick={() => {
-            setFoldedAt(folded ? null : { kind: location.kind, plan });
+      <div className="sheet-grabber" aria-hidden="true" />
+      {compact ? (
+        <h2 id="route-title" className="visually-hidden">
+          {t('route.title')}
+        </h2>
+      ) : (
+        // Stays at the top while the sheet scrolls, so folding is always one tap away.
+        <div className="route-panel__head">
+          <h2 id="route-title">{t('route.title')}</h2>
+          <div className="route-panel__tools">
+            <button
+              type="button"
+              className="sheet-toggle"
+              aria-expanded={!folded}
+              aria-controls={bodyId}
+              aria-label={t('route.toggle')}
+              onClick={() => {
+                setFoldedAt(folded ? null : { kind: location.kind, plan });
+              }}
+            >
+              <ChevronRightIcon className="icon" />
+            </button>
+            {menuButton}
+          </div>
+        </div>
+      )}
+
+      {menuOpen && (
+        <MainMenu
+          id={menuId}
+          onOpen={(view) => {
+            setMenuOpen(false);
+            onNavigate(view);
           }}
-        >
-          <ChevronRightIcon className="icon" />
-        </button>
-      </div>
+        />
+      )}
 
       {guardian && (
         <p className="guardian" data-testid="guardian">
@@ -314,6 +362,7 @@ export function RoutePanel({
             <LocationChooser
               demoLocations={demoLocations}
               simple={profile.simpleMode}
+              trailing={menuButton}
               onGps={onGps}
               onPick={onPick}
               onSimulate={onSimulate}

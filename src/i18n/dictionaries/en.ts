@@ -14,6 +14,8 @@ export const en: Dictionary = {
   'nav.guide': 'What to do',
   'nav.data': 'Data',
   'nav.settings': 'Settings',
+  'nav.menu': 'Menu',
+  'nav.backToMap': 'Back to map',
 
   'settings.title': 'Settings',
   'settings.status': 'App status',
@@ -65,6 +67,7 @@ export const en: Dictionary = {
   'map.showData': 'See details',
   'map.legend': 'Legend',
   'map.view3d': '3D view',
+  'map.view3dShort': '3D',
   'map.reliefNote': 'Relief exaggerated ×{factor} (approx.)',
   'map.resetNorth': 'Point north',
   'map.locate': 'Use my location (GPS)',
@@ -209,7 +212,7 @@ export const en: Dictionary = {
     'Use GPS, tap the map or try a DEMO point. We show you the shortest way out of danger.',
   'tour.tabs.title': 'More information',
   'tour.tabs.body':
-    '“What to do” has the official guidance; “Data”, where each piece of data comes from; “Settings”, your profile and language.',
+    'Tap ≡ to open “What to do” (the official guidance), “Data” (where each piece of data comes from) and “Settings” (your profile and language).',
   'tour.disclaimer.title': 'Always follow the authorities',
   'tour.disclaimer.body':
     'Evacua is a support tool. If SENAPRED, SHOA or the Municipality say otherwise, follow them.',

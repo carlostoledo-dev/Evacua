@@ -14,8 +14,16 @@ export async function waitForMap(page: Page) {
   await expect(page.getByTestId('map')).toHaveAttribute('data-state', 'ready', { timeout: 30_000 });
 }
 
-/** Opens a screen from the bottom tab bar (Spanish labels). */
+/**
+ * Opens a screen as a user would (Spanish labels): "Mapa" with the "‹ Mapa" back button; the
+ * others from the map's ≡ menu, going back to the map first if needed.
+ */
 export async function openTab(page: Page, name: 'Mapa' | 'Qué hacer' | 'Datos' | 'Ajustes') {
+  const back = page.getByRole('button', { name: 'Volver al mapa' });
+  if (await back.isVisible()) await back.click();
+  if (name === 'Mapa') return;
+  const menu = page.getByRole('button', { name: 'Menú' });
+  if ((await menu.getAttribute('aria-expanded')) !== 'true') await menu.click();
   await page
     .getByRole('navigation', { name: 'Navegación principal' })
     .getByRole('button', { name })
