@@ -115,25 +115,28 @@ export async function loadCommune(
   const manifest = await fetchValidated(fetcher, manifestUrl, manifestSchema);
   if (!manifest.ok) return manifest;
 
-  const results = await Promise.all(
-    manifest.value.layers.map((entry) => loadLayer(fetcher, manifestUrl, manifest.value, entry)),
-  );
+  // The walking network (≈ 1 MB) downloads at the same time as the layers, not after them.
+  const graphEntry = manifest.value.graph;
+  const graphUrl = graphEntry ? resolveSameOrigin(graphEntry.file, manifestUrl) : null;
+  if (graphEntry && !graphUrl) {
+    return fail('invalid', graphEntry.file, ['graph path leaves the data origin']);
+  }
+  const graphPromise: Promise<Result<GraphFile | null>> = graphUrl
+    ? fetchValidated(fetcher, graphUrl, graphFileSchema)
+    : Promise.resolve(ok(null));
+  const [results, graph] = await Promise.all([
+    Promise.all(
+      manifest.value.layers.map((entry) => loadLayer(fetcher, manifestUrl, manifest.value, entry)),
+    ),
+    graphPromise,
+  ]);
   const layers: LoadedLayer[] = [];
   for (const result of results) {
     if (!result.ok) return result;
     layers.push(result.value);
   }
-
-  let graph: GraphFile | null = null;
-  const graphEntry = manifest.value.graph;
-  if (graphEntry) {
-    const graphUrl = resolveSameOrigin(graphEntry.file, manifestUrl);
-    if (!graphUrl) return fail('invalid', graphEntry.file, ['graph path leaves the data origin']);
-    const loaded = await fetchValidated(fetcher, graphUrl, graphFileSchema);
-    if (!loaded.ok) return loaded;
-    graph = loaded.value;
-  }
-  return ok({ manifest: manifest.value, layers, graph });
+  if (!graph.ok) return graph;
+  return ok({ manifest: manifest.value, layers, graph: graph.value });
 }
 
 /** Registry → default commune → manifest and layers. */
