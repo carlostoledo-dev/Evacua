@@ -53,10 +53,6 @@ export const en: Dictionary = {
     'Evacua shows you where to evacuate during a tsunami, with official data and even without internet.',
 
   'hazard.tsunami': 'Tsunami',
-  'hazard.wildfire': 'Wildfire',
-  'hazard.earthquake': 'Earthquake',
-
-  'hazard.choose': 'Choose the hazard',
 
   'map.title': 'Sector map',
   'map.attribution': 'Show or hide map credits',
@@ -78,12 +74,6 @@ export const en: Dictionary = {
   'guidance.tsunami.2':
     'If after an earthquake you see the sea draw back unusually, exposing the seabed, evacuate immediately to higher ground.',
   'guidance.tsunami.3': 'Prefer horizontal evacuation toward a meeting point and/or safety area.',
-  'guidance.earthquake.1': 'Stay calm and go to a seismic protection place.',
-  'guidance.earthquake.2':
-    'Protect yourself and hold on under something sturdy. If you cannot get under it, stay next to it.',
-  'guidance.earthquake.3': 'If you are outdoors, move away from buildings, poles and power lines.',
-  'guidance.earthquake.4':
-    'If you are on the coast and the earthquake made it hard to stay standing, evacuate immediately toward a meeting point.',
   'guidance.source': "Translated from SENAPRED's official Spanish guidance.",
   'guidance.sourceLink': 'See all recommendations (Spanish)',
 
@@ -146,8 +136,6 @@ export const en: Dictionary = {
   'route.noDestination': 'No meeting points are loaded to show a direction.',
   'route.timeNote':
     'Estimated time between a normal and a slow walking pace (FEMA). Do not wait: evacuate now.',
-  'route.earthquakeFirst':
-    'First protect yourself during the quake. If you are on the coast and it was hard to stay standing, evacuate like this:',
   'route.you': 'You',
   'route.legend': 'Your route',
 
@@ -203,8 +191,6 @@ export const en: Dictionary = {
   'tour.previous': 'Previous',
   'tour.finish': 'Got it',
   'tour.skip': 'Skip tutorial',
-  'tour.hazard.title': 'Choose the hazard',
-  'tour.hazard.body': 'Tsunami or earthquake. The map and guidance adapt to your choice.',
   'tour.map.title': 'This is your map',
   'tour.map.body':
     'The red hatched zone is the tsunami evacuation area (SENAPRED data). The green circles with a person are the meeting points.',

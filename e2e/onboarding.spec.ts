@@ -28,8 +28,7 @@ test('first run: welcome, install, profile, ready, then the tutorial over the ma
   await page.getByRole('button', { name: 'Ver el mapa' }).click();
   await waitForMap(page);
 
-  // Five steps for an older adult: no "choose the hazard" step (one hazard) and no map buttons
-  // step (simple mode has none). Every card stays on screen.
+  // Five steps for an older adult: no map buttons step (simple mode has none). Every card stays on screen.
   const tour = page.getByRole('dialog', { name: 'Este es tu mapa' });
   await expect(tour).toBeVisible();
   const viewport = page.viewportSize();

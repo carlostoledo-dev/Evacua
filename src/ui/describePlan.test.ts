@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest';
-import type { HazardId } from '../domain/hazards.ts';
 import { PROFILES } from '../domain/profiles.ts';
 import type { EvacuationPlan } from '../domain/routing.ts';
 import { esCL } from '../i18n/dictionaries/es-CL.ts';
@@ -22,8 +21,8 @@ const route: EvacuationPlan = {
   metersToSafety: 174,
   timeToSafety: { fastestMinutes: 2, slowestMinutes: 4 },
 };
-const describe_ = (plan: EvacuationPlan, profile = PROFILES.adult, hazard: HazardId = 'tsunami') =>
-  describePlan(plan, { t, locale: 'es-CL', profile, hazard, sectorName: 'Yobilo' });
+const describe_ = (plan: EvacuationPlan, profile = PROFILES.adult) =>
+  describePlan(plan, { t, locale: 'es-CL', profile, sectorName: 'Yobilo' });
 
 describe('describePlan', () => {
   it('adult: full time range on each step', () => {
@@ -65,10 +64,6 @@ describe('describePlan', () => {
     const d = describe_(route, PROFILES.child);
     expect(d.steps[0]).toBe('Sal del área de peligro: 170 m a pie.');
     expect(d.notes).toEqual([]);
-  });
-
-  it('earthquake adds the protect-first intro inside the evacuation area', () => {
-    expect(describe_(route, PROFILES.adult, 'earthquake').intro).toContain('Primero protégete');
   });
 
   it('describes outside-sector and straight-line plans without inventing a route', () => {

@@ -10,7 +10,6 @@ import {
 } from 'react';
 import type { DemoLocation } from '../../data/schema.ts';
 import { DEMO_WALK_SPEEDUP, LOW_ACCURACY_M } from '../../domain/constants.ts';
-import type { HazardId } from '../../domain/hazards.ts';
 import { streetLegs, type ManeuverKind } from '../../domain/navigation.ts';
 import type { ProfileConfig } from '../../domain/profiles.ts';
 import type { EvacuationPlan } from '../../domain/routing.ts';
@@ -98,7 +97,6 @@ function PlanView({
         <Icon />
         {simpleOnly ? <span>{description.headline}</span> : <strong>{description.headline}</strong>}
       </p>
-      {description.intro && <p className="plan-note">{description.intro}</p>}
       {description.straightLine && (
         <p className="plan plan--warning">
           <WarningIcon />
@@ -145,7 +143,6 @@ function PlanView({
 interface RoutePanelProps {
   location: LocationState;
   plan: EvacuationPlan | null;
-  hazard: HazardId;
   profile: ProfileConfig;
   sectorName: string;
   demoLocations: readonly DemoLocation[];
@@ -174,7 +171,6 @@ interface RoutePanelProps {
 export function RoutePanel({
   location,
   plan,
-  hazard,
   profile,
   sectorName,
   demoLocations,
@@ -197,8 +193,8 @@ export function RoutePanel({
   const guardian = profile.guardianMessage ? t('route.guardian') : null;
 
   const description = useMemo(
-    () => (plan ? describePlan(plan, { t, locale, profile, hazard, sectorName }) : null),
-    [plan, t, locale, profile, hazard, sectorName],
+    () => (plan ? describePlan(plan, { t, locale, profile, sectorName }) : null),
+    [plan, t, locale, profile, sectorName],
   );
   const text = description ? spokenText(description, guardian) : null;
   const route = plan?.kind === 'route' ? plan : null;
@@ -624,7 +620,7 @@ export function RoutePanel({
                 {text && !speech.supported && (
                   <p className="muted small">{t('voice.unsupported')}</p>
                 )}
-                <HazardGuidance hazard={hazard} brief />
+                <HazardGuidance brief />
                 {caption}
               </div>
             </>

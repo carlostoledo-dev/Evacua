@@ -17,7 +17,6 @@ import {
   MAP_3D_PITCH_DEG,
   MAP_3D_TERRAIN_EXAGGERATION,
 } from '../../domain/constants.ts';
-import { layersForHazard, type HazardId } from '../../domain/hazards.ts';
 import { useI18n } from '../../i18n/I18nContext.ts';
 import { CompassIcon, LayersIcon, LocateIcon } from '../components/icons.tsx';
 import type { Theme } from '../theme.ts';
@@ -104,7 +103,6 @@ function lineCollection(path: [number, number][] | null): GeoJSON.FeatureCollect
 
 interface MapViewProps {
   commune: CommuneData;
-  hazard: HazardId;
   theme: Theme;
   overlay: UserOverlay;
   /** When true, the next tap on the map reports a position through `onPick`. */
@@ -148,7 +146,6 @@ function supportsWebGL(): boolean {
 
 export default function MapView({
   commune,
-  hazard,
   theme,
   overlay,
   picking,
@@ -282,25 +279,19 @@ export default function MapView({
     // eslint-disable-next-line react-hooks/exhaustive-deps, @eslint-react/exhaustive-deps
   }, [commune, t, theme]);
 
-  // Show only the layers relevant to the selected hazard, minus those switched off by the user.
+  // Show every official layer except those switched off by the user.
   useEffect(() => {
     const map = mapRef.current;
     if (!map || mapVersion === 0) return;
-    const visible = new Set(
-      layersForHazard(
-        hazard,
-        commune.layers.map((l) => l.entry),
-      ).map((e) => e.id),
-    );
     for (const layer of commune.layers) {
       for (const id of overlayLayerIds(layer)) {
         if (map.getLayer(id)) {
-          const shown = visible.has(layer.entry.id) && !hiddenLayers.has(layer.entry.id);
+          const shown = !hiddenLayers.has(layer.entry.id);
           map.setLayoutProperty(id, 'visibility', shown ? 'visible' : 'none');
         }
       }
     }
-  }, [hazard, commune, mapVersion, hiddenLayers]);
+  }, [commune, mapVersion, hiddenLayers]);
 
   // Hill shading: with the 3D relief, or on the flat map when "Relieve" is on.
   useEffect(() => {

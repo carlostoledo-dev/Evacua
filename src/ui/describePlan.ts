@@ -1,7 +1,6 @@
 // Turns an evacuation plan into the exact sentences shown on screen and read aloud, adapted to
 // the profile. One source for both, so voice never says something the screen does not.
 import { bearingDegrees, compassPoint } from '../domain/geo.ts';
-import type { HazardId } from '../domain/hazards.ts';
 import type { ProfileConfig } from '../domain/profiles.ts';
 import type { EvacuationPlan, StraightLineReason, TimeRange } from '../domain/routing.ts';
 import type { MessageKey, MessageParams } from '../i18n/translate.ts';
@@ -21,7 +20,6 @@ export interface PlanItem {
 export interface PlanDescription {
   tone: 'danger' | 'safe' | 'warning';
   headline: string;
-  intro: string | null;
   /** Full sentences: read aloud, and shown when there is no route to lay out. */
   steps: string[];
   /** The same steps as `steps`, for the on-screen route summary (empty without a route). */
@@ -68,11 +66,10 @@ export function describePlan(
     t: Translate;
     locale: string;
     profile: ProfileConfig;
-    hazard: HazardId;
     sectorName: string;
   },
 ): PlanDescription {
-  const { t, locale, profile, hazard, sectorName } = options;
+  const { t, locale, profile, sectorName } = options;
   const distance = (meters: number) => formatDistance(meters, locale);
   const time = (range: TimeRange) => {
     if (profile.time === 'range') {
@@ -82,7 +79,7 @@ export function describePlan(
     return '';
   };
   const shortTime = (range: TimeRange) => formatShortTime(range, profile, t);
-  const base = { intro: null, steps: [], items: [], notes: [], straightLine: false };
+  const base = { steps: [], items: [], notes: [], straightLine: false };
 
   if (plan.kind === 'outside-service-area') {
     return { ...base, tone: 'warning', headline: t('route.outside', { sector: sectorName }) };
@@ -96,13 +93,11 @@ export function describePlan(
 
   const tone = plan.inDangerZone ? 'danger' : 'safe';
   const headline = t(plan.inDangerZone ? 'route.inDanger' : 'route.notInDanger');
-  const intro = hazard === 'earthquake' && plan.inDangerZone ? t('route.earthquakeFirst') : null;
 
   if (plan.kind === 'straight-line') {
     return {
       tone,
       headline,
-      intro,
       items: [],
       straightLine: true,
       steps: [
@@ -173,7 +168,6 @@ export function describePlan(
   return {
     tone,
     headline,
-    intro,
     steps,
     items,
     notes: profile.time === 'hidden' ? [] : [t('route.timeNote')],
@@ -183,7 +177,7 @@ export function describePlan(
 
 /** What the voice reads: the same sentences, in the same order. */
 export function spokenText(description: PlanDescription, guardian: string | null): string {
-  return [guardian, description.headline, description.intro, ...description.steps]
+  return [guardian, description.headline, ...description.steps]
     .filter((part): part is string => Boolean(part))
     .join(' ');
 }

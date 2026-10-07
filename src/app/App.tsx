@@ -1,5 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
-import { DEFAULT_HAZARD, layersForHazard, type HazardId } from '../domain/hazards.ts';
+import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { useI18n } from '../i18n/I18nContext.ts';
 import { ConnectionPill } from '../ui/components/ConnectionPill.tsx';
 import { Disclaimer } from '../ui/components/Disclaimer.tsx';
@@ -21,6 +20,8 @@ import { MapScreen } from '../ui/screens/MapScreen.tsx';
 import { SettingsScreen } from '../ui/screens/SettingsScreen.tsx';
 import type { View } from '../ui/views.ts';
 
+const NO_LAYERS: readonly never[] = [];
+
 const VIEW_TITLE_ID: Record<View, string> = {
   map: 'view-title-map',
   guide: 'view-title-guide',
@@ -34,7 +35,6 @@ export function App() {
   const serviceWorker = useServiceWorker();
   const commune = useCommuneData();
   const { preference, theme, setPreference } = useTheme();
-  const [hazard, setHazard] = useState<HazardId>(DEFAULT_HAZARD);
   const [view, setView] = useState<View>('map');
   const profile = useUserProfile();
   const [tourRequested, setTourRequested] = useState(false);
@@ -52,16 +52,7 @@ export function App() {
   }, [view]);
 
   const data = commune.state.status === 'ready' ? commune.state.data : null;
-  const visibleLayers = useMemo(() => {
-    if (!data) return [];
-    const ids = new Set(
-      layersForHazard(
-        hazard,
-        data.layers.map((l) => l.entry),
-      ).map((e) => e.id),
-    );
-    return data.layers.filter((l) => ids.has(l.entry.id));
-  }, [data, hazard]);
+  const visibleLayers = data?.layers ?? NO_LAYERS;
 
   const location = useLocation();
   const plan = useEvacuationPlan(data, visibleLayers, locationPosition(location.state));
@@ -123,8 +114,6 @@ export function App() {
         <MapScreen
           active={view === 'map'}
           commune={commune.state}
-          hazard={hazard}
-          onHazardChange={setHazard}
           visibleLayers={visibleLayers}
           theme={theme}
           onShowData={() => {
@@ -143,8 +132,6 @@ export function App() {
         />
         {view === 'guide' && (
           <GuideScreen
-            hazard={hazard}
-            onHazardChange={setHazard}
             pilot={data ? { sector: data.manifest.sector.name, commune: data.manifest.name } : null}
           />
         )}

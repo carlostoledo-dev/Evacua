@@ -1,7 +1,6 @@
 // Decorative icons drawn for this project. Always paired with visible text, so hidden from
 // assistive technology. Shapes use `currentColor` to follow the surrounding text color.
-import type { ComponentType, ReactNode } from 'react';
-import type { HazardId } from '../../domain/hazards.ts';
+import type { ReactNode } from 'react';
 
 interface IconProps {
   className?: string;
@@ -104,38 +103,6 @@ export function RefreshIcon(props: IconProps) {
     </Svg>
   );
 }
-
-export function WaveIcon(props: IconProps) {
-  return (
-    <Svg {...props}>
-      <path d="M2 16c2 0 2-1.5 4-1.5S8 16 10 16s2-1.5 4-1.5 2 1.5 4 1.5 2-1.5 4-1.5" />
-      <path d="M2 20c2 0 2-1.5 4-1.5S8 20 10 20s2-1.5 4-1.5 2 1.5 4 1.5 2-1.5 4-1.5" />
-      <path d="M4 12c0-4 3-8 8-8 3 0 5 2 5 4-2-1-5 0-5 3 0 2 1 3 3 3" />
-    </Svg>
-  );
-}
-
-export function QuakeIcon(props: IconProps) {
-  return (
-    <Svg {...props}>
-      <path d="M2 12h3l2-6 3 12 3-9 2 5 2-2h5" />
-    </Svg>
-  );
-}
-
-export function FlameIcon(props: IconProps) {
-  return (
-    <Svg {...props}>
-      <path d="M12 3c1 4 5 5 5 10a5 5 0 0 1-10 0c0-3 2-4 2-7 1.5 1 3 2.5 3-3Z" />
-    </Svg>
-  );
-}
-
-export const HAZARD_ICONS: Record<HazardId, ComponentType<IconProps>> = {
-  tsunami: WaveIcon,
-  earthquake: QuakeIcon,
-  wildfire: FlameIcon,
-};
 
 export function MapIcon(props: IconProps) {
   return (

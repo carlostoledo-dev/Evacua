@@ -8,7 +8,7 @@ import { planEvacuation, prepareRouting, type EvacuationPlan } from '../../domai
 const WARM_UP_DELAY_MS = 1500;
 
 /**
- * Builds the routing context once per commune and hazard (graph + safe-node index, ~30 ms on a
+ * Builds the routing context once per commune (graph + safe-node index, ~30 ms on a
  * desktop, several times that on a slow phone) and plans the evacuation whenever the position
  * changes (a few ms). The context is not built while the app opens (the map comes first): it is
  * built in a quiet moment shortly after, or right away if a position arrives earlier, so the

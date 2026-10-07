@@ -1,16 +1,7 @@
 import { useCallback, useEffect, useRef, useState, type ComponentType } from 'react';
-import { HAZARD_CHOICE } from '../../domain/hazards.ts';
 import { useI18n } from '../../i18n/I18nContext.ts';
 import type { MessageKey } from '../../i18n/translate.ts';
-import {
-  ArrowUpIcon,
-  LayersIcon,
-  MapIcon,
-  MenuIcon,
-  WalkIcon,
-  WarningIcon,
-  WaveIcon,
-} from './icons.tsx';
+import { ArrowUpIcon, LayersIcon, MapIcon, MenuIcon, WalkIcon, WarningIcon } from './icons.tsx';
 
 interface Step {
   /** The element marked with data-tour="<target>" is highlighted. */
@@ -24,7 +15,6 @@ interface Step {
 
 /** A short visual walk through what is on screen, in the order it is used. */
 const ALL_STEPS: readonly Step[] = [
-  { target: 'hazard', icon: WaveIcon, title: 'tour.hazard.title', body: 'tour.hazard.body' },
   { target: 'map', icon: MapIcon, title: 'tour.map.title', body: 'tour.map.body' },
   { target: 'route', icon: WalkIcon, title: 'tour.route.title', body: 'tour.route.body' },
   {
@@ -63,9 +53,8 @@ function targetRect(target: string): Rect | null {
   return { top: r.top, left: r.left, width: r.width, height: r.height };
 }
 
-// The hazard step only exists when there is a hazard to choose; the map buttons step only
-// when the profile shows them (simple mode has none).
-const FULL_STEPS = ALL_STEPS.filter((step) => step.target !== 'hazard' || HAZARD_CHOICE);
+// The map buttons step only exists when the profile shows them (simple mode has none).
+const FULL_STEPS = ALL_STEPS;
 const SIMPLE_STEPS = FULL_STEPS.filter((step) => step.target !== 'map-buttons');
 
 interface TourProps {

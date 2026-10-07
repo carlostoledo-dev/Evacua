@@ -59,8 +59,8 @@ test('tsunami only: no hazard to choose, official tsunami guidance and layers', 
 }) => {
   await page.goto('/');
   await waitForMap(page);
-  // Owner decision 2026-10-04: a single hazard, so no selector anywhere.
-  await expect(page.getByRole('radio', { name: /Tsunami|Terremoto|Incendio/ })).toHaveCount(0);
+  // Tsunami only: there is no hazard to choose.
+  await expect(page.getByRole('radio', { name: /Tsunami/ })).toHaveCount(0);
   await page.getByTestId('layers-button').click();
   await expect(page.getByTestId('map-legend').getByRole('listitem')).toHaveCount(4);
   // Each layer can be switched off and on again (design screen 6).
@@ -75,7 +75,6 @@ test('tsunami only: no hazard to choose, official tsunami guidance and layers', 
   await openTab(page, 'Qué hacer');
   const guidance = page.getByTestId('guidance');
   await expect(guidance).toContainText('Área de Evacuación por tsunami');
-  await expect(guidance).not.toContainText('Lugar de Protección Sísmica');
   await expect(
     page.getByText('Zona piloto: Lagunillas, Yobilo y Coronel Centro (Coronel)'),
   ).toBeVisible();

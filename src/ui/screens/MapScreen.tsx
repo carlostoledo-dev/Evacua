@@ -1,14 +1,12 @@
 import { lazy, Suspense, useMemo, useState, type CSSProperties, type ReactNode } from 'react';
 import type { LoadedLayer } from '../../data/loader.ts';
 import type { DemoLocation } from '../../data/schema.ts';
-import { HAZARD_CHOICE, type HazardId } from '../../domain/hazards.ts';
 import { headingAlong, nextManeuver } from '../../domain/navigation.ts';
 import type { ProfileConfig } from '../../domain/profiles.ts';
 import type { EvacuationPlan } from '../../domain/routing.ts';
 import { useI18n } from '../../i18n/I18nContext.ts';
 import { ArrivedScreen } from '../components/ArrivedScreen.tsx';
 import { Disclaimer } from '../components/Disclaimer.tsx';
-import { HazardSelector } from '../components/HazardSelector.tsx';
 import { ChevronRightIcon, MenuIcon, WarningIcon } from '../components/icons.tsx';
 import { LayersSheet } from '../components/LayersSheet.tsx';
 import { MenuSheet } from '../components/MainMenu.tsx';
@@ -42,8 +40,6 @@ export interface LocationActions {
 interface MapScreenProps {
   active: boolean;
   commune: CommuneState;
-  hazard: HazardId;
-  onHazardChange: (hazard: HazardId) => void;
   visibleLayers: readonly LoadedLayer[];
   theme: Theme;
   onShowData: () => void;
@@ -74,8 +70,6 @@ const SHEET_GAP_PX = 8;
 export function MapScreen({
   active,
   commune,
-  hazard,
-  onHazardChange,
   visibleLayers,
   theme,
   onShowData,
@@ -189,7 +183,6 @@ export function MapScreen({
           >
             <MapView
               commune={commune.data}
-              hazard={hazard}
               theme={theme}
               overlay={overlay}
               picking={location.kind === 'picking'}
@@ -254,11 +247,6 @@ export function MapScreen({
             </button>
           )
         )}
-        {HAZARD_CHOICE && !navigation.active && (
-          <div data-tour="hazard">
-            <HazardSelector value={hazard} onChange={onHazardChange} compact />
-          </div>
-        )}
         <div className="map-top__row">
           <div className="map-top__notice" data-tour="disclaimer">
             <Disclaimer
@@ -277,7 +265,6 @@ export function MapScreen({
           <RoutePanel
             location={location}
             plan={plan}
-            hazard={hazard}
             profile={profile}
             sectorName={commune.data.manifest.sector.name}
             demoLocations={demoLocations}

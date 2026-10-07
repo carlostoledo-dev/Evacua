@@ -52,10 +52,6 @@ export const esCL = {
     'Evacua te muestra hacia dónde evacuar ante un tsunami, con datos oficiales e incluso sin internet.',
 
   'hazard.tsunami': 'Tsunami',
-  'hazard.wildfire': 'Incendio forestal',
-  'hazard.earthquake': 'Terremoto',
-
-  'hazard.choose': 'Elige la amenaza',
 
   'map.title': 'Mapa del sector',
   'map.attribution': 'Mostrar u ocultar créditos del mapa',
@@ -71,7 +67,7 @@ export const esCL = {
   'map.resetNorth': 'Apuntar al norte',
   'map.locate': 'Usar mi ubicación (GPS)',
 
-  // Verbatim from SENAPRED (https://www.senapred.cl/tsunami/ and /sismos/), retrieved 2026-10-02.
+  // Verbatim from SENAPRED (https://www.senapred.cl/tsunami/), retrieved 2026-10-02.
   'guidance.title': 'Qué hacer (indicaciones oficiales)',
   'guidance.tsunami.1':
     'Si sientes un sismo que te dificulta mantenerte en pie y te encuentras en un Área de Evacuación por tsunami, evacúa inmediatamente.',
@@ -79,13 +75,6 @@ export const esCL = {
     'Si después de un sismo observas que el mar se retira de forma inusual, exponiendo el fondo marino, evacúa inmediatamente hacia terrenos elevados.',
   'guidance.tsunami.3':
     'Prioriza la evacuación horizontal hacia un Punto de Encuentro y/o Área de Seguridad.',
-  'guidance.earthquake.1': 'Mantén la calma y ubícate en un Lugar de Protección Sísmica.',
-  'guidance.earthquake.2':
-    'Protégete y afírmate debajo de un elemento firme. Si no es posible ubicarte debajo, ubícate junto a él.',
-  'guidance.earthquake.3':
-    'Si estás en la calle, aléjate de los edificios, postes y cables eléctricos.',
-  'guidance.earthquake.4':
-    'Si estás en la costa y el sismo te dificultó mantenerte en pie, evacúa inmediatamente hacia un punto de encuentro.',
   'guidance.source': 'Texto oficial de SENAPRED.',
   'guidance.sourceLink': 'Ver todas las recomendaciones',
 
@@ -150,8 +139,6 @@ export const esCL = {
   'route.noDestination': 'No hay puntos de encuentro cargados para indicar una dirección.',
   'route.timeNote':
     'Tiempo estimado entre un ritmo de caminata normal y uno lento (FEMA). No esperes: evacúa de inmediato.',
-  'route.earthquakeFirst':
-    'Primero protégete durante el sismo. Si estás en la costa y te costó mantenerte en pie, evacúa así:',
   'route.you': 'Tú',
   'route.legend': 'Tu ruta',
 
@@ -208,8 +195,6 @@ export const esCL = {
   'tour.previous': 'Anterior',
   'tour.finish': 'Entendido',
   'tour.skip': 'Saltar tutorial',
-  'tour.hazard.title': 'Elige la amenaza',
-  'tour.hazard.body': 'Tsunami o terremoto. El mapa y las indicaciones se adaptan a lo que elijas.',
   'tour.map.title': 'Este es tu mapa',
   'tour.map.body':
     'La zona roja con rayas es el área a evacuar por tsunami (datos de SENAPRED). Los círculos verdes con una persona son los puntos de encuentro.',

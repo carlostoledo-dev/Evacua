@@ -12,6 +12,4 @@ export const ROLE_LABEL: Record<LayerRole, MessageKey> = {
 
 export const HAZARD_LABEL: Record<HazardId, MessageKey> = {
   tsunami: 'hazard.tsunami',
-  wildfire: 'hazard.wildfire',
-  earthquake: 'hazard.earthquake',
 };

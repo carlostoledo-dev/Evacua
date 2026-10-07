@@ -259,7 +259,7 @@ function overlayLayers(layer: LoadedLayer, p: MapPalette): LayerSpecification[] 
   }
 }
 
-/** Map layer ids drawn for one official data layer (used to toggle visibility per hazard). */
+/** Map layer ids drawn for one official data layer (used to switch it on and off). */
 export function overlayLayerIds(layer: LoadedLayer): string[] {
   return overlayLayers(layer, LIGHT_PALETTE).map((l) => l.id);
 }

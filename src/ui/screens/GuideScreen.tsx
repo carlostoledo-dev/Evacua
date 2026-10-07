@@ -1,18 +1,14 @@
-import { HAZARD_CHOICE, type HazardId } from '../../domain/hazards.ts';
 import { useI18n } from '../../i18n/I18nContext.ts';
 import { Disclaimer } from '../components/Disclaimer.tsx';
 import { HazardGuidance } from '../components/HazardGuidance.tsx';
-import { HazardSelector } from '../components/HazardSelector.tsx';
 import { KitChecklist } from '../components/KitChecklist.tsx';
 
 interface GuideScreenProps {
-  hazard: HazardId;
-  onHazardChange: (hazard: HazardId) => void;
   /** Names of the pilot area, from the commune's data (null while it loads). */
   pilot: { sector: string; commune: string } | null;
 }
 
-export function GuideScreen({ hazard, onHazardChange, pilot }: GuideScreenProps) {
+export function GuideScreen({ pilot }: GuideScreenProps) {
   const { t } = useI18n();
   return (
     <section className="screen screen--panel" aria-labelledby="view-title-guide">
@@ -23,8 +19,7 @@ export function GuideScreen({ hazard, onHazardChange, pilot }: GuideScreenProps)
       <p>{t('home.intro')}</p>
       {/* The full notice; the app bar's line is this screen's landmark. */}
       <Disclaimer card landmark={false} />
-      {HAZARD_CHOICE && <HazardSelector value={hazard} onChange={onHazardChange} />}
-      <HazardGuidance hazard={hazard} />
+      <HazardGuidance />
       <KitChecklist />
     </section>
   );
