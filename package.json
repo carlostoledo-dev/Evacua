@@ -28,7 +28,7 @@
     "data:graph": "node scripts/build-graph.ts && prettier --write public/data/communes/*/manifest.json"
   },
   "dependencies": {
-    "maplibre-gl": "^6.11.2",
+    "maplibre-gl": "^6.12.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "workbox-window": "^7.4.1",
