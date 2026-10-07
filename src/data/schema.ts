@@ -177,15 +177,34 @@ export type GraphEntry = z.infer<typeof graphEntrySchema>;
  * Compact graph: `nodes` is [lon0, lat0, lon1, lat1, …]; `edges` is [from, to, meters, …]
  * with node indices. Edges are walkable in both directions.
  */
+/**
+ * An array of finite numbers (integers if `int`), checked in one plain loop: the same rule as
+ * `z.array(z.number())`, without zod's per-item work on the graph's ≈ 170 000 numbers.
+ */
+function numberArray(options: { int?: boolean; min?: number } = {}) {
+  const { int = false, min = 0 } = options;
+  return z.custom<number[]>(
+    (value) => {
+      if (!Array.isArray(value) || value.length < min) return false;
+      for (const item of value as unknown[]) {
+        if (typeof item !== 'number' || !Number.isFinite(item)) return false;
+        if (int && !Number.isInteger(item)) return false;
+      }
+      return true;
+    },
+    { message: `expected an array of ${int ? 'integers' : 'numbers'} (at least ${String(min)})` },
+  );
+}
+
 export const graphFileSchema = z
   .object({
     schemaVersion: z.literal(1),
-    nodes: z.array(z.number()).min(2),
-    edges: z.array(z.number()),
+    nodes: numberArray({ min: 2 }),
+    edges: numberArray(),
     /** Street names (OSM `name`), referenced by `edgeNames`. Optional: older files have none. */
     names: z.array(z.string().min(1)).optional(),
     /** One entry per edge: index into `names`, or -1 for an unnamed way. */
-    edgeNames: z.array(z.number().int()).optional(),
+    edgeNames: numberArray({ int: true }).optional(),
   })
   .superRefine((graph, ctx) => {
     if (graph.nodes.length % 2 !== 0) {
