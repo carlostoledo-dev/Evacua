@@ -423,7 +423,7 @@ export default function MapView({
           on a short screen: layers (not while navigating), 3D, the compass while the map is
           turned, and "find me". Zoom is pinch, scroll or keyboard. */}
       {!simple && (
-        <div className="map-buttons">
+        <div className="map-buttons" data-tour="map-buttons">
           {!follow && (
             <button
               type="button"

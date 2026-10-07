@@ -19,8 +19,6 @@ export interface ProfileConfig {
   simpleMode: boolean;
   /** Show "Busca a tu adulto o profesor y sigue el plan". */
   guardianMessage: boolean;
-  /** Offer the game-like drill (modo simulacro). */
-  drill: boolean;
 }
 
 export const PROFILES: Readonly<Record<ProfileId, ProfileConfig>> = {
@@ -31,7 +29,6 @@ export const PROFILES: Readonly<Record<ProfileId, ProfileConfig>> = {
     autoSpeak: false,
     simpleMode: false,
     guardianMessage: false,
-    drill: false,
   },
   senior: {
     id: 'senior',
@@ -40,7 +37,6 @@ export const PROFILES: Readonly<Record<ProfileId, ProfileConfig>> = {
     autoSpeak: true,
     simpleMode: true,
     guardianMessage: false,
-    drill: false,
   },
   child: {
     id: 'child',
@@ -49,7 +45,6 @@ export const PROFILES: Readonly<Record<ProfileId, ProfileConfig>> = {
     autoSpeak: false,
     simpleMode: true,
     guardianMessage: true,
-    drill: true,
   },
 };
 

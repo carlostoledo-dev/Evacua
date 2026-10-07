@@ -28,16 +28,22 @@ test('first run: welcome, install, profile, ready, then the tutorial over the ma
   await page.getByRole('button', { name: 'Ver el mapa' }).click();
   await waitForMap(page);
 
-  // Four steps: with a single hazard there is no "choose the hazard" step.
-  const tour = page.getByRole('dialog', { name: 'Lee el mapa' });
+  // Five steps for an older adult: no "choose the hazard" step (one hazard) and no map buttons
+  // step (simple mode has none). Every card stays on screen.
+  const tour = page.getByRole('dialog', { name: 'Este es tu mapa' });
   await expect(tour).toBeVisible();
   const viewport = page.viewportSize();
-  for (let step = 1; step <= 4; step++) {
+  for (let step = 1; step <= 5; step++) {
     const card = await page.locator('.tour__card').boundingBox();
     expect(card && viewport && card.y >= 0 && card.y + card.height <= viewport.height + 1).toBe(
       true,
     );
-    await page.getByRole('button', { name: step === 4 ? 'Entendido' : 'Siguiente' }).click();
+    if (step === 3) {
+      await expect(
+        page.getByRole('dialog', { name: 'Desliza hacia arriba para ver más' }),
+      ).toBeVisible();
+    }
+    await page.getByRole('button', { name: step === 5 ? 'Entendido' : 'Siguiente' }).click();
   }
   await expect(page.getByRole('dialog')).toHaveCount(0);
 
@@ -74,7 +80,7 @@ test('every onboarding step fits one phone screen, without scrolling', async ({ 
   }
 });
 
-test('child profile: guardian message, no times, and the drill game', async ({ page }) => {
+test('child profile: guardian message, no times, no drill timer', async ({ page }) => {
   await onboard(page, /Niño o niña/);
   await page.getByRole('button', { name: 'Ver el mapa' }).click();
   await page.getByRole('button', { name: 'Saltar tutorial' }).click();
@@ -86,10 +92,8 @@ test('child profile: guardian message, no times, and the drill game', async ({ p
   await panel.getByRole('combobox').selectOption('yobilo-villa-mora');
   await expect(panel.getByTestId('plan')).toContainText('Sal del área de peligro');
   await expect(panel.getByTestId('plan')).not.toContainText('min');
-  await panel.getByRole('button', { name: 'Empezar simulacro' }).click();
-  await expect(panel.getByRole('timer')).toContainText('Caminando');
-  await panel.getByRole('button', { name: '¡Llegamos!' }).click();
-  await expect(panel.getByTestId('drill')).toContainText('¡Muy bien!');
+  // Owner decision 2026-10-07: no timed drill for children.
+  await expect(page.getByRole('timer')).toHaveCount(0);
 });
 
 test('profile can be changed and all local data deleted from Settings', async ({ page }) => {

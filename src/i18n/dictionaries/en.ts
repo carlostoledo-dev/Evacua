@@ -113,7 +113,8 @@ export const en: Dictionary = {
     'Low accuracy (± {meters}): your position may be wrong. For a reliable result, pick your location on the map.',
 
   'route.title': 'Where to evacuate',
-  'route.toggle': 'Show or hide the options',
+  'route.moreDetails': 'How to get there and more',
+  'route.lessDetails': 'Hide details',
   'route.inDanger': 'You are inside the tsunami evacuation area.',
   'route.notInDanger': 'You are outside the tsunami evacuation area.',
   'route.toSafety': 'Leave the danger area: {distance} on foot {time}.',
@@ -191,7 +192,7 @@ export const en: Dictionary = {
   'profile.senior': 'Older adult',
   'profile.senior.description': 'Large text, voice and simple steps.',
   'profile.child': 'Child',
-  'profile.child.description': 'Icons, short phrases and a drill.',
+  'profile.child.description': 'Icons and short phrases, with their adult.',
   'profile.child.age': 'Under {age}',
   'profile.adult.age': '{from} to {to} years old',
   'profile.senior.age': '{age} or older',
@@ -204,15 +205,21 @@ export const en: Dictionary = {
   'tour.skip': 'Skip tutorial',
   'tour.hazard.title': 'Choose the hazard',
   'tour.hazard.body': 'Tsunami or earthquake. The map and guidance adapt to your choice.',
-  'tour.map.title': 'Read the map',
+  'tour.map.title': 'This is your map',
   'tour.map.body':
-    'The hatched area is the evacuation area according to SENAPRED. Areas without hatching are safe. Green dots are official meeting points.',
-  'tour.route.title': 'Say where you are',
+    'The red hatched zone is the tsunami evacuation area (SENAPRED data). The green circles with a person are the meeting points.',
+  'tour.route.title': 'Find your route',
   'tour.route.body':
-    'Use GPS, tap the map or try a DEMO point. We show you the shortest way out of danger.',
-  'tour.tabs.title': 'More information',
+    'Tap “Find my route”: with your GPS we show the nearest meeting point and the shortest way. No GPS? Pick on the map or try a DEMO point.',
+  'tour.tabs.title': 'Menu ≡',
   'tour.tabs.body':
     'Tap ≡ to open “What to do” (the official guidance), “Data” (where each piece of data comes from) and “Settings” (your profile and language).',
+  'tour.swipe.title': 'Swipe up to see more',
+  'tour.swipe.body':
+    'Once you have a route, drag this sheet up (or tap “How to get there and more”) to see each street, listen to the instructions and read what SENAPRED says.',
+  'tour.buttons.title': 'Map buttons',
+  'tour.buttons.body':
+    'Layers: what the map shows and where each piece of data comes from. 3D: the hills in relief. Arrow: back to your location.',
   'tour.disclaimer.title': 'Always follow the authorities',
   'tour.disclaimer.body':
     'Evacua is a support tool. If SENAPRED, SHOA or the Municipality say otherwise, follow them.',
@@ -245,15 +252,6 @@ export const en: Dictionary = {
   'route.time.slow': '(about {slow} min at a gentle pace)',
   'route.guardian': 'Find your grown-up or teacher and follow the plan.',
   'route.moreOptions': 'Other ways to locate yourself',
-
-  'drill.title': 'Drill mode',
-  'drill.body': 'Practice with your grown-up: walk together to the meeting point.',
-  'drill.start': 'Start drill',
-  'drill.running': 'Walking… {seconds} s',
-  'drill.arrived': 'We made it!',
-  'drill.result':
-    'Great job! You arrived in {minutes} min {seconds} s. Practice again to get faster.',
-  'drill.again': 'Again',
 
   'settings.profile': 'Your profile',
   'settings.profileHint': 'Kept only on this phone.',

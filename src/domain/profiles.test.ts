@@ -12,8 +12,8 @@ describe('profiles', () => {
     expect(PROFILES.senior.textScale).toBeGreaterThan(PROFILES.adult.textScale);
   });
 
-  it('child: guardian message, drill mode and no timing pressure', () => {
-    expect(PROFILES.child).toMatchObject({ guardianMessage: true, drill: true, time: 'hidden' });
+  it('child: guardian message and no timing pressure', () => {
+    expect(PROFILES.child).toMatchObject({ guardianMessage: true, time: 'hidden' });
   });
 
   it('validates ids', () => {

@@ -9,7 +9,9 @@ function panel(page: Page) {
 
 /** Pulls the route sheet up to its details (how to get there, listen, change location). */
 async function expand(page: Page) {
-  const toggle = panel(page).getByRole('button', { name: 'Mostrar u ocultar las opciones' });
+  const toggle = panel(page).getByRole('button', {
+    name: /Ver cómo llegar y más|Ocultar detalles/,
+  });
   if ((await toggle.getAttribute('aria-expanded')) !== 'true') await toggle.click();
 }
 
@@ -168,7 +170,9 @@ test('the sheet shows a summary first and pulls up for the details', async ({ pa
   await page.goto('/');
   await waitForMap(page);
   await simulate(page, 'lagunillas');
-  const toggle = panel(page).getByRole('button', { name: 'Mostrar u ocultar las opciones' });
+  const toggle = panel(page).getByRole('button', {
+    name: /Ver cómo llegar y más|Ocultar detalles/,
+  });
   await expect(toggle).toHaveAttribute('aria-expanded', 'false');
   await expect(panel(page).getByTestId('plan')).toBeHidden();
   // The red card on top opens the details too.
@@ -211,7 +215,9 @@ test('the sheets follow the finger: swipe up for details, down to fold or close'
   await page.goto('/');
   await waitForMap(page);
   await simulate(page, 'yobilo-villa-mora');
-  const toggle = panel(page).getByRole('button', { name: 'Mostrar u ocultar las opciones' });
+  const toggle = panel(page).getByRole('button', {
+    name: /Ver cómo llegar y más|Ocultar detalles/,
+  });
   await flick(page, '[data-testid="plan-summary"]', 500, 340);
   await expect(toggle).toHaveAttribute('aria-expanded', 'true');
   await flick(page, '[data-testid="plan-summary"]', 300, 480);

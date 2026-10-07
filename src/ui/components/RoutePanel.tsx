@@ -1,6 +1,7 @@
 import {
   useEffect,
   useId,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -30,12 +31,12 @@ import type { Navigation } from '../hooks/useNavigation.ts';
 import { useSpeech } from '../hooks/useSpeech.ts';
 import { useSwipe } from '../hooks/useSwipe.ts';
 import type { ManeuverText } from '../navigationText.ts';
-import { DrillMode } from './DrillMode.tsx';
 import { HazardGuidance } from './HazardGuidance.tsx';
 import { LocationChooser } from './LocationChooser.tsx';
 import {
   ArrowRightIcon,
   CheckIcon,
+  ChevronRightIcon,
   ChildIcon,
   LockIcon,
   MenuIcon,
@@ -51,6 +52,15 @@ const ITEM_ICON: Record<PlanItem['kind'], ComponentType<{ className?: string }>>
   'meeting-point': PinIcon,
   'safe-area': ShieldCheckIcon,
 };
+
+/** The system asks for less motion (or we cannot tell): no growing animation then. */
+function prefersReducedMotion(): boolean {
+  try {
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  } catch {
+    return true;
+  }
+}
 
 const TURN_ACTION: Record<Exclude<ManeuverKind, 'arrive'>, MessageKey> = {
   'slight-left': 'nav.slightLeft',
@@ -221,13 +231,34 @@ export function RoutePanel({
     panelRef.current?.scrollTo({ top: 0 });
   }, [location.kind, plan]);
 
+  // Opening or closing the details, the sheet grows or shrinks visibly (not in one jump):
+  // remember its height now, then animate from it once the new content is laid out.
+  const heightBeforeRef = useRef<number | null>(null);
+  const setExpanded = (open: boolean) => {
+    if (open === expanded) return;
+    heightBeforeRef.current = panelRef.current?.getBoundingClientRect().height ?? null;
+    onExpandedChange(open);
+  };
+  useLayoutEffect(() => {
+    const panel = panelRef.current;
+    const before = heightBeforeRef.current;
+    heightBeforeRef.current = null;
+    if (!panel || before === null || prefersReducedMotion()) return;
+    const after = panel.getBoundingClientRect().height;
+    if (Math.abs(after - before) < 4) return;
+    panel.animate([{ height: `${String(before)}px` }, { height: `${String(after)}px` }], {
+      duration: 320,
+      easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)',
+    });
+  }, [expanded]);
+
   // Swipe the sheet up for the details and down for the summary only (as on iOS).
   const swipe = useSwipe({
     onSwipeUp: () => {
-      onExpandedChange(true);
+      setExpanded(true);
     },
     onSwipeDown: () => {
-      onExpandedChange(false);
+      setExpanded(false);
     },
   });
 
@@ -347,22 +378,12 @@ export function RoutePanel({
         {t('route.title')}
       </h2>
 
-      {/* Swiped or tapped up / down like an iOS sheet; a real button, so it also works with a
-          keyboard or a screen reader. */}
+      {/* The handle: drag it (or the summary) up or down, as on iOS. The labeled button under
+          "start" does the same with a tap, a keyboard or a screen reader. */}
       {route && !navigation.active ? (
-        <button
-          {...swipe.handlers}
-          type="button"
-          className="sheet-toggle"
-          aria-expanded={expanded}
-          aria-controls={detailsId}
-          aria-label={t('route.toggle')}
-          onClick={() => {
-            onExpandedChange(!expanded);
-          }}
-        >
-          <span className="sheet-grabber" aria-hidden="true" />
-        </button>
+        <div className="sheet-handle sheet-drag" aria-hidden="true" {...swipe.handlers}>
+          <span className="sheet-grabber" />
+        </div>
       ) : (
         <div className="sheet-grabber" aria-hidden="true" />
       )}
@@ -534,9 +555,19 @@ export function RoutePanel({
                 <span>{t('nav.start')}</span>
                 <ArrowRightIcon />
               </button>
-
-              {/* Children: the drill game right under the button, not hidden in the details. */}
-              {profile.drill && <DrillMode />}
+              {/* Says what is behind the swipe, so nothing stays hidden. */}
+              <button
+                type="button"
+                className="sheet-more"
+                aria-expanded={expanded}
+                aria-controls={detailsId}
+                onClick={() => {
+                  setExpanded(!expanded);
+                }}
+              >
+                <span>{t(expanded ? 'route.lessDetails' : 'route.moreDetails')}</span>
+                <ChevronRightIcon className="icon sheet-more__chevron" />
+              </button>
 
               <div id={detailsId} className="route-panel__details" hidden={!expanded}>
                 {description && (

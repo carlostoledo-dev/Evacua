@@ -1,19 +1,53 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, type ComponentType } from 'react';
 import { HAZARD_CHOICE } from '../../domain/hazards.ts';
 import { useI18n } from '../../i18n/I18nContext.ts';
 import type { MessageKey } from '../../i18n/translate.ts';
+import {
+  ArrowUpIcon,
+  LayersIcon,
+  MapIcon,
+  MenuIcon,
+  WalkIcon,
+  WarningIcon,
+  WaveIcon,
+} from './icons.tsx';
 
-/** Each step highlights the element marked with data-tour="<target>". */
-const ALL_STEPS: readonly { target: string; title: MessageKey; body: MessageKey }[] = [
-  { target: 'hazard', title: 'tour.hazard.title', body: 'tour.hazard.body' },
-  { target: 'map', title: 'tour.map.title', body: 'tour.map.body' },
-  { target: 'route', title: 'tour.route.title', body: 'tour.route.body' },
-  { target: 'menu', title: 'tour.tabs.title', body: 'tour.tabs.body' },
-  { target: 'disclaimer', title: 'tour.disclaimer.title', body: 'tour.disclaimer.body' },
+interface Step {
+  /** The element marked with data-tour="<target>" is highlighted. */
+  target: string;
+  icon: ComponentType<{ className?: string }>;
+  title: MessageKey;
+  body: MessageKey;
+  /** Shows an arrow moving up: "swipe this up". */
+  swipeHint?: boolean;
+}
+
+/** A short visual walk through what is on screen, in the order it is used. */
+const ALL_STEPS: readonly Step[] = [
+  { target: 'hazard', icon: WaveIcon, title: 'tour.hazard.title', body: 'tour.hazard.body' },
+  { target: 'map', icon: MapIcon, title: 'tour.map.title', body: 'tour.map.body' },
+  { target: 'route', icon: WalkIcon, title: 'tour.route.title', body: 'tour.route.body' },
+  {
+    target: 'route',
+    icon: ArrowUpIcon,
+    title: 'tour.swipe.title',
+    body: 'tour.swipe.body',
+    swipeHint: true,
+  },
+  {
+    target: 'map-buttons',
+    icon: LayersIcon,
+    title: 'tour.buttons.title',
+    body: 'tour.buttons.body',
+  },
+  { target: 'menu', icon: MenuIcon, title: 'tour.tabs.title', body: 'tour.tabs.body' },
+  {
+    target: 'disclaimer',
+    icon: WarningIcon,
+    title: 'tour.disclaimer.title',
+    body: 'tour.disclaimer.body',
+  },
 ];
-
-// The hazard step only exists when there is a hazard to choose.
-const STEPS = ALL_STEPS.filter((step) => step.target !== 'hazard' || HAZARD_CHOICE);
 
 interface Rect {
   top: number;
@@ -29,9 +63,21 @@ function targetRect(target: string): Rect | null {
   return { top: r.top, left: r.left, width: r.width, height: r.height };
 }
 
-/** Guided tour shown after onboarding (and on demand from Settings). */
-export function Tour({ onClose }: { onClose: () => void }) {
+// The hazard step only exists when there is a hazard to choose; the map buttons step only
+// when the profile shows them (simple mode has none).
+const FULL_STEPS = ALL_STEPS.filter((step) => step.target !== 'hazard' || HAZARD_CHOICE);
+const SIMPLE_STEPS = FULL_STEPS.filter((step) => step.target !== 'map-buttons');
+
+interface TourProps {
+  onClose: () => void;
+  /** Simple mode has no buttons over the map: their step is skipped. */
+  simple: boolean;
+}
+
+/** Guided tour shown after onboarding (and on demand from the menu or Settings). */
+export function Tour({ onClose, simple }: TourProps) {
   const { t } = useI18n();
+  const STEPS = simple ? SIMPLE_STEPS : FULL_STEPS;
   const [index, setIndex] = useState(0);
   const [rect, setRect] = useState<Rect | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);
@@ -106,9 +152,24 @@ export function Tour({ onClose }: { onClose: () => void }) {
         />
       )}
       <div className="glass-card tour__card" style={cardStyle} ref={cardRef} tabIndex={-1}>
-        <p className="tour__progress">
-          {t('tour.progress', { current: index + 1, total: STEPS.length })}
-        </p>
+        <div className="tour__head">
+          <span className={step.swipeHint ? 'tour__icon tour__icon--swipe' : 'tour__icon'}>
+            <step.icon className="icon" />
+          </span>
+          <p className="tour__progress">
+            <span className="visually-hidden">
+              {t('tour.progress', { current: index + 1, total: STEPS.length })}
+            </span>
+            {STEPS.map((s, i) => (
+              <span
+                key={`${s.target}-${s.title}`}
+                className="tour__dot"
+                data-state={i === index ? 'current' : i < index ? 'done' : 'todo'}
+                aria-hidden="true"
+              />
+            ))}
+          </p>
+        </div>
         <h2 id="tour-title">{t(step.title)}</h2>
         <p>{t(step.body)}</p>
         <div className="tour__actions">

@@ -1309,22 +1309,23 @@ button svg.icon {
   letter-spacing: -0.025em;
 }
 
-.sheet-toggle {
+/* The handle at the top of the route sheet: a wide area to drag, the grabber in it. */
+.sheet-handle {
   display: grid;
   place-items: start center;
-  width: 100%;
-  height: var(--touch-target);
-  margin-bottom: -1.25rem;
-  padding: 0.4375rem 0 0;
-  background: transparent;
-  border: 0;
-  cursor: pointer;
+  height: 1.75rem;
+  margin: 0 -1rem -0.5rem;
+  padding-top: 0.4375rem;
+  cursor: grab;
 }
 
-/* Down = fold the sheet; up = unfold it. */
+.sheet-handle .sheet-grabber {
+  width: 3rem;
+  margin: 0;
+}
+
 /* Swipe areas: the finger drags the sheet instead of scrolling the page. */
-.sheet-drag,
-.sheet-toggle {
+.sheet-drag {
   touch-action: none;
   user-select: none;
 }
@@ -1334,13 +1335,35 @@ button svg.icon {
   transition: transform 0.25s ease-out;
 }
 
-.sheet-toggle .sheet-grabber {
-  margin: 0;
-  transition: width 0.2s;
+/* "Ver cómo llegar y más": names what the swipe shows, and does it with a tap. */
+.sheet-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  width: 100%;
+  min-height: var(--touch-target);
+  margin-top: 0.375rem;
+  padding: 0 0.75rem;
+  font: inherit;
+  font-size: 0.9375rem;
+  font-weight: 800;
+  color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
 }
 
-.sheet-toggle[aria-expanded='true'] .sheet-grabber {
-  width: 3.25rem;
+.sheet-more__chevron {
+  width: 1.125rem;
+  height: 1.125rem;
+  transform: rotate(90deg);
+  transition: transform 0.25s;
+}
+
+.sheet-more[aria-expanded='true'] .sheet-more__chevron {
+  transform: rotate(-90deg);
 }
 
 /* Summary: who / where, how far, how long (design screen 1). */
@@ -1950,27 +1973,6 @@ button svg.icon {
   cursor: pointer;
 }
 
-.drill {
-  margin: var(--space-2) 0;
-  padding: var(--space-3);
-  border: 2px dashed var(--color-primary);
-  border-radius: var(--radius);
-}
-
-.drill h3 {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  margin-top: 0;
-}
-
-.drill__clock {
-  font-size: 1.6rem;
-  font-weight: 800;
-  font-variant-numeric: tabular-nums;
-  text-align: center;
-}
-
 /* ---------------------------------------------------------------------------------------- */
 /* Official guidance, settings, data                                                         */
 
@@ -2295,12 +2297,69 @@ button svg.icon {
 }
 
 .tour__progress {
+  display: flex;
+  gap: 0.375rem;
   margin: 0;
-  font-size: 0.875rem;
-  font-weight: 800;
-  color: var(--color-text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+}
+
+.tour__dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  background: var(--color-hairline);
+  border-radius: 999px;
+  transition:
+    width 0.25s,
+    background-color 0.25s;
+}
+
+.tour__dot[data-state='done'] {
+  background: var(--color-text-muted);
+}
+
+/* The current step is a longer pill: shape, not only color. */
+.tour__dot[data-state='current'] {
+  width: 1.5rem;
+  background: var(--color-primary);
+}
+
+.tour__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.tour__icon {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  color: var(--color-primary-contrast);
+  background: var(--color-primary);
+  border-radius: 50%;
+}
+
+.tour__icon .icon {
+  width: 1.625rem;
+  height: 1.625rem;
+}
+
+/* "Swipe up": the arrow keeps moving up (stops under reduced motion). */
+.tour__icon--swipe .icon {
+  animation: swipe-hint 1.2s ease-in-out infinite;
+}
+
+@keyframes swipe-hint {
+  0%,
+  100% {
+    transform: translateY(6px);
+    opacity: 0.6;
+  }
+
+  50% {
+    transform: translateY(-6px);
+    opacity: 1;
+  }
 }
 
 /* Welcome: sky with the logo and title, the owner's illustration, then a white sheet. */
