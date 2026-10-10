@@ -180,5 +180,7 @@ visibly labeled DEMO. See `DATA_SOURCES.md`.
 - Video slides (2026-10-10, owner request): AI made a 13-slide deck for the 2:30–3:00 video
   (context → problem → solution) with an English voice-over and a Spanish translation in the
   speaker notes; it drew the globe and Chile maps from Natural Earth (public domain) and a
-  simplified plate diagram, reused the app screenshots, and checked each figure against its
-  source (USGS for the 2010 earthquake, the repository data for the layers).
+  simplified plate diagram, captured new English and Spanish screenshots from the production
+  build (one with the browser offline), split the maps and diagram into layers for animation,
+  and checked each figure against its source (USGS for the 2010 earthquake, the repository data
+  for the layers).
