@@ -177,3 +177,8 @@ visibly labeled DEMO. See `DATA_SOURCES.md`.
   and trails back in the walking network marked as trails, made routing count each trail meter
   4 times (with searches that may begin or end at the nearest street node), compared factors
   1, 2, 4, 8 and 1000, and showed trail stretches as a broken line, a note and named legs.
+- Video slides (2026-10-10, owner request): AI made a 13-slide deck for the 2:30–3:00 video
+  (context → problem → solution) with an English voice-over and a Spanish translation in the
+  speaker notes; it drew the globe and Chile maps from Natural Earth (public domain) and a
+  simplified plate diagram, reused the app screenshots, and checked each figure against its
+  source (USGS for the 2010 earthquake, the repository data for the layers).
