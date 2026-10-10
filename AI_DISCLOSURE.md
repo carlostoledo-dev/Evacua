@@ -189,3 +189,8 @@ visibly labeled DEMO. See `DATA_SOURCES.md`.
   recordings, the screenshots and the layered maps, with English subtitles burned in and a
   matching subtitle file. The Remotion project is kept outside this repository (its license is
   not one of the licenses allowed for dependencies here).
+- Demo video v3 (2026-10-10, owner request): AI animated the owner's illustrations, replaced
+  the hand-drawn phone with a rendered 3D phone, animated a real route computed with Evacua's own
+  routing code (DEMO start point in Lagunillas to meeting point PE031) on the real SENAPRED and
+  OpenStreetMap data, and synced the subtitles to the owner's ElevenLabs voice-over by detecting
+  the pauses in each recording.
