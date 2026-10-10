@@ -184,3 +184,8 @@ visibly labeled DEMO. See `DATA_SOURCES.md`.
   build (one with the browser offline), split the maps and diagram into layers for animation,
   and checked each figure against its source (USGS for the 2010 earthquake, the repository data
   for the layers).
+- Demo video (2026-10-10, owner request): AI recorded the app in the browser (route, the DEMO
+  walk to arrival, 3D relief) and built a 2:42 animated video with Remotion from those
+  recordings, the screenshots and the layered maps, with English subtitles burned in and a
+  matching subtitle file. The Remotion project is kept outside this repository (its license is
+  not one of the licenses allowed for dependencies here).
