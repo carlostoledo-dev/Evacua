@@ -9,18 +9,6 @@ export function mphToMetersPerSecond(mph: number): number {
 }
 
 /**
- * Walking speeds for evacuation estimates, in meters per second.
- *
- * Source: FEMA P-646, "Guidelines for Design of Structures for Vertical Evacuation from
- * Tsunamis", Third Edition (August 2019), Chapter 5, p. 5-2:
- * "The average, healthy person can walk at approximately 4 mph. [...] The average pace of a
- * mobility-impaired population can be assumed to be about 2 mph."
- * https://www.fema.gov/sites/default/files/documents/fema_rsl_guidelines-for-design-of-structures-for-vertical-evacuation-from-tsunamis_050925.pdf
- *
- * Caution: FEMA uses these to space evacuation structures, not to promise arrival times.
- * 4 mph is an optimistic pace, so estimates must be shown as a range and never as "you have time".
- */
-/**
  * Farthest a position (or a meeting point) may be from the walking network before Evacua stops
  * computing a route and shows only a labeled straight line.
  * Engineering choice, not a safety standard: beyond ~250 m the path to the network is unknown.
@@ -88,6 +76,18 @@ export const PROFILE_AGE = {
   seniorFrom: 60,
 } as const;
 
+/**
+ * Walking speeds for evacuation estimates, in meters per second.
+ *
+ * Source: FEMA P-646, "Guidelines for Design of Structures for Vertical Evacuation from
+ * Tsunamis", Third Edition (August 2019), Chapter 5, p. 5-2:
+ * "The average, healthy person can walk at approximately 4 mph. [...] The average pace of a
+ * mobility-impaired population can be assumed to be about 2 mph."
+ * https://www.fema.gov/sites/default/files/documents/fema_rsl_guidelines-for-design-of-structures-for-vertical-evacuation-from-tsunamis_050925.pdf
+ *
+ * Caution: FEMA uses these to space evacuation structures, not to promise arrival times.
+ * 4 mph is an optimistic pace, so estimates must be shown as a range and never as "you have time".
+ */
 export const WALKING_SPEED_MPS = {
   averageHealthyAdult: mphToMetersPerSecond(4),
   mobilityImpaired: mphToMetersPerSecond(2),

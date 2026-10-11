@@ -174,10 +174,6 @@ export const graphEntrySchema = z.object({
 export type GraphEntry = z.infer<typeof graphEntrySchema>;
 
 /**
- * Compact graph: `nodes` is [lon0, lat0, lon1, lat1, …]; `edges` is [from, to, meters, …]
- * with node indices. Edges are walkable in both directions.
- */
-/**
  * An array of finite numbers (integers if `int`), checked in one plain loop: the same rule as
  * `z.array(z.number())`, without zod's per-item work on the graph's ≈ 170 000 numbers.
  */
@@ -196,6 +192,10 @@ function numberArray(options: { int?: boolean; min?: number } = {}) {
   );
 }
 
+/**
+ * Compact graph: `nodes` is [lon0, lat0, lon1, lat1, …]; `edges` is [from, to, meters, …]
+ * with node indices. Edges are walkable in both directions.
+ */
 export const graphFileSchema = z
   .object({
     schemaVersion: z.literal(1),
