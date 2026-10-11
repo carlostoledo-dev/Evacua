@@ -177,3 +177,10 @@ visibly labeled DEMO. See `DATA_SOURCES.md`.
   and trails back in the walking network marked as trails, made routing count each trail meter
   4 times (with searches that may begin or end at the nearest street node), compared factors
   1, 2, 4, 8 and 1000, and showed trail stretches as a broken line, a note and named legs.
+- Code audit (2026-10-11, owner request): AI ran every check (format, lint, types, unit and
+  end-to-end tests, data validation, `npm audit`), reviewed the routing, navigation, data and
+  UI code, and probed routing on a grid of starting points. It fixed the "Escuchar" button
+  staying on "Detener" after the voice finished, hid the map's "find me" button while
+  navigating (a one-off reading stopped the continuous GPS and froze the directions), made
+  995–999 m read "1 km" instead of "1000 m", and moved two source comments back onto the
+  values they describe.
