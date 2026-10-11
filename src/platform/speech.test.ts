@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest';
-import { pickVoice } from './speech.ts';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import { pickVoice, speak } from './speech.ts';
 
 const voice = (lang: string, localService: boolean, name = lang) =>
   ({ lang, localService, name }) as SpeechSynthesisVoice;
@@ -21,5 +21,37 @@ describe('pickVoice', () => {
 
   it('uses the system default while the browser has not listed its voices', () => {
     expect(pickVoice([], 'es-CL')).toBe('default');
+  });
+});
+
+describe('speak', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it('reports when the utterance ends or fails, so the UI can leave its "speaking" state', () => {
+    const spoken: SpeechSynthesisUtterance[] = [];
+    vi.stubGlobal('window', {
+      speechSynthesis: {
+        cancel: () => undefined,
+        getVoices: () => [],
+        speak: (utterance: SpeechSynthesisUtterance) => spoken.push(utterance),
+      },
+    });
+    vi.stubGlobal(
+      'SpeechSynthesisUtterance',
+      class {
+        text: string;
+        constructor(text: string) {
+          this.text = text;
+        }
+      },
+    );
+    const onEnd = vi.fn();
+    expect(speak('Sal de la zona', 'es-CL', onEnd)).toBe('speaking');
+    const [utterance] = spoken;
+    utterance?.onend?.({} as SpeechSynthesisEvent);
+    utterance?.onerror?.({} as SpeechSynthesisErrorEvent);
+    expect(onEnd).toHaveBeenCalledTimes(2);
   });
 });

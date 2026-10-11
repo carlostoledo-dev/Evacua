@@ -34,7 +34,8 @@ export function pickVoice(
   );
 }
 
-export function speak(text: string, lang: string): SpeakResult {
+/** `onEnd` runs once the utterance finishes, fails or is cancelled (also by a later `speak`). */
+export function speak(text: string, lang: string, onEnd?: () => void): SpeakResult {
   const engine = synth();
   if (!engine) return 'unsupported';
   engine.cancel(); // never stack messages
@@ -44,6 +45,10 @@ export function speak(text: string, lang: string): SpeakResult {
   utterance.lang = lang;
   utterance.rate = 0.95;
   if (voice !== 'default') utterance.voice = voice;
+  if (onEnd) {
+    utterance.onend = onEnd;
+    utterance.onerror = onEnd;
+  }
   engine.speak(utterance);
   return 'speaking';
 }
