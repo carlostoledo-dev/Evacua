@@ -184,3 +184,9 @@ visibly labeled DEMO. See `DATA_SOURCES.md`.
   navigating (a one-off reading stopped the continuous GPS and froze the directions), made
   995–999 m read "1 km" instead of "1000 m", and moved two source comments back onto the
   values they describe.
+- Second review (2026-10-11, owner request): AI cloned the public repository, checked the
+  history for secrets and personal data, the live site's security headers and `npm audit`,
+  merged the audit fixes above and the pending Dependabot update into `main`, and made a
+  momentary loss of GPS signal while navigating keep the last position and the route on screen
+  with a visible warning (before, one timeout replaced the route with an error), with unit and
+  end-to-end tests.
