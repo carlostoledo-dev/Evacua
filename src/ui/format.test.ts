@@ -12,4 +12,9 @@ describe('formatDistance', () => {
     expect(formatDistance(1460, 'en')).toBe('1.5 km');
     expect(formatDistance(1460, 'es-CL')).toBe('1,5 km');
   });
+
+  it('says "1 km" when a distance just under it rounds up', () => {
+    expect(formatDistance(994, 'en')).toBe('990 m');
+    expect(formatDistance(997, 'es-CL')).toBe('1 km');
+  });
 });
