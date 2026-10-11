@@ -412,6 +412,12 @@ export function RoutePanel({
               {t('nav.demo', { factor: DEMO_WALK_SPEEDUP })}
             </p>
           )}
+          {location.kind === 'gps' && location.signalLost && (
+            <p className="plan plan--warning" role="alert" data-testid="signal-lost">
+              <WarningIcon />
+              <span>{t('nav.signalLost')}</span>
+            </p>
+          )}
           {location.kind === 'gps-error' ? (
             <p className="plan plan--warning" role="alert">
               <WarningIcon />

@@ -231,6 +231,8 @@ export const en: Dictionary = {
   'nav.arrivedMeeting': "You reached meeting point {code}. Follow the authorities' instructions.",
   'nav.arrivedSafe': "You reached the safe zone. Follow the authorities' instructions.",
   'nav.waiting': 'Finding your position… GPS answers faster outdoors.',
+  'nav.signalLost':
+    'GPS signal lost. You see your last known position: keep following the route and move into the open.',
   'voice.listen': 'Listen',
   'voice.stop': 'Stop',
   'voice.unsupported': 'This phone has no voice available; the instructions are written on screen.',

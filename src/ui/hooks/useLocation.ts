@@ -3,6 +3,7 @@ import {
   getCurrentPosition,
   watchPosition,
   type GeoErrorKind,
+  type GeoResult,
 } from '../../platform/geolocation.ts';
 
 /** Where the user is, and how we know it. Lives in memory only: never stored or sent. */
@@ -11,13 +12,33 @@ export type LocationState =
   | { kind: 'locating' }
   | { kind: 'gps-error'; error: GeoErrorKind }
   | { kind: 'picking' }
-  | { kind: 'gps'; position: [number, number]; accuracyMeters: number }
+  /** `signalLost`: while navigating the GPS stopped answering; this is the last known reading. */
+  | { kind: 'gps'; position: [number, number]; accuracyMeters: number; signalLost: boolean }
   | { kind: 'manual'; position: [number, number] }
   /** Simulated: a preset DEMO point (`demoId`), or a DEMO walk from a picked point (null). */
   | { kind: 'demo'; position: [number, number]; demoId: string | null };
 
 export function locationPosition(state: LocationState): [number, number] | null {
   return 'position' in state ? state.position : null;
+}
+
+/**
+ * The next state while following the GPS. A momentary loss of signal (timeout, no fix under a
+ * roof) keeps the last reading, flagged, so the route and directions stay on screen; only an
+ * error the user must act on (permission revoked, no GPS) replaces it.
+ */
+export function trackedState(previous: LocationState, result: GeoResult): LocationState {
+  if (result.ok) {
+    return {
+      kind: 'gps',
+      position: result.position,
+      accuracyMeters: result.accuracyMeters,
+      signalLost: false,
+    };
+  }
+  const momentary = result.error === 'timeout' || result.error === 'unavailable';
+  if (momentary && previous.kind === 'gps') return { ...previous, signalLost: true };
+  return { kind: 'gps-error', error: result.error };
 }
 
 export function useLocation() {
@@ -35,14 +56,12 @@ export function useLocation() {
   const locateWithGps = useCallback(() => {
     stopTracking();
     const request = ++requestRef.current;
-    setState({ kind: 'locating' });
+    const locating: LocationState = { kind: 'locating' };
+    setState(locating);
     void getCurrentPosition().then((result) => {
       if (request !== requestRef.current) return;
-      setState(
-        result.ok
-          ? { kind: 'gps', position: result.position, accuracyMeters: result.accuracyMeters }
-          : { kind: 'gps-error', error: result.error },
-      );
+      // From "locating" there is no earlier reading to keep: any error is shown as such.
+      setState(trackedState(locating, result));
     });
   }, [stopTracking]);
 
@@ -53,11 +72,7 @@ export function useLocation() {
     setState((previous) => ('position' in previous ? previous : { kind: 'locating' }));
     stopWatchRef.current = watchPosition((result) => {
       if (request !== requestRef.current) return;
-      setState(
-        result.ok
-          ? { kind: 'gps', position: result.position, accuracyMeters: result.accuracyMeters }
-          : { kind: 'gps-error', error: result.error },
-      );
+      setState((previous) => trackedState(previous, result));
     });
   }, [stopTracking]);
 

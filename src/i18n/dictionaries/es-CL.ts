@@ -236,6 +236,8 @@ export const esCL = {
     'Llegaste al punto de encuentro {code}. Sigue las instrucciones de las autoridades.',
   'nav.arrivedSafe': 'Llegaste a la zona segura. Sigue las instrucciones de las autoridades.',
   'nav.waiting': 'Buscando tu posición… Al aire libre el GPS responde más rápido.',
+  'nav.signalLost':
+    'Se perdió la señal del GPS. Ves tu última posición conocida: sigue la ruta y busca un lugar al aire libre.',
   'voice.listen': 'Escuchar',
   'voice.stop': 'Detener',
   'voice.unsupported':

@@ -102,6 +102,42 @@ test.describe('with GPS permission', () => {
     await expect(page.getByTestId('map-demo')).toHaveCount(0);
     await expect(page.getByTestId('map')).toHaveAttribute('data-route', 'shown');
   });
+
+  test('navigating, a momentary loss of GPS signal keeps the route on screen', async ({ page }) => {
+    // Lets the test make the browser's continuous GPS report a timeout.
+    await page.addInitScript(() => {
+      const geolocation = navigator.geolocation;
+      const watch = geolocation.watchPosition.bind(geolocation);
+      const onErrors: PositionErrorCallback[] = [];
+      geolocation.watchPosition = (onSuccess, onError, options) => {
+        if (onError) onErrors.push(onError);
+        return watch(onSuccess, onError, options);
+      };
+      Object.assign(window, {
+        loseGpsSignal: () => {
+          const timeout = { code: 3, PERMISSION_DENIED: 1, POSITION_UNAVAILABLE: 2, TIMEOUT: 3 };
+          for (const onError of onErrors) onError(timeout as GeolocationPositionError);
+        },
+      });
+    });
+    await page.goto('/');
+    await waitForMap(page);
+    await panel(page)
+      .getByRole('button', { name: /Buscar mi ruta/ })
+      .click();
+    await panel(page).getByRole('button', { name: 'Iniciar evacuación' }).click();
+    const navPanel = panel(page).getByTestId('nav-panel');
+    await expect(navPanel.getByRole('button', { name: 'Salir de ruta' })).toBeVisible();
+
+    await page.evaluate(() => {
+      (window as unknown as { loseGpsSignal: () => void }).loseGpsSignal();
+    });
+    await expect(navPanel.getByTestId('signal-lost')).toContainText('Se perdió la señal del GPS');
+    // The route, the next direction and the way out are all still there.
+    await expect(page.getByTestId('map')).toHaveAttribute('data-route', 'shown');
+    await expect(page.getByTestId('nav-banner')).toBeVisible();
+    await expect(navPanel.getByRole('button', { name: 'Salir de ruta' })).toBeVisible();
+  });
 });
 
 test.describe('with an imprecise network location', () => {
