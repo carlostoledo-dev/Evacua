@@ -432,7 +432,7 @@ export default function MapView({
       <div ref={containerRef} className="map-canvas" />
       {/* Map buttons in one column at the bottom right, above the sheet, so they never pile up
           on a short screen: layers (not while navigating), 3D, the compass while the map is
-          turned, and "find me". Zoom is pinch, scroll or keyboard. */}
+          turned, and "find me" (not while navigating). Zoom is pinch, scroll or keyboard. */}
       {!simple && (
         <div className="map-buttons" data-tour="map-buttons">
           {!follow && (
@@ -478,17 +478,21 @@ export default function MapView({
               </span>
             </button>
           )}
-          <button
-            type="button"
-            className="map-button map-locate"
-            aria-label={t('map.locate')}
-            title={t('map.locate')}
-            onClick={() => {
-              onLocateRef.current();
-            }}
-          >
-            <LocateIcon className="icon" />
-          </button>
+          {/* Not while navigating: the map already follows the walker, and a one-off reading
+              would stop the continuous GPS and freeze the directions. */}
+          {!follow && (
+            <button
+              type="button"
+              className="map-button map-locate"
+              aria-label={t('map.locate')}
+              title={t('map.locate')}
+              onClick={() => {
+                onLocateRef.current();
+              }}
+            >
+              <LocateIcon className="icon" />
+            </button>
+          )}
         </div>
       )}
       <div className="map-chips">

@@ -157,6 +157,10 @@ test('a position can be picked on the map when there is no GPS', async ({ page }
   const navPanel = panel(page).getByTestId('nav-panel');
   await expect(navPanel).toContainText('Recorrido simulado, 10 veces más rápido');
   await expect(navPanel.getByRole('progressbar', { name: 'Avance de la ruta' })).toBeVisible();
+  // A one-off "find me" reading would stop following the walker: not offered while navigating.
+  await expect(
+    page.getByTestId('map').getByRole('button', { name: 'Usar mi ubicación (GPS)' }),
+  ).toHaveCount(0);
   await expect(page.getByTestId('map-demo')).toBeVisible();
   await expect(navPanel).not.toContainText('Buscando tu posición');
 });
