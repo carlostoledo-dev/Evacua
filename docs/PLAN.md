@@ -17,7 +17,7 @@ covers **tsunami only** (owner decision 2026-10-07). The current product is desc
 | 4. Evacuation guidance: safe point, route, time | Done — approved 2026-10-04 |
 | 5. Profiles + accessibility                     | Done — approved 2026-10-05 |
 | 6. Security, tests, Lighthouse                  | Done — approved 2026-10-07 |
-| 7. Docs, screenshots, demo script               | Done — awaiting approval   |
+| 7. Docs, screenshots, demo script               | Done — approved 2026-10-12 |
 
 ---
 
@@ -408,6 +408,14 @@ covers **tsunami only** (owner decision 2026-10-07). The current product is desc
   Speech now uses only on-device voices (`localService`); with none, the text stays on screen.
 - Owner to do: enable GitHub private vulnerability reporting (SECURITY.md points to it), record
   the video, fill in Devpost and the track selection form.
+
+**Submission (2026-10-12)**
+
+- Pre-submission audit: three routing and navigation bugs found by simulation and fixed (see
+  AI_DISCLOSURE.md). Private vulnerability reporting enabled, leftover branch deleted, tag
+  `v1.0-warriorhacks` created.
+- Demo video: https://youtu.be/js_6gRGkNGc (linked in the README). Submitted to WarriorHacks 2.0
+  on Devpost by the owner. Phase 7 approved by the owner.
 
 ---
 
