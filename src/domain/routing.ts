@@ -231,7 +231,11 @@ export type EvacuationPlan =
 export interface RoutingContext {
   graph: Graph | null;
   areas: readonly PreparedArea[];
-  /** 1 = node outside every evacuation area. Empty when there is no graph. */
+  /**
+   * 1 = node known to be outside every evacuation area. Empty when there is no graph.
+   * Nodes beyond the data bounds are never safe: the official areas are clipped there, so past
+   * that edge there is no data saying the ground is safe.
+   */
   safeNodes: Uint8Array;
   /** 1 = node on at least one way that is not a trail. Empty when there is no graph. */
   streetNodes: Uint8Array;
@@ -240,6 +244,8 @@ export interface RoutingContext {
 export function prepareRouting(
   graph: Graph | null,
   areas: readonly AreaGeometry[],
+  /** [west, south, east, north] the evacuation areas cover; when omitted, everywhere. */
+  dataBounds?: readonly number[],
 ): RoutingContext {
   const prepared = areas.map(prepareArea);
   const safeNodes = new Uint8Array(graph?.nodeCount ?? 0);
@@ -247,7 +253,8 @@ export function prepareRouting(
   if (graph) {
     for (let i = 0; i < graph.nodeCount; i++) {
       const point = nodeCoordinates(graph, i);
-      safeNodes[i] = prepared.some((area) => insidePreparedArea(point, area)) ? 0 : 1;
+      const known = !dataBounds || insideBounds(point, dataBounds);
+      safeNodes[i] = known && !prepared.some((area) => insidePreparedArea(point, area)) ? 1 : 0;
       for (let k = graph.offsets[i] ?? 0; k < (graph.offsets[i + 1] ?? 0); k++) {
         if (graph.trail[k] !== 1) streetNodes[i] = 1;
       }

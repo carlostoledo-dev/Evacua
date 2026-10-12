@@ -120,6 +120,16 @@ describe('prepareRouting', () => {
     // Inside the box: 0, 1, 6, 7. Outside: 2, 3 (east of it), 4, 5 (west of it).
     expect(Array.from(context.safeNodes)).toEqual([0, 0, 1, 1, 1, 1, 0, 0]);
   });
+
+  it('never flags a node beyond the data bounds as safe (the areas are clipped there)', () => {
+    // The data ends at dx = 0.0005: nodes 2 and 3 lie past it, outside the clipped area only.
+    const bounds = [LON - 0.01, LAT - 0.01, LON + 0.0005, LAT + 0.01];
+    const context = prepareRouting(graph, [evacuationArea], bounds);
+    expect(Array.from(context.safeNodes)).toEqual([0, 0, 0, 0, 1, 1, 0, 0]);
+    // So the way out goes west to B's side, not east past the edge of the data.
+    const plan = planEvacuation({ context, start: at(0, 0), serviceArea, meetingPoints: [A, B] });
+    expect(plan.kind === 'route' ? plan.destination : null).toMatchObject({ code: 'PE-B' });
+  });
 });
 
 describe('planEvacuation (safety first)', () => {
