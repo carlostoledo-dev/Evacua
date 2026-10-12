@@ -5,6 +5,8 @@ import type { MessageKey, MessageParams } from './translate.ts';
 export interface I18nValue {
   locale: Locale;
   setLocale: (locale: Locale) => void;
+  /** Back to the device's language without storing anything ("Borrar mis datos"). */
+  resetLocale: () => void;
   t: (key: MessageKey, params?: MessageParams) => string;
 }
 

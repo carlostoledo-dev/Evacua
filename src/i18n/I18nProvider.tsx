@@ -27,14 +27,19 @@ export function I18nProvider({ store, children }: I18nProviderProps) {
     [store],
   );
 
+  const resetLocale = useCallback(() => {
+    setLocale(resolveInitialLocale(null, navigator.languages));
+  }, []);
+
   const value = useMemo<I18nValue>(() => {
     const dictionary = DICTIONARIES[locale];
     return {
       locale,
       setLocale: changeLocale,
+      resetLocale,
       t: (key, params) => translate(dictionary, key, params),
     };
-  }, [locale, changeLocale]);
+  }, [locale, changeLocale, resetLocale]);
 
   return <I18nContext value={value}>{children}</I18nContext>;
 }

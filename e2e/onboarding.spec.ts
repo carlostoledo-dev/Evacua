@@ -109,10 +109,15 @@ test('profile can be changed and all local data deleted from Settings', async ({
   const stored = await page.evaluate(() => localStorage.getItem('evacua:user'));
   expect(stored).toBe('{"version":1,"profile":"senior","tourDone":true}');
 
+  await page.getByRole('radio', { name: /Oscuro/ }).check();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+
   await page.getByRole('button', { name: 'Borrar mis datos' }).click();
   await page.getByRole('button', { name: /Toca otra vez para borrar/ }).click();
   await expect(page.getByTestId('onboarding-welcome')).toBeVisible();
   expect(await page.evaluate(() => Object.keys(localStorage))).toEqual([]);
+  // The stored theme is gone, so the screen goes back to the system theme at once.
+  await expect(page.locator('html')).not.toHaveAttribute('data-theme');
 });
 
 test('no serious accessibility violations on the onboarding and main screens', async ({ page }) => {

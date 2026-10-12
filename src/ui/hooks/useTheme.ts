@@ -28,6 +28,8 @@ export function useTheme(): {
   preference: ThemePreference;
   theme: Theme;
   setPreference: (preference: ThemePreference) => void;
+  /** Back to the system theme without storing anything ("Borrar mis datos"). */
+  resetPreference: () => void;
 } {
   const [preference, setPreference] = useState<ThemePreference>(readStoredPreference);
   const systemDark = useSyncExternalStore(
@@ -51,5 +53,9 @@ export function useTheme(): {
     browserStore.write(STORAGE_KEYS.theme, next);
   }, []);
 
-  return { preference, theme, setPreference: changePreference };
+  const resetPreference = useCallback(() => {
+    setPreference('system');
+  }, []);
+
+  return { preference, theme, setPreference: changePreference, resetPreference };
 }
