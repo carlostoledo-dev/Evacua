@@ -2,6 +2,7 @@
 
 [![CI](https://github.com/carlostoledo-dev/Evacua/actions/workflows/ci.yml/badge.svg)](https://github.com/carlostoledo-dev/Evacua/actions/workflows/ci.yml)
 [![Live demo](https://img.shields.io/badge/demo-evacua--phi.vercel.app-0b5fd8)](https://evacua-phi.vercel.app)
+[![Demo video](https://img.shields.io/badge/video-YouTube-c4302b)](https://youtu.be/js_6gRGkNGc)
 [![License: PolyForm Noncommercial](https://img.shields.io/badge/license-PolyForm%20Noncommercial%201.0.0-555)](LICENSE)
 
 **An offline tsunami evacuation map for Coronel, Chile.** Install it from the browser, and when
@@ -12,7 +13,8 @@ street by street and out loud.
 > **Support tool only.** It does not replace the authorities (SENAPRED, SHOA, Municipalidad de
 > Coronel). Always follow their official instructions.
 
-**Live demo:** https://evacua-phi.vercel.app · Built for **WarriorHacks 2.0** ·
+**Live demo:** https://evacua-phi.vercel.app · **Video:** https://youtu.be/js_6gRGkNGc · Built for
+**WarriorHacks 2.0** ·
 [Resumen en español](#resumen-en-español)
 
 <p>
@@ -80,7 +82,8 @@ not used to maps: three profiles change the app without making separate apps.
 On a computer the app opens inside a phone frame, with a QR code beside it that opens the demo
 on your phone.
 
-The video script is in [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md).
+Demo video (≈ 3 min): https://youtu.be/js_6gRGkNGc. Its script is in
+[docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md).
 
 ## Run it locally
 
@@ -202,6 +205,8 @@ not allowed, this is _source-available_ software, not OSI "open source". Map and
 instala desde el navegador y, con GPS, te dice si estás en el área de evacuación, hacia dónde ir
 (el punto de encuentro oficial más cercano) y el camino más corto a pie, calle por calle y en
 voz alta. Zona piloto: **Lagunillas, Yobilo y Coronel Centro**.
+
+Demo: https://evacua-phi.vercel.app · Video: https://youtu.be/js_6gRGkNGc
 
 - Usa solo datos oficiales de **SENAPRED** (área de evacuación, vías y puntos de encuentro 2024);
   cada capa muestra su fuente y una etiqueta "oficial" o "DEMO". No se inventa nada.
