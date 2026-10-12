@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { ARRIVAL_RADIUS_M, DEMO_WALK_SPEEDUP, WALKING_SPEED_MPS } from '../../domain/constants.ts';
 import { haversineMeters } from '../../domain/geo.ts';
 import { pathMeters, positionAlong } from '../../domain/navigation.ts';
-import type { EvacuationPlan } from '../../domain/routing.ts';
+import type { Destination, EvacuationPlan } from '../../domain/routing.ts';
 import type { LocationState } from './useLocation.ts';
 
 /** How often the DEMO walk moves the simulated position. */
@@ -27,10 +27,28 @@ export interface Navigation {
   mode: NavigationMode;
   /** Within the arrival radius of the destination. */
   arrived: boolean;
+  /** Where the user arrived (null until then), for the arrival screen and voice. */
+  arrivedAt: Destination | null;
   voice: boolean;
   start: () => void;
   stop: () => void;
   toggleVoice: () => void;
+}
+
+/**
+ * Where a navigating user at `position` has arrived, or null: within the arrival radius of the
+ * route's destination, or, on a route to safe ground (no meeting point reachable), as soon as the
+ * plan says "already safe", because that route ends where the evacuation area ends.
+ */
+export function arrivalAt(
+  position: [number, number],
+  plan: EvacuationPlan | null,
+): Destination | null {
+  if (plan?.kind === 'already-safe') return { kind: 'safe-area', coordinates: position };
+  if (plan?.kind !== 'route') return null;
+  return haversineMeters(position, plan.destination.coordinates) <= ARRIVAL_RADIUS_M
+    ? plan.destination
+    : null;
 }
 
 /**
@@ -96,11 +114,16 @@ export function useNavigation(
   }, [mode, simulate]);
 
   const position = 'position' in location ? location.position : null;
-  const arrived =
-    mode !== null &&
-    route !== null &&
-    position !== null &&
-    haversineMeters(position, route.destination.coordinates) <= ARRIVAL_RADIUS_M;
+  const arrivedAt = mode !== null && position !== null ? arrivalAt(position, plan) : null;
 
-  return { active: mode !== null, mode: mode ?? 'gps', arrived, voice, start, stop, toggleVoice };
+  return {
+    active: mode !== null,
+    mode: mode ?? 'gps',
+    arrived: arrivedAt !== null,
+    arrivedAt,
+    voice,
+    start,
+    stop,
+    toggleVoice,
+  };
 }

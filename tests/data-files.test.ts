@@ -4,7 +4,10 @@ import { describe, expect, it } from 'vitest';
 import { loadCommune, loadRegistry, type CommuneData } from '../src/data/loader.ts';
 import { routingInputs } from '../src/data/routing-inputs.ts';
 import { buildGraph } from '../src/domain/graph.ts';
+import { pathMeters, positionAlong } from '../src/domain/navigation.ts';
 import { planEvacuation, prepareRouting } from '../src/domain/routing.ts';
+import { planningArea } from '../src/ui/hooks/useEvacuationPlan.ts';
+import { arrivalAt } from '../src/ui/hooks/useNavigation.ts';
 import { fsFetcher } from '../scripts/lib/fs-fetcher.ts';
 
 const registryUrl = pathToFileURL('public/data/communes/index.json').href;
@@ -63,7 +66,11 @@ describe('shipped data', () => {
     expect(graph).not.toBeNull();
     const { evacuationAreas, meetingPoints } = routingInputs(layers);
     expect(meetingPoints.length).toBeGreaterThan(0);
-    const context = prepareRouting(graph ? buildGraph(graph) : null, evacuationAreas);
+    const context = prepareRouting(
+      graph ? buildGraph(graph) : null,
+      evacuationAreas,
+      manifest.bounds,
+    );
     const plans = Object.fromEntries(
       manifest.demoLocations.map((demo) => [
         demo.id,
@@ -96,5 +103,50 @@ describe('shipped data', () => {
       expect(yobilo.metersToSafety).toBeGreaterThan(0);
       expect(yobilo.metersToSafety).toBeLessThan(yobilo.meters);
     }
+  });
+
+  // Walks a route the way the DEMO walk does, re-planning from each new position.
+  it('Coronel pilot area: a started route stays on screen until the user arrives', async () => {
+    const { manifest, layers, graph } = await loadShipped('coronel');
+    const { evacuationAreas, meetingPoints } = routingInputs(layers);
+    const context = prepareRouting(
+      graph ? buildGraph(graph) : null,
+      evacuationAreas,
+      manifest.bounds,
+    );
+    const plan = (start: [number, number], navigating: boolean) =>
+      planEvacuation({
+        context,
+        start,
+        serviceArea: planningArea(manifest, navigating),
+        meetingPoints,
+      });
+    const walk = (start: [number, number], navigating: boolean) => {
+      const first = plan(start, false);
+      if (first.kind !== 'route') throw new Error(`no route from ${String(start)}`);
+      const kinds = new Set<string>();
+      const length = pathMeters(first.path);
+      let end: [number, number] = start;
+      for (let walked = 0; walked < length; walked = Math.min(length, walked + 25)) {
+        end = positionAlong(first.path, Math.min(length, walked + 25));
+        kinds.add(plan(end, navigating).kind);
+      }
+      return { first, kinds, arrived: arrivalAt(end, plan(end, navigating)) };
+    };
+
+    // Inside the pilot area, toward meeting point PE033, which lies just outside it.
+    const toOutside = walk([-73.12966, -36.98025], true);
+    expect(toOutside.first.destination).toMatchObject({
+      code: '08102PE033',
+    });
+    expect([...toOutside.kinds]).toEqual(['route']);
+    expect(toOutside.arrived?.kind).toBe('meeting-point');
+    // Before the fix, the same walk said "outside the pilot area" halfway.
+    expect(walk([-73.12966, -36.98025], false).kinds.has('outside-service-area')).toBe(true);
+
+    // No meeting point reachable: the route to safe ground arrives where the area ends.
+    const toSafeGround = walk([-73.16524, -36.98435], true);
+    expect(toSafeGround.first.destination.kind).toBe('safe-area');
+    expect(toSafeGround.arrived?.kind).toBe('safe-area');
   });
 });

@@ -69,7 +69,10 @@ from Lagunillas (north) through Yobilo to the centre of Coronel (south), located
 OpenStreetMap (Lagunillas quarter ≈ -36.981, -73.158; Plaza de Armas ≈ -37.029, -73.145). It is
 not an official administrative boundary, and neighbouring areas inside the rectangle (such as
 Schwager) are covered too. The data bounds (`[-73.195, -37.056, -73.112, -36.956]`) extend
-beyond it so routes can reach nearby safe zones and meeting points.
+beyond it so routes can reach nearby safe zones and meeting points. Five official meeting points
+(PE021, PE022, PE033, PE034, PE035) lie between the two: a route can only **start** inside the
+service area, but once the user is navigating it keeps going anywhere inside the data bounds, so
+the route to those points does not vanish halfway with "outside the pilot area".
 
 ## Basemap and map assets
 
@@ -114,11 +117,15 @@ npm run data:graph   # rebuild the walking network from OpenStreetMap and update
 
 How a route is computed ([`src/domain/routing.ts`](src/domain/routing.ts)), all on the phone:
 
-1. Outside the pilot service area → no route, only a message.
+1. Starting outside the pilot service area → no route, only a message (while navigating a
+   started route, the limit is the data bounds; see above).
 2. Inside SENAPRED's evacuation area → the shortest walk (by street, see trails below) to **leave the area**,
    then the nearest official meeting point reachable **without walking back into the area**.
    If none is, the destination is the safe zone itself. This follows SENAPRED's instruction to
-   prioritize reaching a meeting point and/or safety area.
+   prioritize reaching a meeting point and/or safety area. Safe ground means outside the area
+   **and inside the data bounds**: the official layers are clipped at those bounds, while the
+   walking network goes ≈ 400 m beyond them, so a street past the edge is never treated as safe
+   (it may still be crossed on the way to safe ground).
 3. Outside the evacuation area → the nearest meeting point through safe ground, or "already safe".
 4. No street network, start farther than 250 m from any street, or no path → only a straight
    line with distance and compass direction, labeled "not a route".

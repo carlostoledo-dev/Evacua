@@ -277,9 +277,10 @@ export function RoutePanel({
   }, [navigation.active, profile.autoSpeak, text, say]);
 
   // Navigation voice: each new instruction once (not every meter), then the arrival.
+  const arrivedAt = navigation.arrivedAt;
   const arrivedText =
-    route?.destination.kind === 'meeting-point'
-      ? t('nav.arrivedMeeting', { code: shortCode(route.destination.code) })
+    arrivedAt?.kind === 'meeting-point'
+      ? t('nav.arrivedMeeting', { code: shortCode(arrivedAt.code) })
       : t('nav.arrivedSafe');
   const navSpeech = navigation.arrived
     ? { key: 'arrived', words: arrivedText }

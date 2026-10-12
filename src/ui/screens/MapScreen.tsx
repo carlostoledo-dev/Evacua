@@ -1,4 +1,12 @@
-import { lazy, Suspense, useMemo, useState, type CSSProperties, type ReactNode } from 'react';
+import {
+  lazy,
+  Suspense,
+  useEffect,
+  useMemo,
+  useState,
+  type CSSProperties,
+  type ReactNode,
+} from 'react';
 import type { LoadedLayer } from '../../data/loader.ts';
 import type { DemoLocation } from '../../data/schema.ts';
 import { headingAlong, nextManeuver } from '../../domain/navigation.ts';
@@ -53,6 +61,8 @@ interface MapScreenProps {
   /** Opens one of the screens behind the map. */
   onNavigate: (view: Exclude<View, 'map'>) => void;
   onReplayTour: () => void;
+  /** Whether a navigation session is running (a started route continues across the data). */
+  onNavigatingChange: (navigating: boolean) => void;
 }
 
 const NO_DEMO_LOCATIONS: readonly DemoLocation[] = [];
@@ -81,12 +91,16 @@ export function MapScreen({
   prompt,
   onNavigate,
   onReplayTour,
+  onNavigatingChange,
 }: MapScreenProps) {
   const { t, locale } = useI18n();
   const [topRef, topHeight] = useElementHeight();
   const [sheetRef, sheetHeight] = useElementHeight();
   const route = plan?.kind === 'route' ? plan : null;
   const navigation = useNavigation(location, plan, locationActions);
+  useEffect(() => {
+    onNavigatingChange(navigation.active);
+  }, [navigation.active, onNavigatingChange]);
   const guiding = navigation.active && !navigation.arrived ? route : null;
   const maneuver = useMemo(
     () => (guiding ? nextManeuver(guiding.path, displayStreets(guiding, t)) : null),
@@ -335,9 +349,9 @@ export function MapScreen({
         onReplayTour={onReplayTour}
       />
 
-      {navigation.active && navigation.arrived && route && (
+      {navigation.active && navigation.arrivedAt && (
         <ArrivedScreen
-          destination={route.destination}
+          destination={navigation.arrivedAt}
           demo={navigation.mode === 'demo'}
           onMoreInfo={() => {
             navigation.stop();

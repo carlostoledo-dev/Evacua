@@ -30,11 +30,11 @@ const VIEW_TITLE_ID: Record<View, string> = {
 };
 
 export function App() {
-  const { t } = useI18n();
+  const { t, resetLocale } = useI18n();
   const online = useOnlineStatus();
   const serviceWorker = useServiceWorker();
   const commune = useCommuneData();
-  const { preference, theme, setPreference } = useTheme();
+  const { preference, theme, setPreference, resetPreference } = useTheme();
   const [view, setView] = useState<View>('map');
   const profile = useUserProfile();
   const [tourRequested, setTourRequested] = useState(false);
@@ -55,7 +55,9 @@ export function App() {
   const visibleLayers = data?.layers ?? NO_LAYERS;
 
   const location = useLocation();
-  const plan = useEvacuationPlan(data, visibleLayers, locationPosition(location.state));
+  // Reported by the map screen, which runs the navigation session.
+  const [navigating, setNavigating] = useState(false);
+  const plan = useEvacuationPlan(data, visibleLayers, locationPosition(location.state), navigating);
 
   if (!profile.user) {
     return (
@@ -129,6 +131,7 @@ export function App() {
           onReplayTour={() => {
             setTourRequested(true);
           }}
+          onNavigatingChange={setNavigating}
         />
         {view === 'guide' && (
           <GuideScreen
@@ -151,6 +154,9 @@ export function App() {
             onDeleteAll={() => {
               location.clear();
               profile.deleteAll();
+              // The stored theme and language are gone too: show the defaults right away.
+              resetPreference();
+              resetLocale();
             }}
           />
         )}
