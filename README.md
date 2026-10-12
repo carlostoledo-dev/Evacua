@@ -143,6 +143,8 @@ SEO 100; installability verified by an e2e test; all 8 security headers checked 
   may be blocked after an earthquake; the app cannot know. SENAPRED has not yet confirmed reuse
   terms in writing (it is cited as IDE Chile asks).
 - **Times are estimates** from published walking speeds, not a guarantee that you have time.
+- **Slopes are not modeled** (no elevation in the routing): the route is the shortest walk on
+  the street network, which is not always the easiest uphill.
 - **GPS can be wrong** indoors or near tall buildings.
 - **Voice** needs an on-device voice for the language; otherwise the text stays on screen.
 - Not tested with the community or the authorities yet.

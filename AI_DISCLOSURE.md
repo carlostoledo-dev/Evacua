@@ -190,3 +190,14 @@ visibly labeled DEMO. See `DATA_SOURCES.md`.
   momentary loss of GPS signal while navigating keep the last position and the route on screen
   with a visible warning (before, one timeout replaced the route with an error), with unit and
   end-to-end tests.
+- Pre-submission audit (2026-10-12, owner request): AI re-ran every check, the end-to-end
+  tests, `npm audit` and the live headers, and simulated the DEMO walk (re-planning at each step,
+  as the app does) from the DEMO points and 300 random starts. It found and fixed three routing
+  and navigation bugs, each with tests: a started route to one of the five official meeting
+  points just outside the pilot rectangle (PE021, PE022, PE033, PE034, PE035) vanished halfway
+  with "outside the pilot area" (navigation now continues inside the data bounds); a route to
+  safe ground never showed the arrival screen; and streets of the walking network past the data
+  bounds, where the official evacuation area is clipped, counted as safe ground (7 % of a grid
+  of starts ended there; they are now never safe). It also made "Borrar mis datos" reset the
+  theme and language on screen at once, added the "slopes are not modeled" limit to the README,
+  and deleted a merged leftover branch.
